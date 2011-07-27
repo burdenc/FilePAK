@@ -49,7 +49,7 @@ bool filePAK::createPAK(string name, string entryPath, string types)
 				if(types.empty()) correctType = true;
 				else
 				{
-					for(int i = 0; i < correctTypes.size(); i++)
+					for(unsigned int i = 0; i < correctTypes.size(); i++)
 						if(!entry->d_name+correctTypes[i].compare(entry->d_name))
 							correctType = true;
 				}
@@ -66,13 +66,12 @@ bool filePAK::createPAK(string name, string entryPath, string types)
 					entryName += entry->d_name;
 					memcpy(fentry.name, entry->d_name, 50); //only the file name
 					memcpy(fentry.fullname, entryName.c_str(), 100); //file name + folders
-					//fentry.name = entry->d_name;
 				
 					fileIn.open(entryName, ifstream::binary | ifstream::ate);
-					//fileIn = fopen(entryName.c_str(), "r");
+
 					if(fileIn.is_open())
 					{
-						fentry.size = fileIn.tellg(); //to calculate the file's size
+						fentry.size = (unsigned int) fileIn.tellg(); //to calculate the file's size
 						fileIn.close();
 					}
 					else return false;
@@ -97,7 +96,6 @@ bool filePAK::createPAK(string name, string entryPath, string types)
 
 	if(numberFiles) //if any files were found at all
 	{
-		//PAKout.open(name, ios::trunc | ios::out | ios::binary);
 		PAKout.open(name, ofstream::binary | ofstream::trunc);
 		if(PAKout.is_open())
 		{
@@ -117,7 +115,6 @@ bool filePAK::createPAK(string name, string entryPath, string types)
 				}
 
 				PAKout.write(buffer, sizeof(PAKfileEntry)); //finally write the entry
-				//PAKout.flush();
 
 				delete [] buffer; //no memory leaks in this code, no sir
 			}
@@ -126,7 +123,6 @@ bool filePAK::createPAK(string name, string entryPath, string types)
 				int size = entries[i].size;
 				buffer = new char[size];
 
-				//fileIn.open(entries[i].fullname, ios::in | ios::binary);
 				fileIn.open(entries[i].fullname, ifstream::binary);
 				if(fileIn.is_open())
 				{
@@ -139,9 +135,6 @@ bool filePAK::createPAK(string name, string entryPath, string types)
 					}
 
 					PAKout.write(buffer, size); //write it out
-
-					//Here's where I start seeing bugs. When I wrote a text file everything seemed to work fine, but when writing a picture
-					//there seemed to be a 1 byte deviation (you can try it yourself and compare the output.jpg to the original file
 
 					delete [] buffer;
 					fileIn.close();
@@ -211,7 +204,7 @@ char* filePAK::grabPAKEntry(string name)
 	{
 		if(strcmp(entries[i].name, name.c_str()) == 0)
 		{
-			char *buffer;
+			char *buffer = NULL;
 
 			ifstream PAKread;
 			PAKread.open(pakname, ios::binary);
@@ -249,7 +242,6 @@ int filePAK::grabPAKEntrySize(string name)
 			return entries[i].size;
 		}
 	}
-
 	return -1; // This shouldn't happen. Treat as a critical error.
 }
 
@@ -267,8 +259,6 @@ vector<string> filePAK::filetypes(string types)
 		numtypes++;
 	} while(true);
 
-	//cout << numtypes << endl;
-	//string* splittypes = new string[numtypes];
 	string splittype;
 	pos = -1;
 
