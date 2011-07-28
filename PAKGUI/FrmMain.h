@@ -10,12 +10,12 @@ namespace PAKGUI {
 	using namespace System::Drawing;
 
 	/// <summary>
-	/// Summary for Form1
+	/// Summary for frmMain
 	/// </summary>
-	public ref class Form1 : public System::Windows::Forms::Form
+	public ref class frmMain : public System::Windows::Forms::Form
 	{
 	public:
-		Form1(void)
+		frmMain(void)
 		{
 			InitializeComponent();
 			//
@@ -27,7 +27,7 @@ namespace PAKGUI {
 		/// <summary>
 		/// Clean up any resources being used.
 		/// </summary>
-		~Form1()
+		~frmMain()
 		{
 			if (components)
 			{
@@ -67,12 +67,13 @@ namespace PAKGUI {
 
 	private: System::Windows::Forms::TextBox^  txtAddDir;
 	private: System::Windows::Forms::CheckedListBox^  lstPakContents;
+	private: System::Windows::Forms::ProgressBar^  progressBar;
 
 
 
 
 
-	private: System::Windows::Forms::ProgressBar^  progressBar1;
+
 	private: System::Windows::Forms::Label^  label1;
 	private: System::Windows::Forms::Label^  lblItemProg;
 
@@ -92,14 +93,17 @@ namespace PAKGUI {
 	private: System::Windows::Forms::ToolStripMenuItem^  selectAllToolStripMenuItem;
 	private: System::Windows::Forms::ToolStripMenuItem^  selectNoneToolStripMenuItem;
 	private: System::Windows::Forms::ToolStripMenuItem^  pAKToolStripMenuItem;
-	private: System::Windows::Forms::ToolStripMenuItem^  pAKRePAKToolStripMenuItem;
-	private: System::Windows::Forms::ToolStripMenuItem^  unPAKToolStripMenuItem;
+	private: System::Windows::Forms::ToolStripMenuItem^  menuPak;
+	private: System::Windows::Forms::ToolStripMenuItem^  menuUnpak;
+
+
 	private: System::Windows::Forms::ToolStripMenuItem^  aboutToolStripMenuItem;
 	private: System::Windows::Forms::Button^  btnSelectNone;
 
 	private: System::Windows::Forms::Button^  btnSelectAll;
+	private: System::Windows::Forms::OpenFileDialog^  openPakDialog;
 
-	private: System::Windows::Forms::OpenFileDialog^  openFileDialog;
+
 	private: System::Windows::Forms::SaveFileDialog^  saveFileDialog;
 	private: System::Windows::Forms::FolderBrowserDialog^  folderBrowserDialog;
 	private: System::Windows::Forms::Button^  btnAddFiles;
@@ -134,8 +138,8 @@ namespace PAKGUI {
 			this->selectAllToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->selectNoneToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->pAKToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
-			this->pAKRePAKToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
-			this->unPAKToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->menuPak = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->menuUnpak = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->helpToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->aboutToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->groupBox2 = (gcnew System::Windows::Forms::GroupBox());
@@ -153,13 +157,13 @@ namespace PAKGUI {
 			this->lblItemProg = (gcnew System::Windows::Forms::Label());
 			this->label2 = (gcnew System::Windows::Forms::Label());
 			this->label1 = (gcnew System::Windows::Forms::Label());
-			this->progressBar1 = (gcnew System::Windows::Forms::ProgressBar());
+			this->progressBar = (gcnew System::Windows::Forms::ProgressBar());
 			this->btnUnpak = (gcnew System::Windows::Forms::Button());
 			this->btnPak = (gcnew System::Windows::Forms::Button());
 			this->statusStrip1 = (gcnew System::Windows::Forms::StatusStrip());
 			this->stsLblStatus = (gcnew System::Windows::Forms::ToolStripStatusLabel());
 			this->stsStatus = (gcnew System::Windows::Forms::ToolStripStatusLabel());
-			this->openFileDialog = (gcnew System::Windows::Forms::OpenFileDialog());
+			this->openPakDialog = (gcnew System::Windows::Forms::OpenFileDialog());
 			this->saveFileDialog = (gcnew System::Windows::Forms::SaveFileDialog());
 			this->folderBrowserDialog = (gcnew System::Windows::Forms::FolderBrowserDialog());
 			this->menuStrip1->SuspendLayout();
@@ -193,12 +197,14 @@ namespace PAKGUI {
 			this->newToolStripMenuItem->Name = L"newToolStripMenuItem";
 			this->newToolStripMenuItem->Size = System::Drawing::Size(103, 22);
 			this->newToolStripMenuItem->Text = L"New";
+			this->newToolStripMenuItem->Click += gcnew System::EventHandler(this, &frmMain::newToolStripMenuItem_Click);
 			// 
 			// openToolStripMenuItem
 			// 
 			this->openToolStripMenuItem->Name = L"openToolStripMenuItem";
 			this->openToolStripMenuItem->Size = System::Drawing::Size(103, 22);
 			this->openToolStripMenuItem->Text = L"Open";
+			this->openToolStripMenuItem->Click += gcnew System::EventHandler(this, &frmMain::openToolStripMenuItem_Click);
 			// 
 			// toolStripMenuItem1
 			// 
@@ -233,23 +239,25 @@ namespace PAKGUI {
 			// 
 			// pAKToolStripMenuItem
 			// 
-			this->pAKToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(2) {this->pAKRePAKToolStripMenuItem, 
-				this->unPAKToolStripMenuItem});
+			this->pAKToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(2) {this->menuPak, 
+				this->menuUnpak});
 			this->pAKToolStripMenuItem->Name = L"pAKToolStripMenuItem";
 			this->pAKToolStripMenuItem->Size = System::Drawing::Size(41, 20);
 			this->pAKToolStripMenuItem->Text = L"PAK";
 			// 
-			// pAKRePAKToolStripMenuItem
+			// menuPak
 			// 
-			this->pAKRePAKToolStripMenuItem->Name = L"pAKRePAKToolStripMenuItem";
-			this->pAKRePAKToolStripMenuItem->Size = System::Drawing::Size(142, 22);
-			this->pAKRePAKToolStripMenuItem->Text = L"PAK / RePAK";
+			this->menuPak->Enabled = false;
+			this->menuPak->Name = L"menuPak";
+			this->menuPak->Size = System::Drawing::Size(152, 22);
+			this->menuPak->Text = L"PAK / RePAK";
 			// 
-			// unPAKToolStripMenuItem
+			// menuUnpak
 			// 
-			this->unPAKToolStripMenuItem->Name = L"unPAKToolStripMenuItem";
-			this->unPAKToolStripMenuItem->Size = System::Drawing::Size(142, 22);
-			this->unPAKToolStripMenuItem->Text = L"UnPAK";
+			this->menuUnpak->Enabled = false;
+			this->menuUnpak->Name = L"menuUnpak";
+			this->menuUnpak->Size = System::Drawing::Size(152, 22);
+			this->menuUnpak->Text = L"UnPAK";
 			// 
 			// helpToolStripMenuItem
 			// 
@@ -357,7 +365,7 @@ namespace PAKGUI {
 			this->btnBrowseDir->TabIndex = 10;
 			this->btnBrowseDir->Text = L"Browse";
 			this->btnBrowseDir->UseVisualStyleBackColor = true;
-			this->btnBrowseDir->Click += gcnew System::EventHandler(this, &Form1::btnBrowseDir_Click);
+			this->btnBrowseDir->Click += gcnew System::EventHandler(this, &frmMain::btnBrowseDir_Click);
 			// 
 			// lstPakContents
 			// 
@@ -371,7 +379,7 @@ namespace PAKGUI {
 			this->lstPakContents->ScrollAlwaysVisible = true;
 			this->lstPakContents->Size = System::Drawing::Size(800, 334);
 			this->lstPakContents->TabIndex = 11;
-			this->lstPakContents->ItemCheck += gcnew System::Windows::Forms::ItemCheckEventHandler(this, &Form1::lstPakContents_ItemCheck);
+			this->lstPakContents->ItemCheck += gcnew System::Windows::Forms::ItemCheckEventHandler(this, &frmMain::lstPakContents_ItemCheck);
 			// 
 			// panel3
 			// 
@@ -379,7 +387,7 @@ namespace PAKGUI {
 			this->panel3->Controls->Add(this->lblItemProg);
 			this->panel3->Controls->Add(this->label2);
 			this->panel3->Controls->Add(this->label1);
-			this->panel3->Controls->Add(this->progressBar1);
+			this->panel3->Controls->Add(this->progressBar);
 			this->panel3->Controls->Add(this->btnUnpak);
 			this->panel3->Controls->Add(this->btnPak);
 			this->panel3->Dock = System::Windows::Forms::DockStyle::Bottom;
@@ -424,12 +432,13 @@ namespace PAKGUI {
 			this->label1->TabIndex = 3;
 			this->label1->Text = L"Progress:";
 			// 
-			// progressBar1
+			// progressBar
 			// 
-			this->progressBar1->Location = System::Drawing::Point(118, 3);
-			this->progressBar1->Name = L"progressBar1";
-			this->progressBar1->Size = System::Drawing::Size(446, 37);
-			this->progressBar1->TabIndex = 2;
+			this->progressBar->Enabled = false;
+			this->progressBar->Location = System::Drawing::Point(118, 3);
+			this->progressBar->Name = L"progressBar";
+			this->progressBar->Size = System::Drawing::Size(446, 37);
+			this->progressBar->TabIndex = 2;
 			// 
 			// btnUnpak
 			// 
@@ -473,11 +482,21 @@ namespace PAKGUI {
 			this->stsStatus->Size = System::Drawing::Size(26, 17);
 			this->stsStatus->Text = L"Idle";
 			// 
-			// openFileDialog
+			// openPakDialog
 			// 
-			this->openFileDialog->FileName = L"openFileDialog1";
+			this->openPakDialog->DefaultExt = L"pak";
+			this->openPakDialog->Filter = L"PAK files|*.pak|All files|*.*";
+			this->openPakDialog->ShowHelp = true;
+			this->openPakDialog->SupportMultiDottedExtensions = true;
+			this->openPakDialog->Title = L"Open PAK file";
 			// 
-			// Form1
+			// saveFileDialog
+			// 
+			this->saveFileDialog->DefaultExt = L"pak";
+			this->saveFileDialog->SupportMultiDottedExtensions = true;
+			this->saveFileDialog->Title = L"Save PAK file";
+			// 
+			// frmMain
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
@@ -489,7 +508,7 @@ namespace PAKGUI {
 			this->MaximizeBox = false;
 			this->MaximumSize = System::Drawing::Size(836, 613);
 			this->MinimumSize = System::Drawing::Size(836, 613);
-			this->Name = L"Form1";
+			this->Name = L"frmMain";
 			this->SizeGripStyle = System::Windows::Forms::SizeGripStyle::Hide;
 			this->Text = L"pakGUI";
 			this->menuStrip1->ResumeLayout(false);
@@ -508,8 +527,8 @@ namespace PAKGUI {
 #pragma endregion
 
 		// This event occurs every time an item in the PAK Contents list is checked or unchecked.
-	private: System::Void lstPakContents_ItemCheck(System::Object^  sender, System::Windows::Forms::ItemCheckEventArgs^  e) {
-
+	private: System::Void lstPakContents_ItemCheck(System::Object^  sender, System::Windows::Forms::ItemCheckEventArgs^  e)
+			 {
 				 /////////////////////////////
 				 // Item Progress Label
 				 /////////////////////////////
@@ -538,12 +557,16 @@ namespace PAKGUI {
 					 btnPak->Enabled = true; // Pak button
 					 btnUnpak->Enabled = true; // Unpak button
 					 btnDeleteSelected->Enabled = true; // "Delete Selected" button
+					 menuPak->Enabled = true; // menu pak button
+					 menuUnpak->Enabled = true; // menu unpak button
 				 }
 				 else if ( btnPak->Enabled || btnUnpak->Enabled || btnDeleteSelected->Enabled ) // Otherwise, disable them if they are enabled
 				 {
 					 btnPak->Enabled = false; // Pak button
 					 btnUnpak->Enabled = false; // Unpak button
 					 btnDeleteSelected->Enabled = false; // "Delete Selected" button
+					 menuPak->Enabled = false; // menu pak button
+					 menuUnpak->Enabled = false; // menu unpak button
 				 }
 
 				 lblItemProg->Text = "0 / " + numChecked; // Update the item progress label
@@ -551,9 +574,59 @@ namespace PAKGUI {
 			 }
 
 			 // This event occurs when the Browse button is hit to add an entire directory to the PAK
-	private: System::Void btnBrowseDir_Click(System::Object^  sender, System::EventArgs^  e) {
+	private: System::Void btnBrowseDir_Click(System::Object^  sender, System::EventArgs^  e)
+			 {
 				 folderBrowserDialog->ShowDialog(); // This displays the folder selection dialog
 				 txtAddDir->Text = folderBrowserDialog->SelectedPath; // This sets the text box to the resulting selection from the user
+			 }
+
+			 // This event occurs when the Open menu item is clicked
+	private: System::Void openToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e)
+			 {
+				 openPakDialog->ShowDialog();
+			 }
+
+			 // This event occurs when the New menu item is clicked
+	private: System::Void newToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e)
+			 {
+				 if ( progressBar->Enabled ) // if the progress bar is enabled, this signifies that there is currently an operation being performed
+				 {
+					 // display a message box asking if the user is sure they want to interrupt the current operation
+					 System::Windows::Forms::DialogResult result = MessageBox::Show( "You are currently PAK'ing or UnPAK'ing a file. Interrupting the current operation may cause loss or corruption of data! Are you sure you want to make a new PAK file?", "Operation in progress", MessageBoxButtons::YesNo, MessageBoxIcon::Warning, MessageBoxDefaultButton::Button2 );
+					 if ( result != System::Windows::Forms::DialogResult::Yes )
+					 {
+						 return;
+					 }
+					 else // perform resets on items in the form that are specific to performing an operation
+					 {
+						 progressBar->Value = 0;
+						 progressBar->Enabled = false;
+						 lblPercentProg->Text = "Idle";
+						 stsStatus->Text = "Idle";
+						 lblItemProg->Text = "0 " + lblItemProg->Text->Substring( lblItemProg->Text->IndexOf('/') );
+					 }
+				 }
+				 if ( lstPakContents->Items ) // if the contents list contains any items, this signifies that there is a PAK file open
+				 {
+					 // display a message box asking if the user is sure they want to lose their current pak work
+					 System::Windows::Forms::DialogResult result = MessageBox::Show( "You currently have a PAK file open. If you make a new PAK file, any unsaved changes to the currently open PAK will be lost! Are you sure you want to make a new PAK file?", "PAK File already opened", MessageBoxButtons::YesNo, MessageBoxIcon::Warning, MessageBoxDefaultButton::Button2 );
+					 if ( result != System::Windows::Forms::DialogResult::Yes )
+					 {
+						 return;
+					 }
+				 }
+
+				 // reset all items in the form to their original values
+				 txtAddDir->Text = "";
+				 lblItemProg->Text = "0 / 0";
+				 btnUnpak->Enabled = false;
+				 btnPak->Enabled = false;
+				 btnDeleteSelected->Enabled = false;
+				 menuPak->Enabled = false;
+				 menuUnpak->Enabled = false;
+				 // todo:
+					// clear listbox
+
 			 }
 	};
 }
