@@ -210,7 +210,7 @@ bool filePAK::readPAK(string PAKpath)
 
 bool filePAK::rebuildPAK()
 {
-	if(changes.size() <= 0) return false; //if no changes are buffered
+	if(changes.empty()) return false; //if no changes are buffered
 	if(pakloaded)
 	{
 		ofstream PAKout;
@@ -327,8 +327,24 @@ bool filePAK::appendFile(string name)
 	string path = name.substr(0, found);
 	string file = name.substr(found+1);
 
-	createEntry(path, file);
+	if(!createEntry(path, file)) return false;
+
+	if(changes.empty()) changes.assign(entries.size(), 0);
 	changes.push_back(1);
+}
+
+bool filePAK::removeFile(string name)
+{
+	for(int i = 0; i < entries.size(); i++)
+	{
+		if(name.compare(entries[i].name) == 0)
+		{
+			if(changes.empty()) changes.assign(entries.size(), 0);
+			changes[i] == -1;
+			return true;
+		}
+	}
+	return false;
 }
 
 char* filePAK::grabPAKEntry(string name)
