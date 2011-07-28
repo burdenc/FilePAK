@@ -159,6 +159,8 @@ bool filePAK::createEntry(string path, string name)
 	fentry.offset = 0; //unknown right now
 
 	entries.push_back(fentry); //append to the vector
+
+	return true;
 }
 
 bool filePAK::readPAK(string PAKpath)
@@ -218,7 +220,7 @@ bool filePAK::rebuildPAK()
 
 		PAKout.open(pakname+".new", ofstream::binary); //temporary new file to write to
 
-		int numberFiles;
+		int numberFiles = 0;
 
 		for(unsigned int i = 0; i < changes.size(); i++)
 			if(changes[i] >= 0) //count all changes that aren't deletions
@@ -312,7 +314,7 @@ bool filePAK::rebuildPAK()
 	}
 	else return false;
 
-	for(int i = 0; i < entries.size(); i++) //erase all deletions
+	for(unsigned int i = 0; i < entries.size(); i++) //erase all deletions
 		if(changes[i] == -1)
 			entries.erase(entries.begin()+i, entries.begin()+i+1);
 
@@ -331,16 +333,18 @@ bool filePAK::appendFile(string name)
 
 	if(changes.empty()) changes.assign(entries.size(), 0);
 	changes.push_back(1);
+
+	return true;
 }
 
 bool filePAK::removeFile(string name)
 {
-	for(int i = 0; i < entries.size(); i++)
+	for(unsigned int i = 0; i < entries.size(); i++)
 	{
 		if(name.compare(entries[i].name) == 0)
 		{
 			if(changes.empty()) changes.assign(entries.size(), 0);
-			changes[i] == -1;
+			changes[i] = -1;
 			return true;
 		}
 	}
