@@ -62,6 +62,10 @@ public:
 	//Returns true if nothing goes wrong
 	bool readPAK(string PAKpath);
 
+	//----------------------------------------------------------
+	// The following functions require readPAK to be run first:
+	//----------------------------------------------------------
+
 	//Not implemeneted because I can't get the basic function working yet
 	//TODO: get the damn basic functions working
 	bool appendFile(string filePath);
@@ -74,6 +78,15 @@ public:
 	//name - name of the file stored in the PAK file (don't include the folder/path)
 	//Returns size of a file in the PAK file
 	int grabPAKEntrySize(string name);
+
+	//Returns names of all PAK entries within the
+	vector<string> grabAllPAKEntries();
+
+	//Unpaks a PAK entry
+	//name - entry to unPAK
+	//path - folder to unPAK to
+	//Returns true if nothing goes wrong
+	bool unPAKEntry(string name, string path);
 
 };
 
