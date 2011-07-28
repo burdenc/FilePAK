@@ -60,27 +60,7 @@ bool filePAK::createPAK(string name, string entryPath, string types)
 				if(correctType)
 				{
 					numberFiles++;
-
-					PAKfileEntry fentry; //creates a new table of contents entry
-
-					string entryName; //Sets up the path/name strings
-					entryName += entryPath;
-					entryName += entry->d_name;
-					memcpy(fentry.name, entry->d_name, 50); //only the file name
-					memcpy(fentry.fullname, entryName.c_str(), 100); //file name + folders
-
-					fileIn.open(entryName, ifstream::binary | ifstream::ate);
-
-					if(fileIn.is_open())
-					{
-						fentry.size = (unsigned int) fileIn.tellg(); //to calculate the file's size
-						fileIn.close();
-					}
-					else return false;
-
-					fentry.offset = 0; //unknown right now
-
-					entries.push_back(fentry); //append to the vector
+					if(!createEntry(entryPath, entry->d_name)) return false;
 				}
 
 			}
@@ -156,6 +136,31 @@ bool filePAK::createPAK(string name, string entryPath, string types)
 	return true;
 }
 
+bool filePAK::createEntry(string path, string name)
+{
+	ifstream fileIn;
+	PAKfileEntry fentry; //creates a new table of contents entry
+
+	string entryName; //Sets up the path/name strings
+	entryName += path;
+	entryName += name;
+	memcpy(fentry.name, name.c_str(), 50); //only the file name
+	memcpy(fentry.fullname, entryName.c_str(), 150); //file name + folders
+
+	fileIn.open(entryName, ifstream::binary | ifstream::ate);
+
+	if(fileIn.is_open())
+	{
+		fentry.size = (unsigned int) fileIn.tellg(); //to calculate the file's size
+		fileIn.close();
+	}
+	else return false;
+
+	fentry.offset = 0; //unknown right now
+
+	entries.push_back(fentry); //append to the vector
+}
+
 bool filePAK::readPAK(string PAKpath)
 {
 	ifstream PAKread;
@@ -208,7 +213,6 @@ bool filePAK::rebuildPAK()
 	if(changes.size() <= 0) return false; //if no changes are buffered
 	if(pakloaded)
 	{
-		vector<PAKfileEntry> original(entries);
 		ofstream PAKout;
 		ifstream PAKin;
 
@@ -230,6 +234,7 @@ bool filePAK::rebuildPAK()
 
 		if(PAKout.is_open())
 		{
+			vector<PAKfileEntry> original(entries);
 			PAKout.write((char *) &header, sizeof(header)); //write out header
 			
 			char *buffer;
@@ -279,12 +284,18 @@ bool filePAK::rebuildPAK()
 
 					PAKout.write(buffer, sizeof(buffer));
 				}
-				else return false;
+				else
+				{
+					original.clear();
+					return false;
+				}
 
 				PAKin.close();
 
 				delete [] buffer;
 			}
+
+			original.clear();
 		}
 		else return false;
 
@@ -300,6 +311,24 @@ bool filePAK::rebuildPAK()
 		delete filename;
 	}
 	else return false;
+
+	for(int i = 0; i < entries.size(); i++) //erase all deletions
+		if(changes[i] == -1)
+			entries.erase(entries.begin()+i, entries.begin()+i+1);
+
+	changes.clear();
+
+	return true;
+}
+
+bool filePAK::appendFile(string name)
+{
+	int found = name.find_last_of("/\\");
+	string path = name.substr(0, found);
+	string file = name.substr(found+1);
+
+	createEntry(path, file);
+	changes.push_back(1);
 }
 
 char* filePAK::grabPAKEntry(string name)

@@ -48,6 +48,9 @@ private:
 	//Used to split the parameter types in createPAK() into a vector 
 	vector<string> filetypes(string types);
 
+	//Create PAKfileEntry
+	bool createEntry(string fullname, string name);
+
 public:
 	filePAK(void);
 	~filePAK(void);
