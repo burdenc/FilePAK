@@ -203,6 +203,105 @@ bool filePAK::readPAK(string PAKpath)
 	return true;
 }
 
+bool filePAK::rebuildPAK()
+{
+	if(changes.size() <= 0) return false; //if no changes are buffered
+	if(pakloaded)
+	{
+		vector<PAKfileEntry> original(entries);
+		ofstream PAKout;
+		ifstream PAKin;
+
+		PAKout.open(pakname+".new", ofstream::binary); //temporary new file to write to
+
+		int numberFiles;
+
+		for(unsigned int i = 0; i < changes.size(); i++)
+			if(changes[i] >= 0) //count all changes that aren't deletions
+				numberFiles++;
+
+		int offset = (sizeof(PAKheader) + (numberFiles * sizeof(PAKfileEntry)));
+		for(unsigned int i = 0; i < entries.size(); i++) //find out new offsets
+		{
+			if(changes[i] == -1) continue; //don't factor in deletions
+			entries[i].offset = offset;
+			offset += entries[i].size;
+		}
+
+		if(PAKout.is_open())
+		{
+			PAKout.write((char *) &header, sizeof(header)); //write out header
+			
+			char *buffer;
+
+			for(unsigned int i = 0; i < entries.size(); i++)
+			{
+				if(changes[i] == -1) //if this change is a deletion
+				{
+					PAKout.seekp(sizeof(PAKfileEntry), ofstream::cur);
+					continue;
+				}
+
+				buffer = new char[sizeof(PAKfileEntry)]; //char array to hold each table of contents entry
+				memcpy(buffer, &(entries[i]), sizeof(PAKfileEntry)); //copy over the current entry in the for loop
+
+				for(int j = 0; j < sizeof(PAKfileEntry); j++)
+				{
+					if(header.additionEncrypt) buffer[j] += header.encryptVal; //encrypt each byte
+					else buffer[j] -= header.encryptVal;
+				}
+
+				PAKout.write(buffer, sizeof(PAKfileEntry)); //finally write the entry
+
+				delete [] buffer; //no memory leaks in this code, no sir
+			}
+
+			for(unsigned int i = 0; i < entries.size(); i++)
+			{
+				if(changes[i] == -1) continue; //again, don't factor in deletions
+				if(changes[i] == 1) PAKin.open(entries[i].fullname, ifstream::binary); //if it's an addition, load the file
+				else //if it's already in the PAK file, load it from there
+				{
+					PAKin.open(pakname, ifstream::binary);
+					PAKin.seekg(original[i].offset);
+				}
+
+				if(PAKin.is_open())
+				{
+					buffer = new char[entries[i].size];
+					PAKin.read(buffer, sizeof(buffer));
+
+					for(int j = 0; j < sizeof(PAKfileEntry); j++)
+					{
+						if(header.additionEncrypt) buffer[j] += header.encryptVal; //encrypt each byte
+						else buffer[j] -= header.encryptVal;
+					}
+
+					PAKout.write(buffer, sizeof(buffer));
+				}
+				else return false;
+
+				PAKin.close();
+
+				delete [] buffer;
+			}
+		}
+		else return false;
+
+		PAKout.close();
+
+		remove(pakname.c_str()); //deleting old PAK
+
+		char* filename = new char[150];
+		strcpy(filename, pakname.c_str());
+		strcat(filename, ".new");
+
+		rename(filename, pakname.c_str());
+		delete filename;
+	}
+	else return false;
+}
+
 char* filePAK::grabPAKEntry(string name)
 {
 	if(pakloaded)
