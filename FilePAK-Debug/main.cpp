@@ -60,10 +60,13 @@ int main()
 	else
 	{
 		// to do: make an crash function to display error messages and such
+		delete [] buffer;
 		cout << "Critical error: Output file could not be opened\n";
 		system("pause");
 		return 1;
 	}
+
+	delete [] buffer;
 
 	f.close(); // close output file
 

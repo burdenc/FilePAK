@@ -56,7 +56,7 @@ bool filePAK::createPAK(string name, string entryPath, string types)
 							correctType = true;
 				}
 
-				
+
 				if(correctType)
 				{
 					numberFiles++;
@@ -68,7 +68,7 @@ bool filePAK::createPAK(string name, string entryPath, string types)
 					entryName += entry->d_name;
 					memcpy(fentry.name, entry->d_name, 50); //only the file name
 					memcpy(fentry.fullname, entryName.c_str(), 100); //file name + folders
-				
+
 					fileIn.open(entryName, ifstream::binary | ifstream::ate);
 
 					if(fileIn.is_open())
@@ -86,6 +86,8 @@ bool filePAK::createPAK(string name, string entryPath, string types)
 			}
 		}
 	}
+
+	delete dir, entry;
 
 	header.numberFiles = numberFiles;
 
@@ -260,7 +262,7 @@ vector<string> filePAK::grabAllPAKEntries()
 	vector<string> allentries;
 	if(pakloaded)
 	{
-		for(int i = 0; i < entries.size(); i++)
+		for(unsigned int i = 0; i < entries.size(); i++)
 		{
 			allentries.push_back(entries[i].name);
 		}
@@ -280,8 +282,12 @@ bool filePAK::unPAKEntry(string name, string path)
 		if(buffer == NULL || size <= 0) return false;
 
 		output.write(buffer, size);
+		delete [] buffer;
 	}
-	else return false;
+	else
+	{
+		return false;
+	}
 
 	output.close();
 	return true;
