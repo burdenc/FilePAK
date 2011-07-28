@@ -39,10 +39,11 @@ private:
 	};
 
 	string pakname; //name of the pak file
-	bool pakloaded; //set to true after readPAK() is used, currently isn't used
+	bool pakloaded; //set to true after readPAK() is used
 	PAKheader header; //the header
 	vector<PAKfileEntry> entries; //table of contents of all the entries
 
+	//Used to split the parameter types in createPAK() into a vector 
 	vector<string> filetypes(string types);
 
 public:

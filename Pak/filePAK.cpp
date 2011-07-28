@@ -7,8 +7,8 @@
 #include <random>
 #include <time.h>
 
-#ifdef _WINDOWS_
-#include "dirent.h" //Usually only in MacOSX or Linux, it allows you to find all the files contained within a folder
+#ifndef _POSIX_
+#include "dirent.h" //Usually only in POSIX compilers, it allows you to find all the files contained within a folder
 #else
 #include <dirent.h>
 #endif
@@ -21,10 +21,12 @@ filePAK::filePAK(void)
 
 filePAK::~filePAK(void)
 {
+	entries.clear();
 }
 
 bool filePAK::createPAK(string name, string entryPath, string types)
 {
+	pakloaded = false;
 	pakname = name;
 	srand((unsigned) time(NULL)); //seedin'
 	ofstream PAKout;
@@ -192,6 +194,7 @@ bool filePAK::readPAK(string PAKpath)
 		}
 
 		PAKread.close();
+		pakloaded = true;
 	}
 	else return false; //PAKread not open
 
@@ -200,49 +203,56 @@ bool filePAK::readPAK(string PAKpath)
 
 char* filePAK::grabPAKEntry(string name)
 {
-	for(int i = 0; i < header.numberFiles; i++)
+	if(pakloaded)
 	{
-		if(strcmp(entries[i].name, name.c_str()) == 0)
+		for(int i = 0; i < header.numberFiles; i++)
 		{
-			char *buffer = NULL;
-
-			ifstream PAKread;
-			PAKread.open(pakname, ios::binary);
-			if(PAKread.is_open())
+			if(strcmp(entries[i].name, name.c_str()) == 0)
 			{
-				buffer = new char[entries[i].size];
-				PAKread.seekg(entries[i].offset, ifstream::beg); //seek to the offset of the file in the .pak file
-				PAKread.read(buffer, entries[i].size); //read everything into the buffer
+				char *buffer = NULL;
 
-				for(unsigned int j = 0; j < entries[i].size; j++)
+				ifstream PAKread;
+				PAKread.open(pakname, ios::binary);
+				if(PAKread.is_open())
 				{
-					if(header.additionEncrypt) buffer[j] -= header.encryptVal; //decrypt it
-					else buffer[j] += header.encryptVal;
-				}
+					buffer = new char[entries[i].size];
+					PAKread.seekg(entries[i].offset, ifstream::beg); //seek to the offset of the file in the .pak file
+					PAKread.read(buffer, entries[i].size); //read everything into the buffer
 
-				return buffer; //return it all
-			}
-			else
-			{
-				cout << "Critical error: grabPAKEntry() stream not open\n";
-				return buffer; //NULL
+					for(unsigned int j = 0; j < entries[i].size; j++)
+					{
+						if(header.additionEncrypt) buffer[j] -= header.encryptVal; //decrypt it
+						else buffer[j] += header.encryptVal;
+					}
+
+					return buffer; //return it all
+				}
+				else
+				{
+					cout << "Critical error: grabPAKEntry() stream not open\n";
+					return buffer; //NULL
+				}
 			}
 		}
 	}
 
-	return NULL;
+	return NULL; //PAK file isn't loaded, or entry isn't found
 }
 
 int filePAK::grabPAKEntrySize(string name)
 {
-	for(int i = 0; i < header.numberFiles; i++)
+	if(pakloaded)
 	{
-		if(strcmp(entries[i].name, name.c_str()) == 0)
+		for(int i = 0; i < header.numberFiles; i++)
 		{
-			return entries[i].size;
+			if(strcmp(entries[i].name, name.c_str()) == 0)
+			{
+				return entries[i].size;
+			}
 		}
+		return -1; // This shouldn't happen. Treat as a critical error.
 	}
-	return -1; // This shouldn't happen. Treat as a critical error.
+	return -2; //PAK file isn't loaded
 }
 
 vector<string> filePAK::filetypes(string types)
