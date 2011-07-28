@@ -255,6 +255,38 @@ int filePAK::grabPAKEntrySize(string name)
 	return -2; //PAK file isn't loaded
 }
 
+vector<string> filePAK::grabAllPAKEntries()
+{
+	vector<string> allentries;
+	if(pakloaded)
+	{
+		for(int i = 0; i < entries.size(); i++)
+		{
+			allentries.push_back(entries[i].name);
+		}
+	}
+
+	return allentries; //NULL if pakloaded == false
+}
+
+bool filePAK::unPAKEntry(string name, string path)
+{
+	ofstream output;
+	output.open(path, ofstream::binary | ofstream::trunc);
+	if(output.is_open())
+	{
+		char *buffer = grabPAKEntry(name);
+		int size = grabPAKEntrySize(name);
+		if(buffer == NULL || size <= 0) return false;
+
+		output.write(buffer, size);
+	}
+	else return false;
+
+	output.close();
+	return true;
+}
+
 vector<string> filePAK::filetypes(string types)
 {
 	vector<string> splittypes;
