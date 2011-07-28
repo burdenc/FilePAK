@@ -66,7 +66,7 @@ namespace PAKGUI {
 
 
 	private: System::Windows::Forms::TextBox^  txtAddDir;
-	private: System::Windows::Forms::CheckedListBox^  lstPakContents;
+
 	private: System::Windows::Forms::ProgressBar^  progressBar;
 
 
@@ -109,6 +109,14 @@ namespace PAKGUI {
 	private: System::Windows::Forms::Button^  btnAddFiles;
 
 	private: System::Windows::Forms::Button^  btnDeleteSelected;
+	private: System::Windows::Forms::ListView^  lstPakContents;
+	private: System::Windows::Forms::ColumnHeader^  columnHeader1;
+	private: System::Windows::Forms::ColumnHeader^  columnHeader2;
+	private: System::Windows::Forms::ColumnHeader^  columnHeader3;
+	private: System::Windows::Forms::ColumnHeader^  columnHeader4;
+	private: System::Windows::Forms::ToolTip^  toolTip1;
+
+
 
 
 
@@ -128,6 +136,7 @@ namespace PAKGUI {
 		/// </summary>
 		void InitializeComponent(void)
 		{
+			this->components = (gcnew System::ComponentModel::Container());
 			this->menuStrip1 = (gcnew System::Windows::Forms::MenuStrip());
 			this->fileToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->newToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
@@ -143,6 +152,11 @@ namespace PAKGUI {
 			this->helpToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->aboutToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->groupBox2 = (gcnew System::Windows::Forms::GroupBox());
+			this->lstPakContents = (gcnew System::Windows::Forms::ListView());
+			this->columnHeader1 = (gcnew System::Windows::Forms::ColumnHeader());
+			this->columnHeader2 = (gcnew System::Windows::Forms::ColumnHeader());
+			this->columnHeader4 = (gcnew System::Windows::Forms::ColumnHeader());
+			this->columnHeader3 = (gcnew System::Windows::Forms::ColumnHeader());
 			this->btnAddFiles = (gcnew System::Windows::Forms::Button());
 			this->btnDeleteSelected = (gcnew System::Windows::Forms::Button());
 			this->btnSelectNone = (gcnew System::Windows::Forms::Button());
@@ -151,7 +165,6 @@ namespace PAKGUI {
 			this->txtAddDir = (gcnew System::Windows::Forms::TextBox());
 			this->btnAddDir = (gcnew System::Windows::Forms::Button());
 			this->btnBrowseDir = (gcnew System::Windows::Forms::Button());
-			this->lstPakContents = (gcnew System::Windows::Forms::CheckedListBox());
 			this->panel3 = (gcnew System::Windows::Forms::Panel());
 			this->lblPercentProg = (gcnew System::Windows::Forms::Label());
 			this->lblItemProg = (gcnew System::Windows::Forms::Label());
@@ -166,6 +179,7 @@ namespace PAKGUI {
 			this->openPakDialog = (gcnew System::Windows::Forms::OpenFileDialog());
 			this->saveFileDialog = (gcnew System::Windows::Forms::SaveFileDialog());
 			this->folderBrowserDialog = (gcnew System::Windows::Forms::FolderBrowserDialog());
+			this->toolTip1 = (gcnew System::Windows::Forms::ToolTip(this->components));
 			this->menuStrip1->SuspendLayout();
 			this->groupBox2->SuspendLayout();
 			this->groupBox1->SuspendLayout();
@@ -195,27 +209,28 @@ namespace PAKGUI {
 			// newToolStripMenuItem
 			// 
 			this->newToolStripMenuItem->Name = L"newToolStripMenuItem";
-			this->newToolStripMenuItem->Size = System::Drawing::Size(103, 22);
+			this->newToolStripMenuItem->Size = System::Drawing::Size(152, 22);
 			this->newToolStripMenuItem->Text = L"New";
 			this->newToolStripMenuItem->Click += gcnew System::EventHandler(this, &frmMain::newToolStripMenuItem_Click);
 			// 
 			// openToolStripMenuItem
 			// 
 			this->openToolStripMenuItem->Name = L"openToolStripMenuItem";
-			this->openToolStripMenuItem->Size = System::Drawing::Size(103, 22);
+			this->openToolStripMenuItem->Size = System::Drawing::Size(152, 22);
 			this->openToolStripMenuItem->Text = L"Open";
 			this->openToolStripMenuItem->Click += gcnew System::EventHandler(this, &frmMain::openToolStripMenuItem_Click);
 			// 
 			// toolStripMenuItem1
 			// 
 			this->toolStripMenuItem1->Name = L"toolStripMenuItem1";
-			this->toolStripMenuItem1->Size = System::Drawing::Size(100, 6);
+			this->toolStripMenuItem1->Size = System::Drawing::Size(149, 6);
 			// 
 			// exitToolStripMenuItem
 			// 
 			this->exitToolStripMenuItem->Name = L"exitToolStripMenuItem";
-			this->exitToolStripMenuItem->Size = System::Drawing::Size(103, 22);
+			this->exitToolStripMenuItem->Size = System::Drawing::Size(152, 22);
 			this->exitToolStripMenuItem->Text = L"Exit";
+			this->exitToolStripMenuItem->Click += gcnew System::EventHandler(this, &frmMain::exitToolStripMenuItem_Click);
 			// 
 			// editToolStripMenuItem
 			// 
@@ -249,14 +264,14 @@ namespace PAKGUI {
 			// 
 			this->menuPak->Enabled = false;
 			this->menuPak->Name = L"menuPak";
-			this->menuPak->Size = System::Drawing::Size(152, 22);
+			this->menuPak->Size = System::Drawing::Size(142, 22);
 			this->menuPak->Text = L"PAK / RePAK";
 			// 
 			// menuUnpak
 			// 
 			this->menuUnpak->Enabled = false;
 			this->menuUnpak->Name = L"menuUnpak";
-			this->menuUnpak->Size = System::Drawing::Size(152, 22);
+			this->menuUnpak->Size = System::Drawing::Size(142, 22);
 			this->menuUnpak->Text = L"UnPAK";
 			// 
 			// helpToolStripMenuItem
@@ -274,12 +289,12 @@ namespace PAKGUI {
 			// 
 			// groupBox2
 			// 
+			this->groupBox2->Controls->Add(this->lstPakContents);
 			this->groupBox2->Controls->Add(this->btnAddFiles);
 			this->groupBox2->Controls->Add(this->btnDeleteSelected);
 			this->groupBox2->Controls->Add(this->btnSelectNone);
 			this->groupBox2->Controls->Add(this->btnSelectAll);
 			this->groupBox2->Controls->Add(this->groupBox1);
-			this->groupBox2->Controls->Add(this->lstPakContents);
 			this->groupBox2->Controls->Add(this->panel3);
 			this->groupBox2->Dock = System::Windows::Forms::DockStyle::Fill;
 			this->groupBox2->Location = System::Drawing::Point(0, 24);
@@ -290,6 +305,45 @@ namespace PAKGUI {
 			this->groupBox2->TabIndex = 8;
 			this->groupBox2->TabStop = false;
 			this->groupBox2->Text = L"PAK Contents";
+			// 
+			// lstPakContents
+			// 
+			this->lstPakContents->AllowDrop = true;
+			this->lstPakContents->CheckBoxes = true;
+			this->lstPakContents->Columns->AddRange(gcnew cli::array< System::Windows::Forms::ColumnHeader^  >(4) {this->columnHeader1, 
+				this->columnHeader2, this->columnHeader4, this->columnHeader3});
+			this->lstPakContents->FullRowSelect = true;
+			this->lstPakContents->Location = System::Drawing::Point(10, 128);
+			this->lstPakContents->Name = L"lstPakContents";
+			this->lstPakContents->Size = System::Drawing::Size(794, 342);
+			this->lstPakContents->Sorting = System::Windows::Forms::SortOrder::Ascending;
+			this->lstPakContents->TabIndex = 17;
+			this->lstPakContents->UseCompatibleStateImageBehavior = false;
+			this->lstPakContents->View = System::Windows::Forms::View::Details;
+			this->lstPakContents->ItemCheck += gcnew System::Windows::Forms::ItemCheckEventHandler(this, &frmMain::lstPakContents_ItemCheck);
+			this->lstPakContents->DragDrop += gcnew System::Windows::Forms::DragEventHandler(this, &frmMain::lstPakContents_DragDrop);
+			this->lstPakContents->DragOver += gcnew System::Windows::Forms::DragEventHandler(this, &frmMain::lstPakContents_DragOver);
+			// 
+			// columnHeader1
+			// 
+			this->columnHeader1->Text = L"File name";
+			this->columnHeader1->Width = 238;
+			// 
+			// columnHeader2
+			// 
+			this->columnHeader2->Text = L"Directory";
+			this->columnHeader2->Width = 308;
+			// 
+			// columnHeader4
+			// 
+			this->columnHeader4->Text = L"Origin";
+			this->columnHeader4->Width = 156;
+			// 
+			// columnHeader3
+			// 
+			this->columnHeader3->Text = L"File extension";
+			this->columnHeader3->TextAlign = System::Windows::Forms::HorizontalAlignment::Right;
+			this->columnHeader3->Width = 86;
 			// 
 			// btnAddFiles
 			// 
@@ -302,12 +356,11 @@ namespace PAKGUI {
 			// 
 			// btnDeleteSelected
 			// 
-			this->btnDeleteSelected->Enabled = false;
 			this->btnDeleteSelected->Location = System::Drawing::Point(288, 99);
 			this->btnDeleteSelected->Name = L"btnDeleteSelected";
-			this->btnDeleteSelected->Size = System::Drawing::Size(89, 23);
+			this->btnDeleteSelected->Size = System::Drawing::Size(100, 23);
 			this->btnDeleteSelected->TabIndex = 15;
-			this->btnDeleteSelected->Text = L"Delete selected";
+			this->btnDeleteSelected->Text = L"Delete highlighted";
 			this->btnDeleteSelected->UseVisualStyleBackColor = true;
 			// 
 			// btnSelectNone
@@ -316,8 +369,9 @@ namespace PAKGUI {
 			this->btnSelectNone->Name = L"btnSelectNone";
 			this->btnSelectNone->Size = System::Drawing::Size(75, 23);
 			this->btnSelectNone->TabIndex = 14;
-			this->btnSelectNone->Text = L"Select none";
+			this->btnSelectNone->Text = L"Check none";
 			this->btnSelectNone->UseVisualStyleBackColor = true;
+			this->btnSelectNone->Click += gcnew System::EventHandler(this, &frmMain::btnSelectNone_Click);
 			// 
 			// btnSelectAll
 			// 
@@ -325,8 +379,9 @@ namespace PAKGUI {
 			this->btnSelectAll->Name = L"btnSelectAll";
 			this->btnSelectAll->Size = System::Drawing::Size(75, 23);
 			this->btnSelectAll->TabIndex = 13;
-			this->btnSelectAll->Text = L"Select all";
+			this->btnSelectAll->Text = L"Check all";
 			this->btnSelectAll->UseVisualStyleBackColor = true;
+			this->btnSelectAll->Click += gcnew System::EventHandler(this, &frmMain::btnSelectAll_Click);
 			// 
 			// groupBox1
 			// 
@@ -366,20 +421,6 @@ namespace PAKGUI {
 			this->btnBrowseDir->Text = L"Browse";
 			this->btnBrowseDir->UseVisualStyleBackColor = true;
 			this->btnBrowseDir->Click += gcnew System::EventHandler(this, &frmMain::btnBrowseDir_Click);
-			// 
-			// lstPakContents
-			// 
-			this->lstPakContents->FormattingEnabled = true;
-			this->lstPakContents->HorizontalScrollbar = true;
-			this->lstPakContents->Items->AddRange(gcnew cli::array< System::Object^  >(4) {L"test 1", L"test2", L"test 4\tlksdf\tdslkfj", 
-				L"how do add columns\?"});
-			this->lstPakContents->Location = System::Drawing::Point(10, 128);
-			this->lstPakContents->MultiColumn = true;
-			this->lstPakContents->Name = L"lstPakContents";
-			this->lstPakContents->ScrollAlwaysVisible = true;
-			this->lstPakContents->Size = System::Drawing::Size(800, 334);
-			this->lstPakContents->TabIndex = 11;
-			this->lstPakContents->ItemCheck += gcnew System::Windows::Forms::ItemCheckEventHandler(this, &frmMain::lstPakContents_ItemCheck);
 			// 
 			// panel3
 			// 
@@ -527,106 +568,38 @@ namespace PAKGUI {
 #pragma endregion
 
 		// This event occurs every time an item in the PAK Contents list is checked or unchecked.
-	private: System::Void lstPakContents_ItemCheck(System::Object^  sender, System::Windows::Forms::ItemCheckEventArgs^  e)
-			 {
-				 /////////////////////////////
-				 // Item Progress Label
-				 /////////////////////////////
-				 IEnumerator^ myEnum1 = lstPakContents->CheckedIndices->GetEnumerator(); // This is an enum for cycling through the checked items
-				 int numChecked = 0; // The number of items checked
-				 while ( myEnum1->MoveNext() )
-				 {
-					 if ( lstPakContents->GetItemChecked( *safe_cast<Int32^>(myEnum1->Current) ) )
-					 {
-						 ++numChecked;
-					 }
-				 }
-
-				 // Because of the way the checked items are updated in relation to the event, we have to account for a difference of 1 on two occasions.
-				 if ( e->CurrentValue == CheckState::Unchecked ) // If the event was triggered by a check
-				 {
-					 ++numChecked;
-				 }
-				 else // If the event was triggered by an uncheck
-				 {
-					 --numChecked;
-				 }
-
-				 if ( numChecked > 0 ) // If there's items selected, enable buttons that depend on having selected items
-				 {
-					 btnPak->Enabled = true; // Pak button
-					 btnUnpak->Enabled = true; // Unpak button
-					 btnDeleteSelected->Enabled = true; // "Delete Selected" button
-					 menuPak->Enabled = true; // menu pak button
-					 menuUnpak->Enabled = true; // menu unpak button
-				 }
-				 else if ( btnPak->Enabled || btnUnpak->Enabled || btnDeleteSelected->Enabled ) // Otherwise, disable them if they are enabled
-				 {
-					 btnPak->Enabled = false; // Pak button
-					 btnUnpak->Enabled = false; // Unpak button
-					 btnDeleteSelected->Enabled = false; // "Delete Selected" button
-					 menuPak->Enabled = false; // menu pak button
-					 menuUnpak->Enabled = false; // menu unpak button
-				 }
-
-				 lblItemProg->Text = "0 / " + numChecked; // Update the item progress label
-				 /////////////////////////////
-			 }
+	private: System::Void lstPakContents_ItemCheck(System::Object^  sender, System::Windows::Forms::ItemCheckEventArgs^  e);
 
 			 // This event occurs when the Browse button is hit to add an entire directory to the PAK
-	private: System::Void btnBrowseDir_Click(System::Object^  sender, System::EventArgs^  e)
-			 {
-				 folderBrowserDialog->ShowDialog(); // This displays the folder selection dialog
-				 txtAddDir->Text = folderBrowserDialog->SelectedPath; // This sets the text box to the resulting selection from the user
-			 }
+	private: System::Void btnBrowseDir_Click(System::Object^  sender, System::EventArgs^  e);
 
 			 // This event occurs when the Open menu item is clicked
-	private: System::Void openToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e)
-			 {
-				 openPakDialog->ShowDialog();
-			 }
+	private: System::Void openToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e);
 
 			 // This event occurs when the New menu item is clicked
-	private: System::Void newToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e)
-			 {
-				 if ( progressBar->Enabled ) // if the progress bar is enabled, this signifies that there is currently an operation being performed
-				 {
-					 // display a message box asking if the user is sure they want to interrupt the current operation
-					 System::Windows::Forms::DialogResult result = MessageBox::Show( "You are currently PAK'ing or UnPAK'ing a file. Interrupting the current operation may cause loss or corruption of data! Are you sure you want to make a new PAK file?", "Operation in progress", MessageBoxButtons::YesNo, MessageBoxIcon::Warning, MessageBoxDefaultButton::Button2 );
-					 if ( result != System::Windows::Forms::DialogResult::Yes )
-					 {
-						 return;
-					 }
-					 else // perform resets on items in the form that are specific to performing an operation
-					 {
-						 progressBar->Value = 0;
-						 progressBar->Enabled = false;
-						 lblPercentProg->Text = "Idle";
-						 stsStatus->Text = "Idle";
-						 lblItemProg->Text = "0 " + lblItemProg->Text->Substring( lblItemProg->Text->IndexOf('/') );
-					 }
-				 }
-				 if ( lstPakContents->Items ) // if the contents list contains any items, this signifies that there is a PAK file open
-				 {
-					 // display a message box asking if the user is sure they want to lose their current pak work
-					 System::Windows::Forms::DialogResult result = MessageBox::Show( "You currently have a PAK file open. If you make a new PAK file, any unsaved changes to the currently open PAK will be lost! Are you sure you want to make a new PAK file?", "PAK File already opened", MessageBoxButtons::YesNo, MessageBoxIcon::Warning, MessageBoxDefaultButton::Button2 );
-					 if ( result != System::Windows::Forms::DialogResult::Yes )
-					 {
-						 return;
-					 }
-				 }
+	private: System::Void newToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e);
 
-				 // reset all items in the form to their original values
-				 txtAddDir->Text = "";
-				 lblItemProg->Text = "0 / 0";
-				 btnUnpak->Enabled = false;
-				 btnPak->Enabled = false;
-				 btnDeleteSelected->Enabled = false;
-				 menuPak->Enabled = false;
-				 menuUnpak->Enabled = false;
-				 // todo:
-					// clear listbox
+			 // This event occurs when the user drags a file into the pak contents area
+	private: System::Void lstPakContents_DragDrop(System::Object^  sender, System::Windows::Forms::DragEventArgs^  e);
+	private: System::Void lstPakContents_DragOver(System::Object^  sender, System::Windows::Forms::DragEventArgs^  e) {
+				 if(e->Data->GetDataPresent(DataFormats::FileDrop))
+				 {
+					 e->Effect = DragDropEffects::All;
+				 }
+				 else
+				 {
+					 e->Effect = DragDropEffects::None;
+				 }
+			 }
 
+			 // This event occurs when the user clicks the Select all button
+	private: System::Void btnSelectAll_Click(System::Object^  sender, System::EventArgs^  e);
+
+			 // This event occurs when the user clicks the Select none button
+	private: System::Void btnSelectNone_Click(System::Object^  sender, System::EventArgs^  e);
+
+	private: System::Void exitToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
+				 delete this;
 			 }
 	};
 }
