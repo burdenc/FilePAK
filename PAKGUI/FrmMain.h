@@ -41,7 +41,7 @@ namespace PAKGUI {
 	private: System::Windows::Forms::ToolStripMenuItem^  fileToolStripMenuItem;
 	private: System::Windows::Forms::ToolStripMenuItem^  exitToolStripMenuItem;
 	private: System::Windows::Forms::ToolStripMenuItem^  editToolStripMenuItem;
-	private: System::Windows::Forms::ToolStripMenuItem^  helpToolStripMenuItem;
+
 
 
 
@@ -97,7 +97,7 @@ namespace PAKGUI {
 	private: System::Windows::Forms::ToolStripMenuItem^  menuUnpak;
 
 
-	private: System::Windows::Forms::ToolStripMenuItem^  aboutToolStripMenuItem;
+
 	private: System::Windows::Forms::Button^  btnSelectNone;
 
 	private: System::Windows::Forms::Button^  btnSelectAll;
@@ -149,8 +149,6 @@ namespace PAKGUI {
 			this->pAKToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->menuPak = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->menuUnpak = (gcnew System::Windows::Forms::ToolStripMenuItem());
-			this->helpToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
-			this->aboutToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->groupBox2 = (gcnew System::Windows::Forms::GroupBox());
 			this->lstPakContents = (gcnew System::Windows::Forms::ListView());
 			this->columnHeader1 = (gcnew System::Windows::Forms::ColumnHeader());
@@ -189,8 +187,8 @@ namespace PAKGUI {
 			// 
 			// menuStrip1
 			// 
-			this->menuStrip1->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(4) {this->fileToolStripMenuItem, 
-				this->editToolStripMenuItem, this->pAKToolStripMenuItem, this->helpToolStripMenuItem});
+			this->menuStrip1->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(3) {this->fileToolStripMenuItem, 
+				this->editToolStripMenuItem, this->pAKToolStripMenuItem});
 			this->menuStrip1->Location = System::Drawing::Point(0, 0);
 			this->menuStrip1->Margin = System::Windows::Forms::Padding(10);
 			this->menuStrip1->Name = L"menuStrip1";
@@ -273,19 +271,6 @@ namespace PAKGUI {
 			this->menuUnpak->Name = L"menuUnpak";
 			this->menuUnpak->Size = System::Drawing::Size(142, 22);
 			this->menuUnpak->Text = L"UnPAK";
-			// 
-			// helpToolStripMenuItem
-			// 
-			this->helpToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(1) {this->aboutToolStripMenuItem});
-			this->helpToolStripMenuItem->Name = L"helpToolStripMenuItem";
-			this->helpToolStripMenuItem->Size = System::Drawing::Size(44, 20);
-			this->helpToolStripMenuItem->Text = L"Help";
-			// 
-			// aboutToolStripMenuItem
-			// 
-			this->aboutToolStripMenuItem->Name = L"aboutToolStripMenuItem";
-			this->aboutToolStripMenuItem->Size = System::Drawing::Size(107, 22);
-			this->aboutToolStripMenuItem->Text = L"About";
 			// 
 			// groupBox2
 			// 

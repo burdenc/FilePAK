@@ -3,12 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual C++ Express 2010
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LibPAK", "Pak\Pak.vcxproj", "{00DED9FF-7B5B-413C-8BFB-E4A73DEF6B04}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PAK", "FilePAK-Debug\FilePAK-Debug.vcxproj", "{A25F9E6A-2D89-452D-AC39-FA88C6758467}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pakEXE", "FilePAK-Debug\FilePAK-Debug.vcxproj", "{A25F9E6A-2D89-452D-AC39-FA88C6758467}"
 	ProjectSection(ProjectDependencies) = postProject
 		{00DED9FF-7B5B-413C-8BFB-E4A73DEF6B04} = {00DED9FF-7B5B-413C-8BFB-E4A73DEF6B04}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PAKGUI", "PAKGUI\PAKGUI.vcxproj", "{F117A81E-3EBE-448F-8382-621588D4A734}"
+	ProjectSection(ProjectDependencies) = postProject
+		{00DED9FF-7B5B-413C-8BFB-E4A73DEF6B04} = {00DED9FF-7B5B-413C-8BFB-E4A73DEF6B04}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

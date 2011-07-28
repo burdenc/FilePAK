@@ -116,6 +116,9 @@ System::Void frmMain::newToolStripMenuItem_Click(System::Object^  sender, System
 // This event occurs when the user drags a file into the pak contents area
 System::Void frmMain::lstPakContents_DragDrop(System::Object^  sender, System::Windows::Forms::DragEventArgs^  e)
 {
+
+	// NOTE: folders are not working right now, and they might not ever be
+
 	DataObject^ o = gcnew DataObject( DataFormats::FileDrop, e->Data->GetData(DataFormats::FileDrop) );
 
 	if (!o->ContainsFileDropList() )
