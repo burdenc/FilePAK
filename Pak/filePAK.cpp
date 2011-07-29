@@ -160,7 +160,6 @@ bool filePAK::createEntry(string path, string name)
 	}
 	else
 	{
-		cout << "Low Level Error: Cannot create entry \n";
 		return false;
 	}
 
@@ -406,7 +405,6 @@ char* filePAK::grabPAKEntry(string name)
 				}
 				else
 				{
-					cout << "Critical error: grabPAKEntry() stream not open\n";
 					return buffer; //NULL
 				}
 			}
