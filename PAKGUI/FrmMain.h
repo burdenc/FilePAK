@@ -126,6 +126,11 @@ private: System::Windows::Forms::TextBox^  textBox1;
 private: System::Windows::Forms::Label^  label3;
 private: System::Windows::Forms::Button^  btnSaveBrowse;
 private: System::Windows::Forms::GroupBox^  groupBox1;
+private: System::Windows::Forms::Label^  label9;
+private: System::Windows::Forms::Label^  label8;
+private: System::Windows::Forms::Label^  label4;
+
+
 
 
 
@@ -164,10 +169,10 @@ private: System::Windows::Forms::GroupBox^  groupBox1;
 			this->columnHeader4 = (gcnew System::Windows::Forms::ColumnHeader());
 			this->columnHeader3 = (gcnew System::Windows::Forms::ColumnHeader());
 			this->btnAddFiles = (gcnew System::Windows::Forms::Button());
+			this->btnBrowseDir = (gcnew System::Windows::Forms::Button());
 			this->btnDeleteSelected = (gcnew System::Windows::Forms::Button());
 			this->btnSelectNone = (gcnew System::Windows::Forms::Button());
 			this->btnSelectAll = (gcnew System::Windows::Forms::Button());
-			this->btnBrowseDir = (gcnew System::Windows::Forms::Button());
 			this->panel3 = (gcnew System::Windows::Forms::Panel());
 			this->lblPercentProg = (gcnew System::Windows::Forms::Label());
 			this->lblItemProg = (gcnew System::Windows::Forms::Label());
@@ -183,13 +188,16 @@ private: System::Windows::Forms::GroupBox^  groupBox1;
 			this->saveFileDialog = (gcnew System::Windows::Forms::SaveFileDialog());
 			this->folderBrowserDialog = (gcnew System::Windows::Forms::FolderBrowserDialog());
 			this->groupBox3 = (gcnew System::Windows::Forms::GroupBox());
-			this->label3 = (gcnew System::Windows::Forms::Label());
-			this->textBox1 = (gcnew System::Windows::Forms::TextBox());
-			this->label5 = (gcnew System::Windows::Forms::Label());
-			this->label6 = (gcnew System::Windows::Forms::Label());
-			this->label7 = (gcnew System::Windows::Forms::Label());
 			this->btnSaveBrowse = (gcnew System::Windows::Forms::Button());
+			this->label7 = (gcnew System::Windows::Forms::Label());
+			this->label6 = (gcnew System::Windows::Forms::Label());
+			this->label5 = (gcnew System::Windows::Forms::Label());
+			this->textBox1 = (gcnew System::Windows::Forms::TextBox());
+			this->label3 = (gcnew System::Windows::Forms::Label());
 			this->groupBox1 = (gcnew System::Windows::Forms::GroupBox());
+			this->label4 = (gcnew System::Windows::Forms::Label());
+			this->label8 = (gcnew System::Windows::Forms::Label());
+			this->label9 = (gcnew System::Windows::Forms::Label());
 			this->menuStrip1->SuspendLayout();
 			this->groupBox2->SuspendLayout();
 			this->panel3->SuspendLayout();
@@ -254,13 +262,13 @@ private: System::Windows::Forms::GroupBox^  groupBox1;
 			// selectAllToolStripMenuItem
 			// 
 			this->selectAllToolStripMenuItem->Name = L"selectAllToolStripMenuItem";
-			this->selectAllToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+			this->selectAllToolStripMenuItem->Size = System::Drawing::Size(137, 22);
 			this->selectAllToolStripMenuItem->Text = L"Check all";
 			// 
 			// selectNoneToolStripMenuItem
 			// 
 			this->selectNoneToolStripMenuItem->Name = L"selectNoneToolStripMenuItem";
-			this->selectNoneToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+			this->selectNoneToolStripMenuItem->Size = System::Drawing::Size(137, 22);
 			this->selectNoneToolStripMenuItem->Text = L"Check none";
 			// 
 			// pAKToolStripMenuItem
@@ -293,11 +301,11 @@ private: System::Windows::Forms::GroupBox^  groupBox1;
 			this->groupBox2->Controls->Add(this->btnDeleteSelected);
 			this->groupBox2->Controls->Add(this->btnSelectNone);
 			this->groupBox2->Controls->Add(this->btnSelectAll);
-			this->groupBox2->Location = System::Drawing::Point(13, 24);
-			this->groupBox2->Margin = System::Windows::Forms::Padding(10);
+			this->groupBox2->Location = System::Drawing::Point(14, 151);
+			this->groupBox2->Margin = System::Windows::Forms::Padding(5);
 			this->groupBox2->Name = L"groupBox2";
 			this->groupBox2->Padding = System::Windows::Forms::Padding(10);
-			this->groupBox2->Size = System::Drawing::Size(788, 334);
+			this->groupBox2->Size = System::Drawing::Size(792, 334);
 			this->groupBox2->TabIndex = 8;
 			this->groupBox2->TabStop = false;
 			this->groupBox2->Text = L"PAK Contents";
@@ -351,6 +359,17 @@ private: System::Windows::Forms::GroupBox^  groupBox1;
 			this->btnAddFiles->Text = L"Add file(s)";
 			this->btnAddFiles->UseVisualStyleBackColor = true;
 			// 
+			// btnBrowseDir
+			// 
+			this->btnBrowseDir->Location = System::Drawing::Point(419, 26);
+			this->btnBrowseDir->Margin = System::Windows::Forms::Padding(30, 3, 3, 3);
+			this->btnBrowseDir->Name = L"btnBrowseDir";
+			this->btnBrowseDir->Size = System::Drawing::Size(94, 23);
+			this->btnBrowseDir->TabIndex = 10;
+			this->btnBrowseDir->Text = L"Add directory";
+			this->btnBrowseDir->UseVisualStyleBackColor = true;
+			this->btnBrowseDir->Click += gcnew System::EventHandler(this, &frmMain::btnBrowseDir_Click);
+			// 
 			// btnDeleteSelected
 			// 
 			this->btnDeleteSelected->Location = System::Drawing::Point(286, 26);
@@ -380,17 +399,6 @@ private: System::Windows::Forms::GroupBox^  groupBox1;
 			this->btnSelectAll->UseVisualStyleBackColor = true;
 			this->btnSelectAll->Click += gcnew System::EventHandler(this, &frmMain::btnSelectAll_Click);
 			// 
-			// btnBrowseDir
-			// 
-			this->btnBrowseDir->Location = System::Drawing::Point(419, 26);
-			this->btnBrowseDir->Margin = System::Windows::Forms::Padding(30, 3, 3, 3);
-			this->btnBrowseDir->Name = L"btnBrowseDir";
-			this->btnBrowseDir->Size = System::Drawing::Size(94, 23);
-			this->btnBrowseDir->TabIndex = 10;
-			this->btnBrowseDir->Text = L"Add directory";
-			this->btnBrowseDir->UseVisualStyleBackColor = true;
-			this->btnBrowseDir->Click += gcnew System::EventHandler(this, &frmMain::btnBrowseDir_Click);
-			// 
 			// panel3
 			// 
 			this->panel3->Controls->Add(this->lblPercentProg);
@@ -405,7 +413,7 @@ private: System::Windows::Forms::GroupBox^  groupBox1;
 			this->panel3->Margin = System::Windows::Forms::Padding(10);
 			this->panel3->Name = L"panel3";
 			this->panel3->Padding = System::Windows::Forms::Padding(0, 5, 0, 0);
-			this->panel3->Size = System::Drawing::Size(783, 53);
+			this->panel3->Size = System::Drawing::Size(786, 53);
 			this->panel3->TabIndex = 5;
 			// 
 			// lblPercentProg
@@ -451,13 +459,13 @@ private: System::Windows::Forms::GroupBox^  groupBox1;
 			this->progressBar->Enabled = false;
 			this->progressBar->Location = System::Drawing::Point(153, 8);
 			this->progressBar->Name = L"progressBar";
-			this->progressBar->Size = System::Drawing::Size(384, 37);
+			this->progressBar->Size = System::Drawing::Size(385, 37);
 			this->progressBar->TabIndex = 2;
 			// 
 			// btnUnpak
 			// 
 			this->btnUnpak->Enabled = false;
-			this->btnUnpak->Location = System::Drawing::Point(543, 5);
+			this->btnUnpak->Location = System::Drawing::Point(544, 5);
 			this->btnUnpak->Name = L"btnUnpak";
 			this->btnUnpak->Size = System::Drawing::Size(112, 43);
 			this->btnUnpak->TabIndex = 1;
@@ -468,7 +476,7 @@ private: System::Windows::Forms::GroupBox^  groupBox1;
 			// btnPak
 			// 
 			this->btnPak->Enabled = false;
-			this->btnPak->Location = System::Drawing::Point(661, 5);
+			this->btnPak->Location = System::Drawing::Point(662, 5);
 			this->btnPak->Name = L"btnPak";
 			this->btnPak->Size = System::Drawing::Size(112, 43);
 			this->btnPak->TabIndex = 0;
@@ -478,7 +486,7 @@ private: System::Windows::Forms::GroupBox^  groupBox1;
 			// statusStrip1
 			// 
 			this->statusStrip1->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(2) {this->stsLblStatus, this->stsStatus});
-			this->statusStrip1->Location = System::Drawing::Point(0, 619);
+			this->statusStrip1->Location = System::Drawing::Point(0, 575);
 			this->statusStrip1->Name = L"statusStrip1";
 			this->statusStrip1->Size = System::Drawing::Size(820, 22);
 			this->statusStrip1->SizingGrip = false;
@@ -514,74 +522,27 @@ private: System::Windows::Forms::GroupBox^  groupBox1;
 			// groupBox3
 			// 
 			this->groupBox3->BackColor = System::Drawing::SystemColors::Control;
+			this->groupBox3->Controls->Add(this->label9);
+			this->groupBox3->Controls->Add(this->label8);
+			this->groupBox3->Controls->Add(this->label4);
 			this->groupBox3->Controls->Add(this->btnSaveBrowse);
 			this->groupBox3->Controls->Add(this->label7);
 			this->groupBox3->Controls->Add(this->label6);
 			this->groupBox3->Controls->Add(this->label5);
 			this->groupBox3->Controls->Add(this->textBox1);
 			this->groupBox3->Controls->Add(this->label3);
-			this->groupBox3->Location = System::Drawing::Point(12, 371);
+			this->groupBox3->Location = System::Drawing::Point(14, 30);
+			this->groupBox3->Margin = System::Windows::Forms::Padding(5);
 			this->groupBox3->Name = L"groupBox3";
 			this->groupBox3->Padding = System::Windows::Forms::Padding(10);
-			this->groupBox3->Size = System::Drawing::Size(788, 148);
+			this->groupBox3->Size = System::Drawing::Size(792, 111);
 			this->groupBox3->TabIndex = 10;
 			this->groupBox3->TabStop = false;
 			this->groupBox3->Text = L"PAK Info";
 			// 
-			// label3
-			// 
-			this->label3->AutoSize = true;
-			this->label3->Location = System::Drawing::Point(16, 119);
-			this->label3->Margin = System::Windows::Forms::Padding(3, 0, 20, 6);
-			this->label3->Name = L"label3";
-			this->label3->Size = System::Drawing::Size(99, 13);
-			this->label3->TabIndex = 0;
-			this->label3->Text = L"PAK Save location:";
-			// 
-			// textBox1
-			// 
-			this->textBox1->Location = System::Drawing::Point(138, 116);
-			this->textBox1->Margin = System::Windows::Forms::Padding(3, 3, 3, 6);
-			this->textBox1->Name = L"textBox1";
-			this->textBox1->Size = System::Drawing::Size(556, 20);
-			this->textBox1->TabIndex = 1;
-			// 
-			// label5
-			// 
-			this->label5->AutoSize = true;
-			this->label5->Location = System::Drawing::Point(68, 29);
-			this->label5->Margin = System::Windows::Forms::Padding(6, 6, 20, 6);
-			this->label5->Name = L"label5";
-			this->label5->Size = System::Drawing::Size(91, 13);
-			this->label5->TabIndex = 4;
-			this->label5->Text = L"PAK Size on disk:";
-			this->label5->TextAlign = System::Drawing::ContentAlignment::TopRight;
-			// 
-			// label6
-			// 
-			this->label6->AutoSize = true;
-			this->label6->Location = System::Drawing::Point(16, 54);
-			this->label6->Margin = System::Windows::Forms::Padding(6, 6, 20, 6);
-			this->label6->Name = L"label6";
-			this->label6->Size = System::Drawing::Size(143, 13);
-			this->label6->TabIndex = 5;
-			this->label6->Text = L"Estimated Size after PAK\'ing:";
-			this->label6->TextAlign = System::Drawing::ContentAlignment::TopRight;
-			// 
-			// label7
-			// 
-			this->label7->AutoSize = true;
-			this->label7->Location = System::Drawing::Point(44, 79);
-			this->label7->Margin = System::Windows::Forms::Padding(6, 6, 20, 6);
-			this->label7->Name = L"label7";
-			this->label7->Size = System::Drawing::Size(115, 13);
-			this->label7->TabIndex = 6;
-			this->label7->Text = L"Number of files in PAK:";
-			this->label7->TextAlign = System::Drawing::ContentAlignment::TopRight;
-			// 
 			// btnSaveBrowse
 			// 
-			this->btnSaveBrowse->Location = System::Drawing::Point(700, 114);
+			this->btnSaveBrowse->Location = System::Drawing::Point(375, 48);
 			this->btnSaveBrowse->Margin = System::Windows::Forms::Padding(3, 3, 3, 6);
 			this->btnSaveBrowse->Name = L"btnSaveBrowse";
 			this->btnSaveBrowse->Size = System::Drawing::Size(75, 23);
@@ -589,22 +550,100 @@ private: System::Windows::Forms::GroupBox^  groupBox1;
 			this->btnSaveBrowse->Text = L"Browse";
 			this->btnSaveBrowse->UseVisualStyleBackColor = true;
 			// 
+			// label7
+			// 
+			this->label7->AutoSize = true;
+			this->label7->Location = System::Drawing::Point(520, 79);
+			this->label7->Margin = System::Windows::Forms::Padding(6, 6, 24, 6);
+			this->label7->Name = L"label7";
+			this->label7->Size = System::Drawing::Size(115, 13);
+			this->label7->TabIndex = 6;
+			this->label7->Text = L"Number of files in PAK:";
+			this->label7->TextAlign = System::Drawing::ContentAlignment::TopRight;
+			// 
+			// label6
+			// 
+			this->label6->AutoSize = true;
+			this->label6->Location = System::Drawing::Point(492, 54);
+			this->label6->Margin = System::Windows::Forms::Padding(6, 6, 24, 6);
+			this->label6->Name = L"label6";
+			this->label6->Size = System::Drawing::Size(143, 13);
+			this->label6->TabIndex = 5;
+			this->label6->Text = L"Estimated Size after PAK\'ing:";
+			this->label6->TextAlign = System::Drawing::ContentAlignment::TopRight;
+			// 
+			// label5
+			// 
+			this->label5->AutoSize = true;
+			this->label5->Location = System::Drawing::Point(544, 29);
+			this->label5->Margin = System::Windows::Forms::Padding(6, 6, 24, 6);
+			this->label5->Name = L"label5";
+			this->label5->Size = System::Drawing::Size(91, 13);
+			this->label5->TabIndex = 4;
+			this->label5->Text = L"PAK Size on disk:";
+			this->label5->TextAlign = System::Drawing::ContentAlignment::TopRight;
+			// 
+			// textBox1
+			// 
+			this->textBox1->Location = System::Drawing::Point(125, 51);
+			this->textBox1->Margin = System::Windows::Forms::Padding(3, 3, 10, 6);
+			this->textBox1->Name = L"textBox1";
+			this->textBox1->Size = System::Drawing::Size(237, 20);
+			this->textBox1->TabIndex = 1;
+			// 
+			// label3
+			// 
+			this->label3->AutoSize = true;
+			this->label3->Location = System::Drawing::Point(13, 54);
+			this->label3->Margin = System::Windows::Forms::Padding(3, 0, 10, 6);
+			this->label3->Name = L"label3";
+			this->label3->Size = System::Drawing::Size(99, 13);
+			this->label3->TabIndex = 0;
+			this->label3->Text = L"PAK Save location:";
+			// 
 			// groupBox1
 			// 
 			this->groupBox1->Controls->Add(this->panel3);
-			this->groupBox1->Location = System::Drawing::Point(12, 532);
-			this->groupBox1->Margin = System::Windows::Forms::Padding(10);
+			this->groupBox1->Location = System::Drawing::Point(14, 495);
+			this->groupBox1->Margin = System::Windows::Forms::Padding(5);
 			this->groupBox1->Name = L"groupBox1";
-			this->groupBox1->Size = System::Drawing::Size(789, 72);
+			this->groupBox1->Size = System::Drawing::Size(792, 72);
 			this->groupBox1->TabIndex = 11;
 			this->groupBox1->TabStop = false;
 			this->groupBox1->Text = L"PAK";
+			// 
+			// label4
+			// 
+			this->label4->AutoSize = true;
+			this->label4->Location = System::Drawing::Point(662, 29);
+			this->label4->Name = L"label4";
+			this->label4->Size = System::Drawing::Size(30, 13);
+			this->label4->TabIndex = 8;
+			this->label4->Text = L"0 KB";
+			// 
+			// label8
+			// 
+			this->label8->AutoSize = true;
+			this->label8->Location = System::Drawing::Point(662, 54);
+			this->label8->Name = L"label8";
+			this->label8->Size = System::Drawing::Size(30, 13);
+			this->label8->TabIndex = 9;
+			this->label8->Text = L"0 KB";
+			// 
+			// label9
+			// 
+			this->label9->AutoSize = true;
+			this->label9->Location = System::Drawing::Point(662, 79);
+			this->label9->Name = L"label9";
+			this->label9->Size = System::Drawing::Size(37, 13);
+			this->label9->TabIndex = 10;
+			this->label9->Text = L"0 Files";
 			// 
 			// frmMain
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(820, 641);
+			this->ClientSize = System::Drawing::Size(820, 597);
 			this->Controls->Add(this->groupBox1);
 			this->Controls->Add(this->groupBox3);
 			this->Controls->Add(this->groupBox2);
