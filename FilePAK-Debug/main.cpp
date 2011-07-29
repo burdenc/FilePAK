@@ -24,6 +24,31 @@ int main()
 			system("pause");
 			return 1;
 		}
+
+		if(!pak.appendFile("test/loltest.txt"))
+		{
+			cout << "Critical error: Cannot append file\n";
+			system("pause");
+			return 1;
+		}
+
+		cout << "\nloltest.txt appended\n";
+
+		if(!pak.removeFile("Aether.bmp"))
+		{
+			cout << "Critical error: Cannot remove file\n";
+			system("pause");
+			return 1;
+		}
+
+		cout << "Aether.bmp removed\n";
+
+		if(!pak.rebuildPAK())
+		{
+			cout << "Critical error: Cannot rebuild pak\n";
+			system("pause");
+			return 1;
+		}
 	}
 	else
 	{
@@ -32,15 +57,15 @@ int main()
 		return 1;
 	}
 
-	cout << "PAK file read successfully\n";
+	cout << "\nPAK file read successfully\n";
 	cout << "\nTesting PAK decrypt\n";
 
 	char *buffer; // stores data to be copied
 	int ofsize; // stores size of original file
 	ofstream f; //output
 
-	buffer = pak.grabPAKEntry("Sunset.jpg");
-	ofsize = pak.grabPAKEntrySize("Sunset.jpg");
+	buffer = pak.grabPAKEntry("loltest.txt");
+	ofsize = pak.grabPAKEntrySize("loltest.txt");
 	if(buffer == NULL || ofsize <= 0)
 	{
 		cout << "Critical error: Cannot find file listed in PAK\n";
@@ -49,9 +74,9 @@ int main()
 	}
 
 	cout << "PAK decrypted successfully\n";
-	cout << "\nWriting decrypted file to output.jpg\n";
+	cout << "\nWriting decrypted file to loltest.txt\n";
 
-	f.open("output.jpg", ofstream::binary); // open in binary
+	f.open("output.txt", ofstream::binary); // open in binary
 
 	if (f.is_open())  // make sure it opened
 	{
@@ -70,7 +95,15 @@ int main()
 
 	f.close(); // close output file
 
-	cout << "Output successful\n";
+	buffer = pak.grabPAKEntry("Aether.bmp");
+
+	if(buffer == NULL)
+	{
+		cout << "\nAether not found, deletion success\n";
+	}
+	else delete [] buffer;
+
+	cout << "\nOutput successful\n";
 
 	//////////////////////////////////////////////////
 

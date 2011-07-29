@@ -52,8 +52,14 @@ bool filePAK::createPAK(string name, string entryPath, string types)
 				else
 				{
 					for(unsigned int i = 0; i < correctTypes.size(); i++)
-						if(!entry->d_name+correctTypes[i].compare(entry->d_name))
+					{
+						string comparestr = entry->d_name;
+						int found = comparestr.find_last_of('.');
+						comparestr = comparestr.substr(found);
+
+						if(!comparestr.compare(correctTypes[i]))
 							correctType = true;
+					}
 				}
 
 
@@ -62,7 +68,6 @@ bool filePAK::createPAK(string name, string entryPath, string types)
 					numberFiles++;
 					if(!createEntry(entryPath, entry->d_name)) return false;
 				}
-
 			}
 		}
 	}
@@ -152,9 +157,14 @@ bool filePAK::createEntry(string path, string name)
 	if(fileIn.is_open())
 	{
 		fentry.size = (unsigned int) fileIn.tellg(); //to calculate the file's size
-		fileIn.close();
 	}
-	else return false;
+	else
+	{
+		cout << "Low Level Error: Cannot create entry \n";
+		return false;
+	}
+
+	fileIn.close();
 
 	fentry.offset = 0; //unknown right now
 
@@ -222,11 +232,15 @@ bool filePAK::rebuildPAK()
 
 		int numberFiles = 0;
 
+		vector<PAKfileEntry> original(entries);
+
 		for(unsigned int i = 0; i < changes.size(); i++)
 			if(changes[i] >= 0) //count all changes that aren't deletions
 				numberFiles++;
 
-		int offset = (sizeof(PAKheader) + (numberFiles * sizeof(PAKfileEntry)));
+		header.numberFiles = numberFiles;
+
+		int offset = sizeof(PAKheader) + (numberFiles * sizeof(PAKfileEntry));
 		for(unsigned int i = 0; i < entries.size(); i++) //find out new offsets
 		{
 			if(changes[i] == -1) continue; //don't factor in deletions
@@ -236,7 +250,6 @@ bool filePAK::rebuildPAK()
 
 		if(PAKout.is_open())
 		{
-			vector<PAKfileEntry> original(entries);
 			PAKout.write((char *) &header, sizeof(header)); //write out header
 			
 			char *buffer;
@@ -266,7 +279,10 @@ bool filePAK::rebuildPAK()
 			for(unsigned int i = 0; i < entries.size(); i++)
 			{
 				if(changes[i] == -1) continue; //again, don't factor in deletions
-				if(changes[i] == 1) PAKin.open(entries[i].fullname, ifstream::binary); //if it's an addition, load the file
+				if(changes[i] == 1)
+				{
+					PAKin.open(entries[i].fullname, ifstream::binary); //if it's an addition, load the file
+				}
 				else //if it's already in the PAK file, load it from there
 				{
 					PAKin.open(pakname, ifstream::binary);
@@ -276,15 +292,18 @@ bool filePAK::rebuildPAK()
 				if(PAKin.is_open())
 				{
 					buffer = new char[entries[i].size];
-					PAKin.read(buffer, sizeof(buffer));
+					PAKin.read(buffer, entries[i].size);
 
-					for(int j = 0; j < sizeof(PAKfileEntry); j++)
+					if(changes[i] == 1)
 					{
-						if(header.additionEncrypt) buffer[j] += header.encryptVal; //encrypt each byte
-						else buffer[j] -= header.encryptVal;
+						for(unsigned int j = 0; j < entries[i].size; j++)
+						{
+							if(header.additionEncrypt) buffer[j] += header.encryptVal; //encrypt each byte
+							else buffer[j] -= header.encryptVal;
+						}
 					}
 
-					PAKout.write(buffer, sizeof(buffer));
+					PAKout.write(buffer, entries[i].size);
 				}
 				else
 				{
@@ -299,7 +318,11 @@ bool filePAK::rebuildPAK()
 
 			original.clear();
 		}
-		else return false;
+		else
+		{
+			original.clear();
+			return false;
+		}
 
 		PAKout.close();
 
@@ -325,13 +348,17 @@ bool filePAK::rebuildPAK()
 
 bool filePAK::appendFile(string name)
 {
-	int found = name.find_last_of("/\\");
-	string path = name.substr(0, found);
+	int found = name.find_last_of("/\\"); //seperating path from filename
+	string path = name.substr(0, found+1);
 	string file = name.substr(found+1);
+
+	for(unsigned int i = 0; i < entries.size(); i++) //if file name already exists
+		if(!file.compare(entries[i].name))
+			return false;
 
 	if(!createEntry(path, file)) return false;
 
-	if(changes.empty()) changes.assign(entries.size(), 0);
+	if(changes.empty()) changes.assign(entries.size()-1, 0);
 	changes.push_back(1);
 
 	return true;
@@ -343,7 +370,7 @@ bool filePAK::removeFile(string name)
 	{
 		if(name.compare(entries[i].name) == 0)
 		{
-			if(changes.empty()) changes.assign(entries.size(), 0);
+			if(changes.empty()) changes.assign(entries.size()-1, 0);
 			changes[i] = -1;
 			return true;
 		}

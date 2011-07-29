@@ -39,11 +39,17 @@ private:
 	};
 
 	string pakname; //name of the pak file
-	bool pakloaded; //set to true after readPAK() is used, currently isn't used
+	bool pakloaded; //set to true after readPAK() is used
+	int lastEntry;
 	PAKheader header; //the header
 	vector<PAKfileEntry> entries; //table of contents of all the entries
+	vector<int> changes; //corresponds with entries: -1 = deleted, 0 = normal, 1 = added
 
+	//Used to split the parameter types in createPAK() into a vector 
 	vector<string> filetypes(string types);
+
+	//Create PAKfileEntry
+	bool createEntry(string fullname, string name);
 
 public:
 	filePAK(void);
@@ -61,9 +67,27 @@ public:
 	//Returns true if nothing goes wrong
 	bool readPAK(string PAKpath);
 
-	//Not implemeneted because I can't get the basic function working yet
-	//TODO: get the damn basic functions working
+	//----------------------------------------------------------
+	// The following functions require readPAK to be run first:
+	//----------------------------------------------------------
+
+	//Appends file to PAK
+	//Run rebuildPAK() to flush changes
+	//filePath - path to file to append
+	//Returns true if nothing goes wrong
+	//TODO: implement
 	bool appendFile(string filePath);
+
+	//Removes file to PAK
+	//Run rebuildPAK() to flush changes
+	//filePath - path to file to append
+	//Returns true if nothing goes wrong
+	//TODO: implement
+	bool removeFile(string filePath);
+
+	//Rebuilds the PAK file with buffered changes
+	//Returns true if nothing goes wrong, also returns false if there are no changes to flush
+	bool rebuildPAK();
 
 	//Get a file stored in the PAK file
 	//name - name of the file stored in the PAK file (don't include the folder/path)
@@ -73,6 +97,15 @@ public:
 	//name - name of the file stored in the PAK file (don't include the folder/path)
 	//Returns size of a file in the PAK file
 	int grabPAKEntrySize(string name);
+
+	//Returns names of all PAK entries within the
+	vector<string> grabAllPAKEntries();
+
+	//Unpaks a PAK entry
+	//name - entry to unPAK
+	//path - folder to unPAK to
+	//Returns true if nothing goes wrong
+	bool unPAKEntry(string name, string path);
 
 };
 
