@@ -34,6 +34,13 @@ int main()
 
 		cout << "\nloltest.txt appended\n";
 
+		if (!pak.removeFile("Aether.bmp"))
+		{
+			cout << "Critical error: Cannot remove 'Aether.bmp'\n";
+			system("pause");
+			return 1;
+		}
+
 		if(!pak.rebuildPAK())
 		{
 			cout << "Critical error: Cannot rebuild pak\n";

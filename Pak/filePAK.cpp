@@ -257,7 +257,6 @@ bool filePAK::rebuildPAK()
 			{
 				if(changes[i] == -1) //if this change is a deletion
 				{
-					PAKout.seekp(sizeof(PAKfileEntry), ofstream::cur);
 					continue;
 				}
 
@@ -494,4 +493,18 @@ vector<string> filePAK::filetypes(string types)
 int filePAK::getNumPAKEntries()
 {
 	return header.numberFiles;
+}
+
+bool filePAK::removeFile(string name)
+{
+	for(unsigned int i = 0; i < entries.size(); i++)
+	{
+		if(name.compare(entries[i].name) == 0)
+		{
+			if(changes.empty()) changes.assign(entries.size()-1, 0);
+			changes[i] = -1;
+			return true;
+		}
+	}
+	return false;
 }

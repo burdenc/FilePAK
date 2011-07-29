@@ -82,6 +82,9 @@ public:
 	//Returns true if nothing goes wrong, also returns false if there are no changes to flush
 	bool rebuildPAK();
 
+	//
+	bool filePAK::removeFile(string name);
+
 	//Get a file data stored in the PAK file
 	//name - name of the file stored in the PAK file (don't include the folder/path)
 	//Returns a pointer to the file data in memory
