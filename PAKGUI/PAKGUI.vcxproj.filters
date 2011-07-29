@@ -47,6 +47,9 @@
     <ClInclude Include="frmMain.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="filePAK.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="app.rc">

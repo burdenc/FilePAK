@@ -40,11 +40,16 @@ private:
 
 	string pakname; //name of the pak file
 	bool pakloaded; //set to true after readPAK() is used
+	int lastEntry;
 	PAKheader header; //the header
 	vector<PAKfileEntry> entries; //table of contents of all the entries
+	vector<int> changes; //corresponds with entries: -1 = deleted, 0 = normal, 1 = added
 
 	//Used to split the parameter types in createPAK() into a vector 
 	vector<string> filetypes(string types);
+
+	//Create PAKfileEntry
+	bool createEntry(string fullname, string name);
 
 public:
 	filePAK(void);
@@ -66,9 +71,16 @@ public:
 	// The following functions require readPAK to be run first:
 	//----------------------------------------------------------
 
-	//Not implemeneted because I can't get the basic function working yet
-	//TODO: get the damn basic functions working
+	//Appends file to PAK
+	//Run rebuildPAK() to flush changes
+	//filePath - path to file to append
+	//Returns true if nothing goes wrong
+	//TODO: implement
 	bool appendFile(string filePath);
+
+	//Rebuilds the PAK file with buffered changes
+	//Returns true if nothing goes wrong, also returns false if there are no changes to flush
+	bool rebuildPAK();
 
 	//Get a file data stored in the PAK file
 	//name - name of the file stored in the PAK file (don't include the folder/path)

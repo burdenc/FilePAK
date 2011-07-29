@@ -96,6 +96,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="filePAK.h" />
     <ClInclude Include="frmMain.h">
       <FileType>CppForm</FileType>
     </ClInclude>

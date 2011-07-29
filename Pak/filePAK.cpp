@@ -52,37 +52,22 @@ bool filePAK::createPAK(string name, string entryPath, string types)
 				else
 				{
 					for(unsigned int i = 0; i < correctTypes.size(); i++)
-						if(!entry->d_name+correctTypes[i].compare(entry->d_name))
+					{
+						string comparestr = entry->d_name;
+						int found = comparestr.find_last_of('.');
+						comparestr = comparestr.substr(found);
+
+						if(!comparestr.compare(correctTypes[i]))
 							correctType = true;
+					}
 				}
 
 
 				if(correctType)
 				{
 					numberFiles++;
-
-					PAKfileEntry fentry; //creates a new table of contents entry
-
-					string entryName; //Sets up the path/name strings
-					entryName += entryPath;
-					entryName += entry->d_name;
-					memcpy(fentry.name, entry->d_name, 50); //only the file name
-					memcpy(fentry.fullname, entryName.c_str(), 100); //file name + folders
-
-					fileIn.open(entryName, ifstream::binary | ifstream::ate);
-
-					if(fileIn.is_open())
-					{
-						fentry.size = (unsigned int) fileIn.tellg(); //to calculate the file's size
-						fileIn.close();
-					}
-					else return false;
-
-					fentry.offset = 0; //unknown right now
-
-					entries.push_back(fentry); //append to the vector
+					if(!createEntry(entryPath, entry->d_name)) return false;
 				}
-
 			}
 		}
 	}
@@ -156,6 +141,37 @@ bool filePAK::createPAK(string name, string entryPath, string types)
 	return true;
 }
 
+bool filePAK::createEntry(string path, string name)
+{
+	ifstream fileIn;
+	PAKfileEntry fentry; //creates a new table of contents entry
+
+	string entryName; //Sets up the path/name strings
+	entryName += path;
+	entryName += name;
+	memcpy(fentry.name, name.c_str(), 50); //only the file name
+	memcpy(fentry.fullname, entryName.c_str(), 150); //file name + folders
+
+	fileIn.open(entryName, ifstream::binary | ifstream::ate);
+
+	if(fileIn.is_open())
+	{
+		fentry.size = (unsigned int) fileIn.tellg(); //to calculate the file's size
+	}
+	else
+	{
+		return false;
+	}
+
+	fileIn.close();
+
+	fentry.offset = 0; //unknown right now
+
+	entries.push_back(fentry); //append to the vector
+
+	return true;
+}
+
 bool filePAK::readPAK(string PAKpath)
 {
 	ifstream PAKread;
@@ -199,6 +215,150 @@ bool filePAK::readPAK(string PAKpath)
 		pakloaded = true;
 	}
 	else return false; //PAKread not open
+
+	return true;
+}
+
+bool filePAK::rebuildPAK()
+{
+	if(changes.empty()) return false; //if no changes are buffered
+	if(pakloaded)
+	{
+		ofstream PAKout;
+		ifstream PAKin;
+
+		PAKout.open(pakname+".new", ofstream::binary); //temporary new file to write to
+
+		int numberFiles = 0;
+
+		vector<PAKfileEntry> original(entries);
+
+		for(unsigned int i = 0; i < changes.size(); i++)
+			if(changes[i] >= 0) //count all changes that aren't deletions
+				numberFiles++;
+
+		header.numberFiles = numberFiles;
+
+		int offset = sizeof(PAKheader) + (numberFiles * sizeof(PAKfileEntry));
+		for(unsigned int i = 0; i < entries.size(); i++) //find out new offsets
+		{
+			if(changes[i] == -1) continue; //don't factor in deletions
+			entries[i].offset = offset;
+			offset += entries[i].size;
+		}
+
+		if(PAKout.is_open())
+		{
+			PAKout.write((char *) &header, sizeof(header)); //write out header
+			
+			char *buffer;
+
+			for(unsigned int i = 0; i < entries.size(); i++)
+			{
+				if(changes[i] == -1) //if this change is a deletion
+				{
+					PAKout.seekp(sizeof(PAKfileEntry), ofstream::cur);
+					continue;
+				}
+
+				buffer = new char[sizeof(PAKfileEntry)]; //char array to hold each table of contents entry
+				memcpy(buffer, &(entries[i]), sizeof(PAKfileEntry)); //copy over the current entry in the for loop
+
+				for(int j = 0; j < sizeof(PAKfileEntry); j++)
+				{
+					if(header.additionEncrypt) buffer[j] += header.encryptVal; //encrypt each byte
+					else buffer[j] -= header.encryptVal;
+				}
+
+				PAKout.write(buffer, sizeof(PAKfileEntry)); //finally write the entry
+
+				delete [] buffer; //no memory leaks in this code, no sir
+			}
+
+			for(unsigned int i = 0; i < entries.size(); i++)
+			{
+				if(changes[i] == -1) continue; //again, don't factor in deletions
+				if(changes[i] == 1)
+				{
+					PAKin.open(entries[i].fullname, ifstream::binary); //if it's an addition, load the file
+				}
+				else //if it's already in the PAK file, load it from there
+				{
+					PAKin.open(pakname, ifstream::binary);
+					PAKin.seekg(original[i].offset);
+				}
+
+				if(PAKin.is_open())
+				{
+					buffer = new char[entries[i].size];
+					PAKin.read(buffer, entries[i].size);
+
+					if(changes[i] == 1)
+					{
+						for(unsigned int j = 0; j < entries[i].size; j++)
+						{
+							if(header.additionEncrypt) buffer[j] += header.encryptVal; //encrypt each byte
+							else buffer[j] -= header.encryptVal;
+						}
+					}
+
+					PAKout.write(buffer, entries[i].size);
+				}
+				else
+				{
+					original.clear();
+					return false;
+				}
+
+				PAKin.close();
+
+				delete [] buffer;
+			}
+
+			original.clear();
+		}
+		else
+		{
+			original.clear();
+			return false;
+		}
+
+		PAKout.close();
+
+		remove(pakname.c_str()); //deleting old PAK
+
+		char* filename = new char[150];
+		strcpy(filename, pakname.c_str());
+		strcat(filename, ".new");
+
+		rename(filename, pakname.c_str());
+		delete filename;
+	}
+	else return false;
+
+	for(unsigned int i = 0; i < entries.size(); i++) //erase all deletions
+		if(changes[i] == -1)
+			entries.erase(entries.begin()+i, entries.begin()+i+1);
+
+	changes.clear();
+
+	return true;
+}
+
+bool filePAK::appendFile(string name)
+{
+	int found = name.find_last_of("/\\"); //seperating path from filename
+	string path = name.substr(0, found+1);
+	string file = name.substr(found+1);
+
+	for(unsigned int i = 0; i < entries.size(); i++) //if file name already exists
+		if(!file.compare(entries[i].name))
+			return false;
+
+	if(!createEntry(path, file)) return false;
+
+	if(changes.empty()) changes.assign(entries.size()-1, 0);
+	changes.push_back(1);
 
 	return true;
 }

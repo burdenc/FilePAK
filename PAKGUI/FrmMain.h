@@ -320,7 +320,7 @@ namespace PAKGUI {
 			// 
 			// columnHeader4
 			// 
-			this->columnHeader4->Text = L"Origin";
+			this->columnHeader4->Text = L"Currently in PAK\?";
 			this->columnHeader4->Width = 156;
 			// 
 			// columnHeader3

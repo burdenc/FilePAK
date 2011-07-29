@@ -124,7 +124,7 @@ System::Void frmMain::openToolStripMenuItem_Click(System::Object^  sender, Syste
 
 			ListViewItem^ item = gcnew ListViewItem( filename ); // create the item and give it name column
 			item->SubItems->Add( openPakDialog->FileName->ToString() ); // directory column
-			item->SubItems->Add( "Original PAK" ); // origin column. since you're opening the pak, it must be in the pak
+			item->SubItems->Add( "In PAK" ); // origin column. since you're opening the pak, it must be in the pak
 			item->SubItems->Add( filename->Substring( filename->LastIndexOf('.') ) ); // extension column
 			item->Checked = true; // defaults to checked. since you are manually adding the file, it's assumed that you want to include it in your pak
 			lstPakContents->Items->Add( item ); // finally add the item to the list
@@ -190,9 +190,8 @@ System::Void frmMain::lstPakContents_DragDrop(System::Object^  sender, System::W
 	// NOTE: folders are not working right now, and they might not ever be
 
 	DataObject^ o = gcnew DataObject( DataFormats::FileDrop, e->Data->GetData(DataFormats::FileDrop) );
-
 	if (!o->ContainsFileDropList() )
-		MessageBox::Show( "crit error" ); // CHANGE THIS LATER
+		MessageBox::Show( "Error: No files were dropped." ); // CHANGE THIS LATER
 
 	System::Collections::Specialized::StringCollection ^s = o->GetFileDropList();
 
@@ -202,7 +201,7 @@ System::Void frmMain::lstPakContents_DragDrop(System::Object^  sender, System::W
 		// add an item with all the columns
 		ListViewItem^ item = gcnew ListViewItem( p->Substring( p->LastIndexOf('\\') + 1 ) ); // create the item and give it name column
 		item->SubItems->Add( p ); // directory column
-		item->SubItems->Add( "External file" ); // origin column. since you're manually adding the file, it can't already be in the pak
+		item->SubItems->Add( "Not in PAK" ); // origin column. since you're manually adding the file, it can't already be in the pak
 		item->SubItems->Add( p->Substring( p->LastIndexOf('.') ) ); // extension column
 		item->Checked = true; // defaults to checked. since you are manually adding the file, it's assumed that you want to include it in your pak
 		lstPakContents->Items->Add( item ); // finally add the item to the list
