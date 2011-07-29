@@ -12,6 +12,7 @@ namespace PAKGUI {
 	/// <summary>
 	/// Summary for frmMain
 	/// </summary>
+
 	public ref class frmMain : public System::Windows::Forms::Form
 	{
 	public:
@@ -120,14 +121,12 @@ namespace PAKGUI {
 
 
 
-
 	private: System::ComponentModel::IContainer^  components;
 
 	private:
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
-
 
 #pragma region Windows Form Designer generated code
 		/// <summary>
@@ -207,26 +206,26 @@ namespace PAKGUI {
 			// newToolStripMenuItem
 			// 
 			this->newToolStripMenuItem->Name = L"newToolStripMenuItem";
-			this->newToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+			this->newToolStripMenuItem->Size = System::Drawing::Size(103, 22);
 			this->newToolStripMenuItem->Text = L"New";
 			this->newToolStripMenuItem->Click += gcnew System::EventHandler(this, &frmMain::newToolStripMenuItem_Click);
 			// 
 			// openToolStripMenuItem
 			// 
 			this->openToolStripMenuItem->Name = L"openToolStripMenuItem";
-			this->openToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+			this->openToolStripMenuItem->Size = System::Drawing::Size(103, 22);
 			this->openToolStripMenuItem->Text = L"Open";
 			this->openToolStripMenuItem->Click += gcnew System::EventHandler(this, &frmMain::openToolStripMenuItem_Click);
 			// 
 			// toolStripMenuItem1
 			// 
 			this->toolStripMenuItem1->Name = L"toolStripMenuItem1";
-			this->toolStripMenuItem1->Size = System::Drawing::Size(149, 6);
+			this->toolStripMenuItem1->Size = System::Drawing::Size(100, 6);
 			// 
 			// exitToolStripMenuItem
 			// 
 			this->exitToolStripMenuItem->Name = L"exitToolStripMenuItem";
-			this->exitToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+			this->exitToolStripMenuItem->Size = System::Drawing::Size(103, 22);
 			this->exitToolStripMenuItem->Text = L"Exit";
 			this->exitToolStripMenuItem->Click += gcnew System::EventHandler(this, &frmMain::exitToolStripMenuItem_Click);
 			// 
@@ -475,6 +474,7 @@ namespace PAKGUI {
 			this->btnUnpak->TabIndex = 1;
 			this->btnUnpak->Text = L"UnPAK";
 			this->btnUnpak->UseVisualStyleBackColor = true;
+			this->btnUnpak->Click += gcnew System::EventHandler(this, &frmMain::btnUnpak_Click);
 			// 
 			// btnPak
 			// 
@@ -583,9 +583,14 @@ namespace PAKGUI {
 			 // This event occurs when the user clicks the Select none button
 	private: System::Void btnSelectNone_Click(System::Object^  sender, System::EventArgs^  e);
 
+			 // exit menu item clicked
 	private: System::Void exitToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
 				 delete this;
 			 }
-	};
+
+			 // unpak button clicked
+	private: System::Void btnUnpak_Click(System::Object^  sender, System::EventArgs^  e);
+	};	
+
 }
 

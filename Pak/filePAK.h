@@ -70,17 +70,25 @@ public:
 	//TODO: get the damn basic functions working
 	bool appendFile(string filePath);
 
+	//Get a file data stored in the PAK file
+	//name - name of the file stored in the PAK file (don't include the folder/path)
+	//Returns a pointer to the file data in memory
+	char* getPAKEntryData(string name);
+
 	//Get a file stored in the PAK file
 	//name - name of the file stored in the PAK file (don't include the folder/path)
-	//Returns a pointer to the file in memory
-	char* grabPAKEntry(string name);
+	//Returns a pointer to the PAKfileEntry
+	PAKfileEntry *getPAKEntry(string name);
 
 	//name - name of the file stored in the PAK file (don't include the folder/path)
 	//Returns size of a file in the PAK file
-	int grabPAKEntrySize(string name);
+	int getPAKEntrySize(string name);
 
 	//Returns names of all PAK entries within the
-	vector<string> grabAllPAKEntries();
+	vector<string> getAllPAKEntries();
+
+	//Returns the number of entries in the pak file
+	int getNumPAKEntries();
 
 	//Unpaks a PAK entry
 	//name - entry to unPAK

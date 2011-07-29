@@ -39,10 +39,11 @@ private:
 	};
 
 	string pakname; //name of the pak file
-	bool pakloaded; //set to true after readPAK() is used, currently isn't used
+	bool pakloaded; //set to true after readPAK() is used
 	PAKheader header; //the header
 	vector<PAKfileEntry> entries; //table of contents of all the entries
 
+	//Used to split the parameter types in createPAK() into a vector 
 	vector<string> filetypes(string types);
 
 public:
@@ -61,18 +62,39 @@ public:
 	//Returns true if nothing goes wrong
 	bool readPAK(string PAKpath);
 
+	//----------------------------------------------------------
+	// The following functions require readPAK to be run first:
+	//----------------------------------------------------------
+
 	//Not implemeneted because I can't get the basic function working yet
 	//TODO: get the damn basic functions working
 	bool appendFile(string filePath);
 
+	//Get a file data stored in the PAK file
+	//name - name of the file stored in the PAK file (don't include the folder/path)
+	//Returns a pointer to the file data in memory
+	char* getPAKEntryData(string name);
+
 	//Get a file stored in the PAK file
 	//name - name of the file stored in the PAK file (don't include the folder/path)
-	//Returns a pointer to the file in memory
-	char* grabPAKEntry(string name);
+	//Returns a pointer to the PAKfileEntry
+	PAKfileEntry *getPAKEntry(string name);
 
 	//name - name of the file stored in the PAK file (don't include the folder/path)
 	//Returns size of a file in the PAK file
-	int grabPAKEntrySize(string name);
+	int getPAKEntrySize(string name);
+
+	//Returns names of all PAK entries within the
+	vector<string> getAllPAKEntries();
+
+	//Returns the number of entries in the pak file
+	int getNumPAKEntries();
+
+	//Unpaks a PAK entry
+	//name - entry to unPAK
+	//path - folder to unPAK to
+	//Returns true if nothing goes wrong
+	bool unPAKEntry(string name, string path);
 
 };
 

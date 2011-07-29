@@ -1,14 +1,10 @@
 #include "stdafx.h"
 #include "FrmMain.h"
-#include <msclr/marshal_cppstd.h>
+
 
 using namespace PAKGUI;
-using namespace System;
-using namespace System::ComponentModel;
-using namespace System::Collections;
-using namespace System::Windows::Forms;
-using namespace System::Data;
-using namespace System::Drawing;
+
+filePAK pak;
 
 // This event occurs every time an item in the PAK Contents list is checked or unchecked.
 System::Void frmMain::lstPakContents_ItemCheck(System::Object^  sender, System::Windows::Forms::ItemCheckEventArgs^  e)
@@ -62,10 +58,84 @@ System::Void frmMain::btnBrowseDir_Click(System::Object^  sender, System::EventA
 	txtAddDir->Text = folderBrowserDialog->SelectedPath; // This sets the text box to the resulting selection from the user
 }
 
+// convert System::String (String ^) to std::string for use with LibPAK
+void MarshalString ( String ^ s, string& os ) {
+	using namespace Runtime::InteropServices;
+	const char* chars = 
+		(const char*)(Marshal::StringToHGlobalAnsi(s)).ToPointer();
+	os = chars;
+	Marshal::FreeHGlobal(IntPtr((void*)chars));
+}
+
 // This event occurs when the Open menu item is clicked
 System::Void frmMain::openToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e)
 {
-	openPakDialog->ShowDialog();
+
+	if ( progressBar->Enabled ) // if the progress bar is enabled, this signifies that there is currently an operation being performed
+	{
+		// display a message box asking if the user is sure they want to interrupt the current operation
+		System::Windows::Forms::DialogResult result = MessageBox::Show( "You are currently PAK'ing or UnPAK'ing a file. Interrupting the current operation may cause loss or corruption of data! Are you sure you want to open a PAK file?", "Operation in progress", MessageBoxButtons::YesNo, MessageBoxIcon::Warning, MessageBoxDefaultButton::Button2 );
+		if ( result != System::Windows::Forms::DialogResult::Yes )
+		{
+			return;
+		}
+		else // perform resets on items in the form that are specific to performing an operation
+		{
+			progressBar->Value = 0;
+			progressBar->Enabled = false;
+			lblPercentProg->Text = "Idle";
+			stsStatus->Text = "Idle";
+			lblItemProg->Text = "0 " + lblItemProg->Text->Substring( lblItemProg->Text->IndexOf('/') );
+		}
+	}
+	if ( lstPakContents->Items->Count ) // if the contents list contains any items, this signifies that there is a PAK file open
+	{
+		// display a message box asking if the user is sure they want to lose their current pak work
+		System::Windows::Forms::DialogResult result = MessageBox::Show( "You currently have a PAK file open. If you open a PAK file, any unsaved changes to the currently open PAK will be lost! Are you sure you want to open a PAK file?", "PAK File already opened", MessageBoxButtons::YesNo, MessageBoxIcon::Warning, MessageBoxDefaultButton::Button2 );
+		if ( result != System::Windows::Forms::DialogResult::Yes )
+		{
+			return;
+		}
+	}
+
+	openPakDialog->ShowDialog(); // display file selection dialog
+	string dir = ""; // will hold the full path to the pak
+	MarshalString( openPakDialog->FileName->ToString(), dir ); // convert the dialog result to a string that we can use
+	if ( pak.readPAK( dir ) && pak.getNumPAKEntries() > 0 ) {
+
+		// clear the content list
+		for each ( ListViewItem ^item in lstPakContents->Items )
+		{
+			item->Remove();
+		}
+
+		// adjust controls to reflect a new pak open
+		txtAddDir->Text = "";
+		lblItemProg->Text = "0 / " + pak.getNumPAKEntries();
+		btnUnpak->Enabled = true;
+		btnPak->Enabled = true;
+		menuPak->Enabled = true;
+		menuUnpak->Enabled = true;
+
+		for each ( string name in pak.getAllPAKEntries() )
+		{
+			// add an item with all the columns
+			String ^filename = gcnew String( name.c_str() ); // get the name, and convert it (sigh)
+
+			ListViewItem^ item = gcnew ListViewItem( filename ); // create the item and give it name column
+			item->SubItems->Add( openPakDialog->FileName->ToString() ); // directory column
+			item->SubItems->Add( "Original PAK" ); // origin column. since you're opening the pak, it must be in the pak
+			item->SubItems->Add( filename->Substring( filename->LastIndexOf('.') ) ); // extension column
+			item->Checked = true; // defaults to checked. since you are manually adding the file, it's assumed that you want to include it in your pak
+			lstPakContents->Items->Add( item ); // finally add the item to the list
+		}
+
+	}
+	else
+	{
+		MessageBox::Show( "Error reading PAK" );
+		return;
+	}
 }
 
 // This event occurs when the New menu item is clicked
@@ -155,4 +225,11 @@ System::Void frmMain::btnSelectNone_Click(System::Object^  sender, System::Event
 	{
 		item->Checked = false;
 	}
+}
+
+// This event occurs when the user clicks the Unpak button
+System::Void frmMain::btnUnpak_Click(System::Object^  sender, System::EventArgs^  e) 
+{
+
+	//pak.createPAK("lol.pak", "test/", ".jpg|.bmp")
 }

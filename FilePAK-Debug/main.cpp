@@ -1,5 +1,5 @@
 #include <string>
-#include "filePAK.h"
+#include "../Pak/filePAK.h"
 #include <stdio.h>
 #include <iostream>
 #include <fstream>
@@ -39,8 +39,8 @@ int main()
 	int ofsize; // stores size of original file
 	ofstream f; //output
 
-	buffer = pak.grabPAKEntry("Sunset.jpg");
-	ofsize = pak.grabPAKEntrySize("Sunset.jpg");
+	buffer = pak.getPAKEntryData("Sunset.jpg");
+	ofsize = pak.getPAKEntrySize("Sunset.jpg");
 	if(buffer == NULL || ofsize <= 0)
 	{
 		cout << "Critical error: Cannot find file listed in PAK\n";

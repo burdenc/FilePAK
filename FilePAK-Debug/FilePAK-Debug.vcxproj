@@ -13,9 +13,6 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="filePAK.h" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{A25F9E6A-2D89-452D-AC39-FA88C6758467}</ProjectGuid>
     <RootNamespace>FilePAKDebug</RootNamespace>
