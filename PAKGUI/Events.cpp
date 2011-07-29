@@ -1,5 +1,8 @@
 #include "stdafx.h"
 #include "FrmMain.h"
+#include <fstream>
+#include <sstream>
+#include <iostream>
 
 
 using namespace PAKGUI;
@@ -7,12 +10,53 @@ using namespace PAKGUI;
 filePAK pak;
 
 // convert System::String (String ^) to std::string for use with LibPAK
-void MarshalString ( String ^ s, string& os ) {
+void MarshalString ( String ^ s, string& os )
+{
 	using namespace Runtime::InteropServices;
 	const char* chars = 
 		(const char*)(Marshal::StringToHGlobalAnsi(s)).ToPointer();
 	os = chars;
 	Marshal::FreeHGlobal(IntPtr((void*)chars));
+}
+
+String ^getFileSize( String ^filename )
+{
+	string dir;
+	MarshalString( filename, dir );
+	// Calculate file size in bytes
+	long beg, end;
+	ifstream file ( dir, ios::in|ios::binary); // open file
+	beg = (long)file.tellg(); // beginning of file
+	file.seekg (0, ios::end); // seek to end
+	end = (long)file.tellg(); // end of file
+	file.close(); // close file
+
+	// Convert
+	int i; // number of iterations through the loop determine what unit to use
+	double sizeconvert = end - beg; // the size of the file in bytes
+	if ( sizeconvert == 0 )
+	{
+		return gcnew String( "0" ); // there was nothing in the file
+	}
+	for ( i = 0; sizeconvert > 1024.0; ++i, sizeconvert /= 1024.0 ) {} // convert from bytes to a more readable unit
+
+	stringstream size; // this holds the final string to be returned
+	size << (int) sizeconvert; // get rid of decimals
+
+	// append size unit to the end of the stringstream (GB is the largest supported unit)
+	if ( i == 1 ) size << " KB";
+	else if ( i == 2 ) size << " MB";
+	else if ( i >= 3 )
+	{
+		size.str(string()); // clear stringstream
+		size.setf( ios::fixed, ios::floatfield); // set decimal
+		size.precision(2);
+		size << sizeconvert; // only show decimal if file is in GB
+		size << " GB";
+	}
+	else size << "    B";
+
+	return gcnew String( size.str().c_str() );
 }
 
 
@@ -200,9 +244,18 @@ System::Void frmMain::lstPakContents_DragDrop(System::Object^  sender, System::W
 	// cycle through all the files that were dragged and add them to the list
 	for each ( String ^p in s )
 	{
+		// calc file size
+		String ^size = getFileSize( p );
+		if ( size == "0" )
+		{
+			MessageBox::Show( "Error: File \"" + p->Substring( p->LastIndexOf('\\')+1 ) + "\" contains no data." ); // CHANGE THIS LATER
+			continue;
+		}
+
 		// add an item with all the columns
 		ListViewItem^ item = gcnew ListViewItem( p->Substring( p->LastIndexOf('\\') + 1 ) ); // create the item and give it name column
 		item->SubItems->Add( p ); // directory column
+		item->SubItems->Add( size ); // file size
 		item->SubItems->Add( "Not in PAK" ); // origin column. since you're manually adding the file, it can't already be in the pak
 		item->SubItems->Add( p->Substring( p->LastIndexOf('.') ) ); // extension column
 		item->Checked = true; // defaults to checked. since you are manually adding the file, it's assumed that you want to include it in your pak

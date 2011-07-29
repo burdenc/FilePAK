@@ -129,6 +129,7 @@ private: System::Windows::Forms::GroupBox^  groupBox1;
 private: System::Windows::Forms::Label^  label9;
 private: System::Windows::Forms::Label^  label8;
 private: System::Windows::Forms::Label^  label4;
+private: System::Windows::Forms::ColumnHeader^  columnHeader5;
 
 
 
@@ -166,6 +167,7 @@ private: System::Windows::Forms::Label^  label4;
 			this->lstPakContents = (gcnew System::Windows::Forms::ListView());
 			this->columnHeader1 = (gcnew System::Windows::Forms::ColumnHeader());
 			this->columnHeader2 = (gcnew System::Windows::Forms::ColumnHeader());
+			this->columnHeader5 = (gcnew System::Windows::Forms::ColumnHeader());
 			this->columnHeader4 = (gcnew System::Windows::Forms::ColumnHeader());
 			this->columnHeader3 = (gcnew System::Windows::Forms::ColumnHeader());
 			this->btnAddFiles = (gcnew System::Windows::Forms::Button());
@@ -188,6 +190,9 @@ private: System::Windows::Forms::Label^  label4;
 			this->saveFileDialog = (gcnew System::Windows::Forms::SaveFileDialog());
 			this->folderBrowserDialog = (gcnew System::Windows::Forms::FolderBrowserDialog());
 			this->groupBox3 = (gcnew System::Windows::Forms::GroupBox());
+			this->label9 = (gcnew System::Windows::Forms::Label());
+			this->label8 = (gcnew System::Windows::Forms::Label());
+			this->label4 = (gcnew System::Windows::Forms::Label());
 			this->btnSaveBrowse = (gcnew System::Windows::Forms::Button());
 			this->label7 = (gcnew System::Windows::Forms::Label());
 			this->label6 = (gcnew System::Windows::Forms::Label());
@@ -195,9 +200,6 @@ private: System::Windows::Forms::Label^  label4;
 			this->textBox1 = (gcnew System::Windows::Forms::TextBox());
 			this->label3 = (gcnew System::Windows::Forms::Label());
 			this->groupBox1 = (gcnew System::Windows::Forms::GroupBox());
-			this->label4 = (gcnew System::Windows::Forms::Label());
-			this->label8 = (gcnew System::Windows::Forms::Label());
-			this->label9 = (gcnew System::Windows::Forms::Label());
 			this->menuStrip1->SuspendLayout();
 			this->groupBox2->SuspendLayout();
 			this->panel3->SuspendLayout();
@@ -312,14 +314,16 @@ private: System::Windows::Forms::Label^  label4;
 			// 
 			// lstPakContents
 			// 
+			this->lstPakContents->AllowColumnReorder = true;
 			this->lstPakContents->AllowDrop = true;
 			this->lstPakContents->CheckBoxes = true;
-			this->lstPakContents->Columns->AddRange(gcnew cli::array< System::Windows::Forms::ColumnHeader^  >(4) {this->columnHeader1, 
-				this->columnHeader2, this->columnHeader4, this->columnHeader3});
+			this->lstPakContents->Columns->AddRange(gcnew cli::array< System::Windows::Forms::ColumnHeader^  >(5) {this->columnHeader1, 
+				this->columnHeader2, this->columnHeader5, this->columnHeader4, this->columnHeader3});
+			this->lstPakContents->Dock = System::Windows::Forms::DockStyle::Bottom;
 			this->lstPakContents->FullRowSelect = true;
-			this->lstPakContents->Location = System::Drawing::Point(16, 55);
+			this->lstPakContents->Location = System::Drawing::Point(10, 58);
 			this->lstPakContents->Name = L"lstPakContents";
-			this->lstPakContents->Size = System::Drawing::Size(759, 266);
+			this->lstPakContents->Size = System::Drawing::Size(772, 266);
 			this->lstPakContents->Sorting = System::Windows::Forms::SortOrder::Ascending;
 			this->lstPakContents->TabIndex = 17;
 			this->lstPakContents->UseCompatibleStateImageBehavior = false;
@@ -331,23 +335,29 @@ private: System::Windows::Forms::Label^  label4;
 			// columnHeader1
 			// 
 			this->columnHeader1->Text = L"File name";
-			this->columnHeader1->Width = 245;
+			this->columnHeader1->Width = 180;
 			// 
 			// columnHeader2
 			// 
 			this->columnHeader2->Text = L"Directory";
-			this->columnHeader2->Width = 279;
+			this->columnHeader2->Width = 264;
+			// 
+			// columnHeader5
+			// 
+			this->columnHeader5->Text = L"Size";
+			this->columnHeader5->TextAlign = System::Windows::Forms::HorizontalAlignment::Right;
+			this->columnHeader5->Width = 105;
 			// 
 			// columnHeader4
 			// 
 			this->columnHeader4->Text = L"Currently in PAK\?";
-			this->columnHeader4->Width = 99;
+			this->columnHeader4->Width = 111;
 			// 
 			// columnHeader3
 			// 
 			this->columnHeader3->Text = L"File extension";
 			this->columnHeader3->TextAlign = System::Windows::Forms::HorizontalAlignment::Right;
-			this->columnHeader3->Width = 100;
+			this->columnHeader3->Width = 86;
 			// 
 			// btnAddFiles
 			// 
@@ -486,7 +496,7 @@ private: System::Windows::Forms::Label^  label4;
 			// statusStrip1
 			// 
 			this->statusStrip1->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(2) {this->stsLblStatus, this->stsStatus});
-			this->statusStrip1->Location = System::Drawing::Point(0, 575);
+			this->statusStrip1->Location = System::Drawing::Point(0, 577);
 			this->statusStrip1->Name = L"statusStrip1";
 			this->statusStrip1->Size = System::Drawing::Size(820, 22);
 			this->statusStrip1->SizingGrip = false;
@@ -539,6 +549,33 @@ private: System::Windows::Forms::Label^  label4;
 			this->groupBox3->TabIndex = 10;
 			this->groupBox3->TabStop = false;
 			this->groupBox3->Text = L"PAK Info";
+			// 
+			// label9
+			// 
+			this->label9->AutoSize = true;
+			this->label9->Location = System::Drawing::Point(662, 79);
+			this->label9->Name = L"label9";
+			this->label9->Size = System::Drawing::Size(37, 13);
+			this->label9->TabIndex = 10;
+			this->label9->Text = L"0 Files";
+			// 
+			// label8
+			// 
+			this->label8->AutoSize = true;
+			this->label8->Location = System::Drawing::Point(662, 54);
+			this->label8->Name = L"label8";
+			this->label8->Size = System::Drawing::Size(30, 13);
+			this->label8->TabIndex = 9;
+			this->label8->Text = L"0 KB";
+			// 
+			// label4
+			// 
+			this->label4->AutoSize = true;
+			this->label4->Location = System::Drawing::Point(662, 29);
+			this->label4->Name = L"label4";
+			this->label4->Size = System::Drawing::Size(30, 13);
+			this->label4->TabIndex = 8;
+			this->label4->Text = L"0 KB";
 			// 
 			// btnSaveBrowse
 			// 
@@ -612,38 +649,11 @@ private: System::Windows::Forms::Label^  label4;
 			this->groupBox1->TabStop = false;
 			this->groupBox1->Text = L"PAK";
 			// 
-			// label4
-			// 
-			this->label4->AutoSize = true;
-			this->label4->Location = System::Drawing::Point(662, 29);
-			this->label4->Name = L"label4";
-			this->label4->Size = System::Drawing::Size(30, 13);
-			this->label4->TabIndex = 8;
-			this->label4->Text = L"0 KB";
-			// 
-			// label8
-			// 
-			this->label8->AutoSize = true;
-			this->label8->Location = System::Drawing::Point(662, 54);
-			this->label8->Name = L"label8";
-			this->label8->Size = System::Drawing::Size(30, 13);
-			this->label8->TabIndex = 9;
-			this->label8->Text = L"0 KB";
-			// 
-			// label9
-			// 
-			this->label9->AutoSize = true;
-			this->label9->Location = System::Drawing::Point(662, 79);
-			this->label9->Name = L"label9";
-			this->label9->Size = System::Drawing::Size(37, 13);
-			this->label9->TabIndex = 10;
-			this->label9->Text = L"0 Files";
-			// 
 			// frmMain
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(820, 597);
+			this->ClientSize = System::Drawing::Size(820, 599);
 			this->Controls->Add(this->groupBox1);
 			this->Controls->Add(this->groupBox3);
 			this->Controls->Add(this->groupBox2);
@@ -651,7 +661,8 @@ private: System::Windows::Forms::Label^  label4;
 			this->Controls->Add(this->statusStrip1);
 			this->MainMenuStrip = this->menuStrip1;
 			this->MaximizeBox = false;
-			this->MinimumSize = System::Drawing::Size(836, 613);
+			this->MaximumSize = System::Drawing::Size(836, 637);
+			this->MinimumSize = System::Drawing::Size(836, 637);
 			this->Name = L"frmMain";
 			this->SizeGripStyle = System::Windows::Forms::SizeGripStyle::Hide;
 			this->Text = L"pakGUI";
