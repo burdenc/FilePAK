@@ -6,6 +6,16 @@ using namespace PAKGUI;
 
 filePAK pak;
 
+// convert System::String (String ^) to std::string for use with LibPAK
+void MarshalString ( String ^ s, string& os ) {
+	using namespace Runtime::InteropServices;
+	const char* chars = 
+		(const char*)(Marshal::StringToHGlobalAnsi(s)).ToPointer();
+	os = chars;
+	Marshal::FreeHGlobal(IntPtr((void*)chars));
+}
+
+
 // This event occurs every time an item in the PAK Contents list is checked or unchecked.
 System::Void frmMain::lstPakContents_ItemCheck(System::Object^  sender, System::Windows::Forms::ItemCheckEventArgs^  e)
 {
@@ -55,16 +65,10 @@ System::Void frmMain::lstPakContents_ItemCheck(System::Object^  sender, System::
 System::Void frmMain::btnBrowseDir_Click(System::Object^  sender, System::EventArgs^  e)
 {
 	folderBrowserDialog->ShowDialog(); // This displays the folder selection dialog
-	txtAddDir->Text = folderBrowserDialog->SelectedPath; // This sets the text box to the resulting selection from the user
-}
+	//txtAddDir->Text = folderBrowserDialog->SelectedPath; // This sets the text box to the resulting selection from the user
 
-// convert System::String (String ^) to std::string for use with LibPAK
-void MarshalString ( String ^ s, string& os ) {
-	using namespace Runtime::InteropServices;
-	const char* chars = 
-		(const char*)(Marshal::StringToHGlobalAnsi(s)).ToPointer();
-	os = chars;
-	Marshal::FreeHGlobal(IntPtr((void*)chars));
+	//todo:
+	//		scan selected directory and add files to the list
 }
 
 // This event occurs when the Open menu item is clicked
@@ -110,7 +114,6 @@ System::Void frmMain::openToolStripMenuItem_Click(System::Object^  sender, Syste
 		}
 
 		// adjust controls to reflect a new pak open
-		txtAddDir->Text = "";
 		lblItemProg->Text = "0 / " + pak.getNumPAKEntries();
 		btnUnpak->Enabled = true;
 		btnPak->Enabled = true;
@@ -169,7 +172,6 @@ System::Void frmMain::newToolStripMenuItem_Click(System::Object^  sender, System
 	}
 
 	// reset all items in the form to their original values
-	txtAddDir->Text = "";
 	lblItemProg->Text = "0 / 0";
 	btnUnpak->Enabled = false;
 	btnPak->Enabled = false;

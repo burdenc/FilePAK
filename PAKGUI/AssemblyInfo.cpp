@@ -11,12 +11,12 @@ using namespace System::Security::Permissions;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 //
-[assembly:AssemblyTitleAttribute("PAKGUI")];
+[assembly:AssemblyTitleAttribute("pakGUI")];
 [assembly:AssemblyDescriptionAttribute("")];
 [assembly:AssemblyConfigurationAttribute("")];
-[assembly:AssemblyCompanyAttribute("Microsoft")];
-[assembly:AssemblyProductAttribute("PAKGUI")];
-[assembly:AssemblyCopyrightAttribute("Copyright (c) Microsoft 2011")];
+[assembly:AssemblyCompanyAttribute("Hogg Studios")];
+[assembly:AssemblyProductAttribute("pakGUI")];
+[assembly:AssemblyCopyrightAttribute("Copyright (c) Hogg Studios 2011")];
 [assembly:AssemblyTrademarkAttribute("")];
 [assembly:AssemblyCultureAttribute("")];
 
