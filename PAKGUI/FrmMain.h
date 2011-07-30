@@ -1,5 +1,7 @@
 #pragma once
 
+#include "frmLog.h"
+
 namespace PAKGUI {
 
 	using namespace System;
@@ -16,6 +18,9 @@ namespace PAKGUI {
 
 	public ref class frmMain : public System::Windows::Forms::Form
 	{
+
+	private: System::Windows::Forms::Form ^log;
+
 	public:
 		frmMain(void)
 		{
@@ -23,6 +28,8 @@ namespace PAKGUI {
 			//
 			//TODO: Add the constructor code here
 			//
+			log = gcnew frmLog();
+			log->VisibleChanged += gcnew System::EventHandler(this, &frmMain::frmLog_VisibleChanged);
 		}
 
 	protected:
@@ -118,31 +125,33 @@ namespace PAKGUI {
 	private: System::Windows::Forms::ColumnHeader^  columnHeader3;
 	private: System::Windows::Forms::ColumnHeader^  columnHeader4;
 
-private: System::Windows::Forms::GroupBox^  groupBox3;
-private: System::Windows::Forms::Label^  label7;
-private: System::Windows::Forms::Label^  label8;
+	private: System::Windows::Forms::GroupBox^  groupBox3;
+	private: System::Windows::Forms::Label^  label7;
+	private: System::Windows::Forms::Label^  label8;
 
 
 
-private: System::Windows::Forms::Label^  label5;
-private: System::Windows::Forms::TextBox^  txtSaveDir;
+	private: System::Windows::Forms::Label^  label5;
+	private: System::Windows::Forms::TextBox^  txtSaveDir;
 
 
 
-private: System::Windows::Forms::Label^  label3;
-private: System::Windows::Forms::Button^  btnSaveDirBrowse;
+	private: System::Windows::Forms::Label^  label3;
+	private: System::Windows::Forms::Button^  btnSaveDirBrowse;
 
-private: System::Windows::Forms::GroupBox^  groupBox1;
-private: System::Windows::Forms::Label^  lblNumFiles;
+	private: System::Windows::Forms::GroupBox^  groupBox1;
+	private: System::Windows::Forms::Label^  lblNumFiles;
 
-private: System::Windows::Forms::Label^  lblPakSizeAfterPak;
+	private: System::Windows::Forms::Label^  lblPakSizeAfterPak;
 
-private: System::Windows::Forms::Label^  lblPakSize;
+	private: System::Windows::Forms::Label^  lblPakSize;
 
-private: System::Windows::Forms::ColumnHeader^  columnHeader5;
-private: System::Windows::Forms::Label^  lblOrigDir;
+	private: System::Windows::Forms::ColumnHeader^  columnHeader5;
+	private: System::Windows::Forms::Label^  lblOrigDir;
 
-private: System::Windows::Forms::Label^  label4;
+	private: System::Windows::Forms::Label^  label4;
+	private: System::Windows::Forms::ToolStripMenuItem^  viewToolStripMenuItem;
+	private: System::Windows::Forms::ToolStripMenuItem^  logToolStripMenuItem;
 
 
 
@@ -170,6 +179,8 @@ private: System::Windows::Forms::Label^  label4;
 			this->editToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->selectAllToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->selectNoneToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->viewToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->logToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->pAKToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->menuPak = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->menuUnpak = (gcnew System::Windows::Forms::ToolStripMenuItem());
@@ -200,6 +211,8 @@ private: System::Windows::Forms::Label^  label4;
 			this->savePakDialog = (gcnew System::Windows::Forms::SaveFileDialog());
 			this->folderBrowserDialog = (gcnew System::Windows::Forms::FolderBrowserDialog());
 			this->groupBox3 = (gcnew System::Windows::Forms::GroupBox());
+			this->lblOrigDir = (gcnew System::Windows::Forms::Label());
+			this->label4 = (gcnew System::Windows::Forms::Label());
 			this->lblNumFiles = (gcnew System::Windows::Forms::Label());
 			this->lblPakSizeAfterPak = (gcnew System::Windows::Forms::Label());
 			this->lblPakSize = (gcnew System::Windows::Forms::Label());
@@ -210,8 +223,6 @@ private: System::Windows::Forms::Label^  label4;
 			this->txtSaveDir = (gcnew System::Windows::Forms::TextBox());
 			this->label3 = (gcnew System::Windows::Forms::Label());
 			this->groupBox1 = (gcnew System::Windows::Forms::GroupBox());
-			this->label4 = (gcnew System::Windows::Forms::Label());
-			this->lblOrigDir = (gcnew System::Windows::Forms::Label());
 			this->menuStrip1->SuspendLayout();
 			this->groupBox2->SuspendLayout();
 			this->panel3->SuspendLayout();
@@ -222,8 +233,8 @@ private: System::Windows::Forms::Label^  label4;
 			// 
 			// menuStrip1
 			// 
-			this->menuStrip1->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(3) {this->fileToolStripMenuItem, 
-				this->editToolStripMenuItem, this->pAKToolStripMenuItem});
+			this->menuStrip1->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(4) {this->fileToolStripMenuItem, 
+				this->editToolStripMenuItem, this->viewToolStripMenuItem, this->pAKToolStripMenuItem});
 			this->menuStrip1->Location = System::Drawing::Point(0, 0);
 			this->menuStrip1->Margin = System::Windows::Forms::Padding(10);
 			this->menuStrip1->Name = L"menuStrip1";
@@ -242,26 +253,29 @@ private: System::Windows::Forms::Label^  label4;
 			// newToolStripMenuItem
 			// 
 			this->newToolStripMenuItem->Name = L"newToolStripMenuItem";
-			this->newToolStripMenuItem->Size = System::Drawing::Size(103, 22);
+			this->newToolStripMenuItem->ShortcutKeys = static_cast<System::Windows::Forms::Keys>((System::Windows::Forms::Keys::Control | System::Windows::Forms::Keys::N));
+			this->newToolStripMenuItem->Size = System::Drawing::Size(146, 22);
 			this->newToolStripMenuItem->Text = L"New";
 			this->newToolStripMenuItem->Click += gcnew System::EventHandler(this, &frmMain::newToolStripMenuItem_Click);
 			// 
 			// openToolStripMenuItem
 			// 
 			this->openToolStripMenuItem->Name = L"openToolStripMenuItem";
-			this->openToolStripMenuItem->Size = System::Drawing::Size(103, 22);
+			this->openToolStripMenuItem->ShortcutKeys = static_cast<System::Windows::Forms::Keys>((System::Windows::Forms::Keys::Control | System::Windows::Forms::Keys::O));
+			this->openToolStripMenuItem->Size = System::Drawing::Size(146, 22);
 			this->openToolStripMenuItem->Text = L"Open";
 			this->openToolStripMenuItem->Click += gcnew System::EventHandler(this, &frmMain::openToolStripMenuItem_Click);
 			// 
 			// toolStripMenuItem1
 			// 
 			this->toolStripMenuItem1->Name = L"toolStripMenuItem1";
-			this->toolStripMenuItem1->Size = System::Drawing::Size(100, 6);
+			this->toolStripMenuItem1->Size = System::Drawing::Size(143, 6);
 			// 
 			// exitToolStripMenuItem
 			// 
 			this->exitToolStripMenuItem->Name = L"exitToolStripMenuItem";
-			this->exitToolStripMenuItem->Size = System::Drawing::Size(103, 22);
+			this->exitToolStripMenuItem->ShortcutKeys = static_cast<System::Windows::Forms::Keys>((System::Windows::Forms::Keys::Alt | System::Windows::Forms::Keys::F4));
+			this->exitToolStripMenuItem->Size = System::Drawing::Size(146, 22);
 			this->exitToolStripMenuItem->Text = L"Exit";
 			this->exitToolStripMenuItem->Click += gcnew System::EventHandler(this, &frmMain::exitToolStripMenuItem_Click);
 			// 
@@ -276,14 +290,32 @@ private: System::Windows::Forms::Label^  label4;
 			// selectAllToolStripMenuItem
 			// 
 			this->selectAllToolStripMenuItem->Name = L"selectAllToolStripMenuItem";
-			this->selectAllToolStripMenuItem->Size = System::Drawing::Size(137, 22);
+			this->selectAllToolStripMenuItem->ShortcutKeys = static_cast<System::Windows::Forms::Keys>((System::Windows::Forms::Keys::Control | System::Windows::Forms::Keys::A));
+			this->selectAllToolStripMenuItem->Size = System::Drawing::Size(179, 22);
 			this->selectAllToolStripMenuItem->Text = L"Check all";
 			// 
 			// selectNoneToolStripMenuItem
 			// 
 			this->selectNoneToolStripMenuItem->Name = L"selectNoneToolStripMenuItem";
-			this->selectNoneToolStripMenuItem->Size = System::Drawing::Size(137, 22);
+			this->selectNoneToolStripMenuItem->ShortcutKeys = static_cast<System::Windows::Forms::Keys>((System::Windows::Forms::Keys::Control | System::Windows::Forms::Keys::D));
+			this->selectNoneToolStripMenuItem->Size = System::Drawing::Size(179, 22);
 			this->selectNoneToolStripMenuItem->Text = L"Check none";
+			// 
+			// viewToolStripMenuItem
+			// 
+			this->viewToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(1) {this->logToolStripMenuItem});
+			this->viewToolStripMenuItem->Name = L"viewToolStripMenuItem";
+			this->viewToolStripMenuItem->Size = System::Drawing::Size(44, 20);
+			this->viewToolStripMenuItem->Text = L"View";
+			// 
+			// logToolStripMenuItem
+			// 
+			this->logToolStripMenuItem->CheckOnClick = true;
+			this->logToolStripMenuItem->Name = L"logToolStripMenuItem";
+			this->logToolStripMenuItem->ShortcutKeys = static_cast<System::Windows::Forms::Keys>((System::Windows::Forms::Keys::Control | System::Windows::Forms::Keys::L));
+			this->logToolStripMenuItem->Size = System::Drawing::Size(152, 22);
+			this->logToolStripMenuItem->Text = L"Log";
+			this->logToolStripMenuItem->Click += gcnew System::EventHandler(this, &frmMain::logToolStripMenuItem_Click);
 			// 
 			// pAKToolStripMenuItem
 			// 
@@ -297,14 +329,16 @@ private: System::Windows::Forms::Label^  label4;
 			// 
 			this->menuPak->Enabled = false;
 			this->menuPak->Name = L"menuPak";
-			this->menuPak->Size = System::Drawing::Size(142, 22);
+			this->menuPak->ShortcutKeys = static_cast<System::Windows::Forms::Keys>((System::Windows::Forms::Keys::Control | System::Windows::Forms::Keys::P));
+			this->menuPak->Size = System::Drawing::Size(183, 22);
 			this->menuPak->Text = L"PAK / RePAK";
 			// 
 			// menuUnpak
 			// 
 			this->menuUnpak->Enabled = false;
 			this->menuUnpak->Name = L"menuUnpak";
-			this->menuUnpak->Size = System::Drawing::Size(142, 22);
+			this->menuUnpak->ShortcutKeys = static_cast<System::Windows::Forms::Keys>((System::Windows::Forms::Keys::Control | System::Windows::Forms::Keys::U));
+			this->menuUnpak->Size = System::Drawing::Size(183, 22);
 			this->menuUnpak->Text = L"UnPAK";
 			// 
 			// groupBox2
@@ -570,6 +604,24 @@ private: System::Windows::Forms::Label^  label4;
 			this->groupBox3->TabStop = false;
 			this->groupBox3->Text = L"PAK Info";
 			// 
+			// lblOrigDir
+			// 
+			this->lblOrigDir->Location = System::Drawing::Point(140, 54);
+			this->lblOrigDir->Name = L"lblOrigDir";
+			this->lblOrigDir->Size = System::Drawing::Size(310, 19);
+			this->lblOrigDir->TabIndex = 12;
+			this->lblOrigDir->Text = L"None";
+			// 
+			// label4
+			// 
+			this->label4->AutoSize = true;
+			this->label4->Location = System::Drawing::Point(15, 54);
+			this->label4->Margin = System::Windows::Forms::Padding(3, 0, 10, 6);
+			this->label4->Name = L"label4";
+			this->label4->Size = System::Drawing::Size(112, 13);
+			this->label4->TabIndex = 11;
+			this->label4->Text = L"Original PAK directory:";
+			// 
 			// lblNumFiles
 			// 
 			this->lblNumFiles->Location = System::Drawing::Point(662, 79);
@@ -670,24 +722,6 @@ private: System::Windows::Forms::Label^  label4;
 			this->groupBox1->TabStop = false;
 			this->groupBox1->Text = L"PAK";
 			// 
-			// label4
-			// 
-			this->label4->AutoSize = true;
-			this->label4->Location = System::Drawing::Point(15, 54);
-			this->label4->Margin = System::Windows::Forms::Padding(3, 0, 10, 6);
-			this->label4->Name = L"label4";
-			this->label4->Size = System::Drawing::Size(112, 13);
-			this->label4->TabIndex = 11;
-			this->label4->Text = L"Original PAK directory:";
-			// 
-			// lblOrigDir
-			// 
-			this->lblOrigDir->Location = System::Drawing::Point(140, 54);
-			this->lblOrigDir->Name = L"lblOrigDir";
-			this->lblOrigDir->Size = System::Drawing::Size(310, 19);
-			this->lblOrigDir->TabIndex = 12;
-			this->lblOrigDir->Text = L"None";
-			// 
 			// frmMain
 			// 
 			this->AcceptButton = this->btnPak;
@@ -755,13 +789,16 @@ private: System::Windows::Forms::Label^  label4;
 
 			 // exit menu item clicked
 	private: System::Void exitToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
+				 this->Visible = false;
 				 delete this;
 			 }
 
 			 // unpak button clicked
 	private: System::Void btnUnpak_Click(System::Object^  sender, System::EventArgs^  e);
 	private: System::Void btnSaveDirBrowse_Click(System::Object^  sender, System::EventArgs^  e);
-};	
+	private: System::Void logToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e);
+	private: System::Void frmLog_VisibleChanged(System::Object^  sender, System::EventArgs^  e);
+	};	
 
 }
 

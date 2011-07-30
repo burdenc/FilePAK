@@ -35,6 +35,9 @@
     <ClCompile Include="filePAK.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="frmLog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -47,6 +50,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="filePAK.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="frmLog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

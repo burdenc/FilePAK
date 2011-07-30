@@ -88,6 +88,7 @@
     <ClCompile Include="AssemblyInfo.cpp" />
     <ClCompile Include="Events.cpp" />
     <ClCompile Include="filePAK.cpp" />
+    <ClCompile Include="frmLog.cpp" />
     <ClCompile Include="PAKGUI.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -96,6 +97,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="filePAK.h" />
+    <ClInclude Include="frmLog.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
     <ClInclude Include="frmMain.h">
       <FileType>CppForm</FileType>
     </ClInclude>
@@ -106,6 +110,9 @@
     <ResourceCompile Include="app.rc" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="frmLog.resx">
+      <DependentUpon>frmLog.h</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="frmMain.resX">
       <DependentUpon>frmMain.h</DependentUpon>
       <SubType>Designer</SubType>

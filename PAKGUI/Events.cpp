@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "FrmMain.h"
+#include "frmLog.h"
 #include <fstream>
 #include <sstream>
 #include <iostream>
@@ -159,14 +160,14 @@ System::Void frmMain::btnBrowseDir_Click(System::Object^  sender, System::EventA
 		MarshalString( file->Substring( file->LastIndexOf('\\') + 1 ), tmp );
 		if ( fileSizes[tmp] != 0 )
 		{
-			MessageBox::Show( "Error adding file: \nDuplicate file entry detected: \"" + file->Substring( file->LastIndexOf('\\') + 1 ) + "\"",  "Error", MessageBoxButtons::OK, MessageBoxIcon::Error ); // CHANGE THIS LATER
+			MessageBox::Show( "Error adding file: \nDuplicate file entry detected: \"" + file->Substring( file->LastIndexOf('\\') + 1 ) + "\"",  "Error", MessageBoxButtons::OK, MessageBoxIcon::Error );
 			continue;
 		}
 		fileSizes[tmp] = bytes;
 		String ^size = getFileSize( bytes );
 		if ( size == "0 KB" )
 		{
-			MessageBox::Show( "Error adding file: \nFile \"" + file->Substring( file->LastIndexOf('\\')+1 ) + "\" contains no data.",  "Error", MessageBoxButtons::OK, MessageBoxIcon::Error ); // CHANGE THIS LATER
+			MessageBox::Show( "Error adding file: \nFile \"" + file->Substring( file->LastIndexOf('\\')+1 ) + "\" contains no data.",  "Error", MessageBoxButtons::OK, MessageBoxIcon::Error );
 			continue;
 		}
 
@@ -425,5 +426,29 @@ System::Void frmMain::btnSaveDirBrowse_Click(System::Object^  sender, System::Ev
 	if ( savePakDialog->FileName->IndexOf( '\\' ) != -1 || savePakDialog->FileName->IndexOf( '/' ) != -1 ) // if the user didn't select a file
 	{
 		txtSaveDir->Text = savePakDialog->FileName; // put that path in the save file text box
+	}
+}
+
+System::Void frmMain::logToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e)
+{
+	if ( !logToolStripMenuItem->Checked )
+	{
+		frmMain::log->Visible = false;
+	}
+	else
+	{
+		frmMain::log->Visible = true;
+	}
+	//frmMain::log->Show();
+}
+
+System::Void frmMain::frmLog_VisibleChanged(System::Object^  sender, System::EventArgs^  e)
+{
+	if ( log->Visible ) {
+		logToolStripMenuItem->Checked = true;
+	}
+	else
+	{
+		logToolStripMenuItem->Checked = false;
 	}
 }
