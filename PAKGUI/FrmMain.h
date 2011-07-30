@@ -300,7 +300,7 @@ private: System::Windows::Forms::ToolStripMenuItem^  selectNoneToolStripMenuItem
 			this->selectAllToolStripMenuItem->ShortcutKeys = static_cast<System::Windows::Forms::Keys>((System::Windows::Forms::Keys::Control | System::Windows::Forms::Keys::A));
 			this->selectAllToolStripMenuItem->Size = System::Drawing::Size(179, 22);
 			this->selectAllToolStripMenuItem->Text = L"Check all";
-			this->selectAllToolStripMenuItem->Click += gcnew System::EventHandler(this, &frmMain::selectAllToolStripMenuItem_Click);
+			this->selectAllToolStripMenuItem->Click += gcnew System::EventHandler(this, &frmMain::checkAllToolStripMenuItem_Click);
 			// 
 			// selectNoneToolStripMenuItem
 			// 
@@ -308,7 +308,7 @@ private: System::Windows::Forms::ToolStripMenuItem^  selectNoneToolStripMenuItem
 			this->selectNoneToolStripMenuItem->ShortcutKeys = static_cast<System::Windows::Forms::Keys>((System::Windows::Forms::Keys::Control | System::Windows::Forms::Keys::D));
 			this->selectNoneToolStripMenuItem->Size = System::Drawing::Size(179, 22);
 			this->selectNoneToolStripMenuItem->Text = L"Check none";
-			this->selectNoneToolStripMenuItem->Click += gcnew System::EventHandler(this, &frmMain::selectNoneToolStripMenuItem_Click);
+			this->selectNoneToolStripMenuItem->Click += gcnew System::EventHandler(this, &frmMain::checkNoneToolStripMenuItem_Click);
 			// 
 			// viewToolStripMenuItem
 			// 
@@ -452,7 +452,7 @@ private: System::Windows::Forms::ToolStripMenuItem^  selectNoneToolStripMenuItem
 			this->btnSelectNone->TabIndex = 3;
 			this->btnSelectNone->Text = L"Check none";
 			this->btnSelectNone->UseVisualStyleBackColor = true;
-			this->btnSelectNone->Click += gcnew System::EventHandler(this, &frmMain::btnSelectNone_Click);
+			this->btnSelectNone->Click += gcnew System::EventHandler(this, &frmMain::btnCheckNone_Click);
 			// 
 			// btnSelectAll
 			// 
@@ -462,7 +462,7 @@ private: System::Windows::Forms::ToolStripMenuItem^  selectNoneToolStripMenuItem
 			this->btnSelectAll->TabIndex = 2;
 			this->btnSelectAll->Text = L"Check all";
 			this->btnSelectAll->UseVisualStyleBackColor = true;
-			this->btnSelectAll->Click += gcnew System::EventHandler(this, &frmMain::btnSelectAll_Click);
+			this->btnSelectAll->Click += gcnew System::EventHandler(this, &frmMain::btnCheckAll_Click);
 			// 
 			// panel3
 			// 
@@ -812,10 +812,10 @@ private: System::Windows::Forms::ToolStripMenuItem^  selectNoneToolStripMenuItem
 			 }
 
 			 // This event occurs when the user clicks the Select all button
-	private: System::Void btnSelectAll_Click(System::Object^  sender, System::EventArgs^  e);
+	private: System::Void btnCheckAll_Click(System::Object^  sender, System::EventArgs^  e);
 
 			 // This event occurs when the user clicks the Select none button
-	private: System::Void btnSelectNone_Click(System::Object^  sender, System::EventArgs^  e);
+	private: System::Void btnCheckNone_Click(System::Object^  sender, System::EventArgs^  e);
 
 			 // exit menu item clicked
 	private: System::Void exitToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
@@ -829,8 +829,8 @@ private: System::Windows::Forms::ToolStripMenuItem^  selectNoneToolStripMenuItem
 	private: System::Void logToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e);
 	private: System::Void frmLog_VisibleChanged(System::Object^  sender, System::EventArgs^  e);
 
-	private: System::Void selectAllToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e);
-	private: System::Void selectNoneToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e);
+	private: System::Void checkAllToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e);
+	private: System::Void checkNoneToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e);
 
 };	
 

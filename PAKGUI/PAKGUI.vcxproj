@@ -86,10 +86,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AssemblyInfo.cpp" />
+    <ClCompile Include="btnEvents.cpp" />
     <ClCompile Include="Events.cpp" />
     <ClCompile Include="filePAK.cpp" />
     <ClCompile Include="frmLog.cpp" />
     <ClCompile Include="logEvents.cpp" />
+    <ClCompile Include="menuEvents.cpp" />
     <ClCompile Include="PAKGUI.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

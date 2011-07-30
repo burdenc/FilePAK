@@ -2,7 +2,10 @@
 
 #include <map>
 
-filePAK pak;
+extern filePAK pak;
+extern map<string, long> fileSizes;
+extern long currentEstimatedSize;
 
-map<string, long> fileSizes;
-long currentEstimatedSize = 0;
+extern void MarshalString ( System::String ^ s, string& os );
+extern long getFileBytes( System::String ^filename );
+extern System::String ^getFileSize( long bytes );

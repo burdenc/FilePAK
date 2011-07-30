@@ -8,8 +8,15 @@
 #include <algorithm>
 #include <map>
 
-
 using namespace PAKGUI;
+
+filePAK pak;
+map<string, long> fileSizes;
+long currentEstimatedSize = 0;
+
+void MarshalString ( System::String ^ s, string& os );
+long getFileBytes( System::String ^filename );
+System::String ^getFileSize( long bytes );
 
 // convert System::String (String ^) to std::string for use with LibPAK
 void MarshalString ( String ^ s, string& os )
@@ -135,218 +142,6 @@ System::Void frmMain::lstPakContents_ItemCheck(System::Object^  sender, System::
 	lblItemProg->Text = "0 / " + numChecked; // Update the item progress label
 }
 
-// This event occurs when the Browse button is hit to add an entire directory to the PAK
-System::Void frmMain::btnBrowseDir_Click(System::Object^  sender, System::EventArgs^  e)
-{
-	folderBrowserDialog->ShowDialog(); // This displays the folder selection dialog
-
-	if ( folderBrowserDialog->SelectedPath->Length <= 0 ) // if the user didn't select any files
-	{
-		return;
-	}
-
-	array<String^> ^files = Directory::GetFiles( folderBrowserDialog->SelectedPath );
-
-	bool errors = false;
-
-	for each ( String ^file in files )
-	{
-		// calc file size
-		long bytes = getFileBytes( file );
-		string tmp;
-		MarshalString( file->Substring( file->LastIndexOf('\\') + 1 ), tmp );
-		if ( fileSizes[tmp] != 0 )
-		{
-			if ( errors )
-			{
-				log->displayMsg( "\tDuplicate file entry detected: \"" + file->Substring( file->LastIndexOf('\\') + 1 ) + "\"" );
-			}
-			else
-			{
-				errors = true;
-				log->displayMsg( "Error adding files: " + Environment::NewLine + "\tDuplicate file entry detected: \"" + file->Substring( file->LastIndexOf('\\') + 1 ) + "\"" );
-			}
-			continue;
-		}
-		fileSizes[tmp] = bytes;
-		String ^size = getFileSize( bytes );
-		if ( size == "0 KB" )
-		{
-			if ( errors )
-			{
-				log->displayMsg( "\tFile \"" + file->Substring( file->LastIndexOf('\\')+1 ) + "\" contains no data." );
-			}
-			else
-			{
-				errors = true;
-				log->displayMsg( "Error adding files: " + Environment::NewLine + "\tFile \"" + file->Substring( file->LastIndexOf('\\')+1 ) + "\" contains no data." );
-			}
-			continue;
-		}
-
-		// add an item with all the columns
-		ListViewItem^ item = gcnew ListViewItem( file->Substring( file->LastIndexOf('\\') + 1 ) ); // create the item and give it name column
-		item->SubItems->Add( file ); // directory column
-		item->SubItems->Add( size ); // file size column
-		item->SubItems->Add( "Not in PAK" ); // origin column. since you're manually adding the file, it can't already be in the pak
-		item->SubItems->Add( file->Substring( file->LastIndexOf('.') ) ); // extension column
-		item->Checked = true; // defaults to checked. since you are manually adding the file, it's assumed that you want to include it in your pak
-		lstPakContents->Items->Add( item ); // finally add the item to the list
-
-	}
-
-	log->addBreak();
-
-	if ( !log->Visible && errors ) // if there were errors and the log isn't visible, warn them that there were errors and ask to display the log, otherwise we don't want to bug the user
-	{
-		System::Windows::Forms::DialogResult result = MessageBox::Show( "There were errors performing the previous action. Would you like to view the error log?",  "Errors", MessageBoxButtons::YesNo, MessageBoxIcon::Error );
-		if ( result == System::Windows::Forms::DialogResult::Yes )
-		{
-			log->Visible = true;
-		}
-	}
-}
-
-// This event occurs when the Open menu item is clicked
-System::Void frmMain::openToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e)
-{
-
-	if ( progressBar->Enabled ) // if the progress bar is enabled, this signifies that there is currently an operation being performed
-	{
-		// display a message box asking if the user is sure they want to interrupt the current operation
-		System::Windows::Forms::DialogResult result = MessageBox::Show( "You are currently PAK'ing or UnPAK'ing a file. Interrupting the current operation may cause loss or corruption of data! Are you sure you want to open a PAK file?", "Operation in progress", MessageBoxButtons::YesNo, MessageBoxIcon::Warning, MessageBoxDefaultButton::Button2 );
-		if ( result != System::Windows::Forms::DialogResult::Yes )
-		{
-			return;
-		}
-		else // perform resets on items in the form that are specific to performing an operation
-		{
-			progressBar->Value = 0;
-			progressBar->Enabled = false;
-			lblPercentProg->Text = "Idle";
-			stsStatus->Text = "Idle";
-			lblItemProg->Text = "0 " + lblItemProg->Text->Substring( lblItemProg->Text->IndexOf('/') );
-		}
-	}
-	if ( lstPakContents->Items->Count ) // if the contents list contains any items, this signifies that there is a PAK file open
-	{
-		// display a message box asking if the user is sure they want to lose their current pak work
-		System::Windows::Forms::DialogResult result = MessageBox::Show( "You currently have a PAK file open. If you open a PAK file, any unsaved changes to the currently open PAK will be lost! Are you sure you want to open a PAK file?", "PAK File already opened", MessageBoxButtons::YesNo, MessageBoxIcon::Warning, MessageBoxDefaultButton::Button2 );
-		if ( result != System::Windows::Forms::DialogResult::Yes )
-		{
-			return;
-		}
-	}
-
-	openPakDialog->ShowDialog(); // display file selection dialog
-	string dir = ""; // will hold the full path to the pak
-	MarshalString( openPakDialog->FileName, dir ); // convert the dialog result to a string that we can use
-	if ( pak.readPAK( dir ) && pak.getNumPAKEntries() > 0 ) {
-
-		// clear the content list
-		for each ( ListViewItem ^item in lstPakContents->Items )
-		{
-			item->Remove();
-		}
-
-		fileSizes.clear();
-
-		// adjust controls to reflect a new pak open
-		lblItemProg->Text = "0 / " + pak.getNumPAKEntries();
-		btnUnpak->Enabled = true;
-		btnPak->Enabled = true;
-		menuPak->Enabled = true;
-		menuUnpak->Enabled = true;
-
-		for each ( string name in pak.getAllPAKEntries() )
-		{
-			// add an item with all the columns
-			String ^filename = gcnew String( name.c_str() ); // get the name, and convert it to a System::String
-
-			// calc file size
-			String ^size = getFileSize( pak.getPAKEntry( name )->size );
-
-			ListViewItem^ item = gcnew ListViewItem( filename ); // create the item and give it name column
-			item->SubItems->Add( openPakDialog->FileName ); // directory column
-			item->SubItems->Add( size ); // file size column
-			item->SubItems->Add( "In PAK" ); // origin column. since you're opening the pak, it must be in the pak
-			item->SubItems->Add( filename->Substring( filename->LastIndexOf('.') ) ); // extension column
-			item->Checked = true; // defaults to checked. since you are manually adding the file, it's assumed that you want to include it in your pak
-			lstPakContents->Items->Add( item ); // finally add the item to the list
-
-			long bytes = getFileBytes( openPakDialog->FileName );
-			string tmp;
-			MarshalString( filename, tmp );
-			fileSizes[tmp] = bytes;
-
-			lblPakSize->Text = getFileSize( bytes );
-			lblPakSizeAfterPak->Text = lblPakSize->Text;
-			lblNumFiles->Text = pak.getNumPAKEntries() + " Files";
-			txtSaveDir->Text = openPakDialog->FileName;
-			lblOrigDir->Text = openPakDialog->FileName;
-
-		}
-
-	}
-	else
-	{
-		// This error is worth bringing the user's immediate attention to
-		MessageBox::Show( "Error reading PAK:\nInvalid or corrupt PAK file.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error );
-		log->displayMsg( "Error reading PAK:" + Environment::NewLine + "\tInvalid or corrupt PAK file." ); // but still log it anyways
-		log->addBreak();
-		return;
-	}
-}
-
-// This event occurs when the New menu item is clicked
-System::Void frmMain::newToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e)
-{
-	if ( progressBar->Enabled ) // if the progress bar is enabled, this signifies that there is currently an operation being performed
-	{
-		// display a message box asking if the user is sure they want to interrupt the current operation
-		System::Windows::Forms::DialogResult result = MessageBox::Show( "You are currently PAK'ing or UnPAK'ing a file. Interrupting the current operation may cause loss or corruption of data! Are you sure you want to make a new PAK file?", "Operation in progress", MessageBoxButtons::YesNo, MessageBoxIcon::Warning, MessageBoxDefaultButton::Button2 );
-		if ( result != System::Windows::Forms::DialogResult::Yes )
-		{
-			return;
-		}
-		else // perform resets on items in the form that are specific to performing an operation
-		{
-			progressBar->Value = 0;
-			progressBar->Enabled = false;
-			lblPercentProg->Text = "Idle";
-			stsStatus->Text = "Idle";
-			lblItemProg->Text = "0 " + lblItemProg->Text->Substring( lblItemProg->Text->IndexOf('/') );
-		}
-	}
-	if ( lstPakContents->Items->Count ) // if the contents list contains any items, this signifies that there is a PAK file open
-	{
-		// display a message box asking if the user is sure they want to lose their current pak work
-		System::Windows::Forms::DialogResult result = MessageBox::Show( "You currently have a PAK file open. If you make a new PAK file, any unsaved changes to the currently open PAK will be lost! Are you sure you want to make a new PAK file?", "PAK File already opened", MessageBoxButtons::YesNo, MessageBoxIcon::Warning, MessageBoxDefaultButton::Button2 );
-		if ( result != System::Windows::Forms::DialogResult::Yes )
-		{
-			return;
-		}
-	}
-
-	// reset all items in the form to their original values
-	lblItemProg->Text = "0 / 0";
-	btnUnpak->Enabled = false;
-	btnPak->Enabled = false;
-	menuPak->Enabled = false;
-	menuUnpak->Enabled = false;
-	txtSaveDir->Text = "";
-	lblOrigDir->Text = "None";
-	lblPakSize->Text = "0 KB";
-	lblPakSizeAfterPak->Text = "0 KB";
-	lblNumFiles->Text = "0 Files";
-
-	// clear the content list
-	for each ( ListViewItem ^item in lstPakContents->Items )
-	{
-		item->Remove();
-	}
-}
-
 // This event occurs when the user drags a file into the pak contents area
 System::Void frmMain::lstPakContents_DragDrop(System::Object^  sender, System::Windows::Forms::DragEventArgs^  e)
 {
@@ -424,37 +219,6 @@ System::Void frmMain::lstPakContents_DragDrop(System::Object^  sender, System::W
 
 }
 
-// This event occurs when the user clicks the Select all button
-System::Void frmMain::btnSelectAll_Click(System::Object^  sender, System::EventArgs^  e)
-{
-	for each ( ListViewItem^ item in lstPakContents->Items )
-	{
-		item->Checked = true;
-	}
-}
-System::Void frmMain::selectAllToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e)
-{
-	for each ( ListViewItem^ item in lstPakContents->Items )
-	{
-		item->Checked = true;
-	}
-}
-
-// This event occurs when the user clicks the Select none button
-System::Void frmMain::btnSelectNone_Click(System::Object^  sender, System::EventArgs^  e)
-{
-	for each ( ListViewItem^ item in lstPakContents->Items )
-	{
-		item->Checked = false;
-	}
-}
-System::Void frmMain::selectNoneToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e)
-{
-	for each ( ListViewItem^ item in lstPakContents->Items )
-	{
-		item->Checked = false;
-	}
-}
 
 // This event occurs when the user clicks the Unpak button
 System::Void frmMain::btnUnpak_Click(System::Object^  sender, System::EventArgs^  e) 
