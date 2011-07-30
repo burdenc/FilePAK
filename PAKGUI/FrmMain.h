@@ -574,6 +574,7 @@ private: System::Windows::Forms::ToolStripMenuItem^  selectNoneToolStripMenuItem
 			this->btnPak->TabIndex = 9;
 			this->btnPak->Text = L"PAK/RePAK Checked";
 			this->btnPak->UseVisualStyleBackColor = true;
+			this->btnPak->Click += gcnew System::EventHandler(this, &frmMain::btnPak_Click);
 			// 
 			// statusStrip1
 			// 
@@ -792,7 +793,7 @@ private: System::Windows::Forms::ToolStripMenuItem^  selectNoneToolStripMenuItem
 		}
 #pragma endregion
 
-		// This event occurs every time an item in the PAK Contents list is checked or unchecked.
+			// This event occurs every time an item in the PAK Contents list is checked or unchecked.
 	private: System::Void lstPakContents_ItemCheck(System::Object^  sender, System::Windows::Forms::ItemCheckEventArgs^  e);
 
 			 // This event occurs when the Browse button is hit to add an entire directory to the PAK
@@ -831,13 +832,16 @@ private: System::Windows::Forms::ToolStripMenuItem^  selectNoneToolStripMenuItem
 
 			 // unpak button clicked
 	private: System::Void btnUnpak_Click(System::Object^  sender, System::EventArgs^  e);
+
+			 // TODO
+			 // ADD COMMENTS TO FUNCS BELOW
+
 	private: System::Void btnSaveDirBrowse_Click(System::Object^  sender, System::EventArgs^  e);
 	private: System::Void logToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e);
 	private: System::Void frmLog_VisibleChanged(System::Object^  sender, System::EventArgs^  e);
-
 	private: System::Void checkAllToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e);
 	private: System::Void checkNoneToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e);
-
+	private: System::Void btnPak_Click(System::Object^  sender, System::EventArgs^  e);
 };	
 
 }

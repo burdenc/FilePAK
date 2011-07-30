@@ -91,6 +91,7 @@
     <ClCompile Include="filePAK.cpp" />
     <ClCompile Include="frmLog.cpp" />
     <ClCompile Include="logEvents.cpp" />
+    <ClCompile Include="lstEvents.cpp" />
     <ClCompile Include="menuEvents.cpp" />
     <ClCompile Include="PAKGUI.cpp" />
     <ClCompile Include="stdafx.cpp">

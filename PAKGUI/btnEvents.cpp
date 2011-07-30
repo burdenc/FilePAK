@@ -3,6 +3,7 @@
 
 using namespace PAKGUI;
 
+
 // This event occurs when the user clicks the Check all button
 System::Void frmMain::btnCheckAll_Click(System::Object^  sender, System::EventArgs^  e)
 {
@@ -19,6 +20,18 @@ System::Void frmMain::btnCheckNone_Click(System::Object^  sender, System::EventA
 	{
 		item->Checked = false;
 	}
+}
+
+// This event occurs when the user clicks the Unpak button
+System::Void frmMain::btnUnpak_Click(System::Object^  sender, System::EventArgs^  e) 
+{
+	folderBrowserDialog->ShowDialog(); // open folder browser
+}
+
+// This event occurs when the user clicks the Pak button
+System::Void frmMain::btnPak_Click(System::Object^  sender, System::EventArgs^  e)
+{
+
 }
 
 // This event occurs when the Browse button is hit to add an entire directory to the PAK
@@ -90,5 +103,45 @@ System::Void frmMain::btnBrowseDir_Click(System::Object^  sender, System::EventA
 		{
 			log->Visible = true;
 		}
+	}
+}
+
+// This event occurs when the user clicks the browse button for the pak directory
+System::Void frmMain::btnSaveDirBrowse_Click(System::Object^  sender, System::EventArgs^  e)
+{
+	// if text is present in the save file text box and it appears to be a directory
+	if ( txtSaveDir->Text->Length > 0 && ( txtSaveDir->Text->LastIndexOf( '\\' ) != -1 || txtSaveDir->Text->LastIndexOf( '/' ) != -1 ) )
+	{
+		// make that the initial directory and file for the dialog
+		savePakDialog->InitialDirectory = txtSaveDir->Text->Substring( 0, txtSaveDir->Text->LastIndexOf( '\\' ) );
+
+		// account for both types of slashes
+		if ( txtSaveDir->Text->Length >= txtSaveDir->Text->LastIndexOf( '\\' ) ) // make sure there is a file present after the last slash
+		{
+			savePakDialog->FileName = txtSaveDir->Text->Substring( txtSaveDir->Text->LastIndexOf( '\\' )+1 );
+		}
+		else if ( txtSaveDir->Text->Length >= txtSaveDir->Text->LastIndexOf( '/' ) ) // make sure there is a file present after the last slash
+		{
+			savePakDialog->FileName = txtSaveDir->Text->Substring( txtSaveDir->Text->LastIndexOf( '/' )+1 );
+		}
+		else
+		{
+			savePakDialog->FileName = ""; // the user didn't enter a file after the directory
+		}
+	}
+	else // otherwise, we can't ascertain any sort of directory structure
+	{
+		// so 
+		savePakDialog->InitialDirectory = "";
+		savePakDialog->FileName = "";
+	}
+
+	savePakDialog->ShowDialog();
+
+	// if the user didn't select a file, then it returns the previously selected file without the full path (hence no slashes)
+	// this can be a problem because we always want the full path in the directory text box
+	if ( savePakDialog->FileName->IndexOf( '\\' ) != -1 || savePakDialog->FileName->IndexOf( '/' ) != -1 ) // if the user didn't select a file
+	{
+		txtSaveDir->Text = savePakDialog->FileName; // put that path in the save file text box
 	}
 }

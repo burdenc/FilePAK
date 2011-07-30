@@ -2,6 +2,7 @@
 
 using namespace PAKGUI;
 
+
 System::Void frmMain::logToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e)
 {
 	if ( !logToolStripMenuItem->Checked )
