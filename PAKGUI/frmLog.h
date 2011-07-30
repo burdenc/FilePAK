@@ -159,17 +159,9 @@ namespace PAKGUI {
 
 		}
 #pragma endregion
-	private: System::Void btnOK_Click(System::Object^  sender, System::EventArgs^  e) {
-				 this->Visible = false;
-			 }
-	private: System::Void frmLog_FormClosing(System::Object^  sender, System::Windows::Forms::FormClosingEventArgs^  e) {
-				 this->Visible = false;
-				 e->Cancel = true;
-			 }
-
-	private: System::Void btnClear_Click(System::Object^  sender, System::EventArgs^  e) {
-				 txtLog->Text = "";
-			 }
+	private: System::Void btnOK_Click(System::Object^  sender, System::EventArgs^  e);
+	private: System::Void frmLog_FormClosing(System::Object^  sender, System::Windows::Forms::FormClosingEventArgs^  e);
+	private: System::Void btnClear_Click(System::Object^  sender, System::EventArgs^  e);
 
 	};
 }

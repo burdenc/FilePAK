@@ -1,6 +1,6 @@
 #include "stdafx.h"
-#include "FrmMain.h"
-#include "frmLog.h"
+#include "Events.h"
+
 #include <fstream>
 #include <sstream>
 #include <iostream>
@@ -10,11 +10,6 @@
 
 
 using namespace PAKGUI;
-
-filePAK pak;
-
-map<string, long> fileSizes;
-long currentEstimatedSize = 0;
 
 // convert System::String (String ^) to std::string for use with LibPAK
 void MarshalString ( String ^ s, string& os )
@@ -504,29 +499,5 @@ System::Void frmMain::btnSaveDirBrowse_Click(System::Object^  sender, System::Ev
 	if ( savePakDialog->FileName->IndexOf( '\\' ) != -1 || savePakDialog->FileName->IndexOf( '/' ) != -1 ) // if the user didn't select a file
 	{
 		txtSaveDir->Text = savePakDialog->FileName; // put that path in the save file text box
-	}
-}
-
-System::Void frmMain::logToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e)
-{
-	if ( !logToolStripMenuItem->Checked )
-	{
-		frmMain::log->Visible = false;
-	}
-	else
-	{
-		frmMain::log->Visible = true;
-	}
-	//frmMain::log->Show();
-}
-
-System::Void frmMain::frmLog_VisibleChanged(System::Object^  sender, System::EventArgs^  e)
-{
-	if ( log->Visible ) {
-		logToolStripMenuItem->Checked = true;
-	}
-	else
-	{
-		logToolStripMenuItem->Checked = false;
 	}
 }

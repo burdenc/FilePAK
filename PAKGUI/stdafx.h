@@ -4,3 +4,5 @@
 #pragma once
 
 #include "filePAK.h"
+#include "FrmMain.h"
+#include "frmLog.h"
