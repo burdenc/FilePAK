@@ -152,6 +152,8 @@ System::Void frmMain::btnBrowseDir_Click(System::Object^  sender, System::EventA
 
 	array<String^> ^files = Directory::GetFiles( folderBrowserDialog->SelectedPath );
 
+	bool errors = false;
+
 	for each ( String ^file in files )
 	{
 		// calc file size
@@ -160,14 +162,30 @@ System::Void frmMain::btnBrowseDir_Click(System::Object^  sender, System::EventA
 		MarshalString( file->Substring( file->LastIndexOf('\\') + 1 ), tmp );
 		if ( fileSizes[tmp] != 0 )
 		{
-			MessageBox::Show( "Error adding file: \nDuplicate file entry detected: \"" + file->Substring( file->LastIndexOf('\\') + 1 ) + "\"",  "Error", MessageBoxButtons::OK, MessageBoxIcon::Error );
+			if ( errors )
+			{
+				log->displayMsg( "\tDuplicate file entry detected: \"" + file->Substring( file->LastIndexOf('\\') + 1 ) + "\"" );
+			}
+			else
+			{
+				errors = true;
+				log->displayMsg( "Error adding files: " + Environment::NewLine + "\tDuplicate file entry detected: \"" + file->Substring( file->LastIndexOf('\\') + 1 ) + "\"" );
+			}
 			continue;
 		}
 		fileSizes[tmp] = bytes;
 		String ^size = getFileSize( bytes );
 		if ( size == "0 KB" )
 		{
-			MessageBox::Show( "Error adding file: \nFile \"" + file->Substring( file->LastIndexOf('\\')+1 ) + "\" contains no data.",  "Error", MessageBoxButtons::OK, MessageBoxIcon::Error );
+			if ( errors )
+			{
+				log->displayMsg( "\tFile \"" + file->Substring( file->LastIndexOf('\\')+1 ) + "\" contains no data." );
+			}
+			else
+			{
+				errors = true;
+				log->displayMsg( "Error adding files: " + Environment::NewLine + "\tFile \"" + file->Substring( file->LastIndexOf('\\')+1 ) + "\" contains no data." );
+			}
 			continue;
 		}
 
@@ -180,6 +198,17 @@ System::Void frmMain::btnBrowseDir_Click(System::Object^  sender, System::EventA
 		item->Checked = true; // defaults to checked. since you are manually adding the file, it's assumed that you want to include it in your pak
 		lstPakContents->Items->Add( item ); // finally add the item to the list
 
+	}
+
+	log->addBreak();
+
+	if ( !log->Visible && errors ) // if there were errors and the log isn't visible, warn them that there were errors and ask to display the log, otherwise we don't want to bug the user
+	{
+		System::Windows::Forms::DialogResult result = MessageBox::Show( "There were errors performing the previous action. Would you like to view the error log?",  "Errors", MessageBoxButtons::YesNo, MessageBoxIcon::Error );
+		if ( result == System::Windows::Forms::DialogResult::Yes )
+		{
+			log->Visible = true;
+		}
 	}
 }
 
@@ -266,7 +295,10 @@ System::Void frmMain::openToolStripMenuItem_Click(System::Object^  sender, Syste
 	}
 	else
 	{
+		// This error is worth bringing the user's immediate attention to
 		MessageBox::Show( "Error reading PAK:\nInvalid or corrupt PAK file.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error );
+		log->displayMsg( "Error reading PAK:" + Environment::NewLine + "\tInvalid or corrupt PAK file." ); // but still log it anyways
+		log->addBreak();
 		return;
 	}
 }
@@ -324,16 +356,20 @@ System::Void frmMain::newToolStripMenuItem_Click(System::Object^  sender, System
 System::Void frmMain::lstPakContents_DragDrop(System::Object^  sender, System::Windows::Forms::DragEventArgs^  e)
 {
 
-	// NOTE: folders are not working right now, and they might not ever be
+	// NOTE: drag/drop'ing folders are not working right now, and they might not ever be
 
 	DataObject^ o = gcnew DataObject( DataFormats::FileDrop, e->Data->GetData(DataFormats::FileDrop) );
-	if (!o->ContainsFileDropList() ) // should never happen
+	if (!o->ContainsFileDropList() ) // probably shouldn't ever happen
 	{
+		// this error is worth the user's immediate attention
 		MessageBox::Show( "Error adding files:\nNo eligible files could be found.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error  );
+		log->displayMsg( "Error adding files:" + Environment::NewLine + "\tNo eligible files could be found." ); // still add it to the log anyways
+		log->addBreak();
 	}
 
 	System::Collections::Specialized::StringCollection ^s = o->GetFileDropList();
 
+	bool errors = false; // if there were errors adding files, this will be true
 	// cycle through all the files that were dragged and add them to the list
 	for each ( String ^p in s )
 	{
@@ -341,14 +377,30 @@ System::Void frmMain::lstPakContents_DragDrop(System::Object^  sender, System::W
 		long bytes = getFileBytes( p );
 		if ( bytes <= 0 )
 		{
-			MessageBox::Show( "Error adding file: \nFile \"" + p->Substring( p->LastIndexOf('\\')+1 ) + "\" contains no data.",  "Error", MessageBoxButtons::OK, MessageBoxIcon::Error );
+			if ( errors )
+			{
+				log->displayMsg( "\tFile \"" + p->Substring( p->LastIndexOf('\\')+1 ) + "\" contains no data." );
+			}
+			else
+			{
+				errors = true;
+				log->displayMsg( "Error adding files: " + Environment::NewLine + "\tFile \"" + p->Substring( p->LastIndexOf('\\')+1 ) + "\" contains no data." );
+			}
 			continue;
 		}
 		string tmp;
 		MarshalString( p->Substring( p->LastIndexOf('\\') + 1 ), tmp );
 		if ( fileSizes[tmp] != 0 )
 		{
-			MessageBox::Show( "Error adding file: \nDuplicate file entry detected: \"" + p->Substring( p->LastIndexOf('\\')+1 ) + "\"",  "Error", MessageBoxButtons::OK, MessageBoxIcon::Error );
+			if ( errors )
+			{
+				log->displayMsg( "\tDuplicate file entry detected: \"" + p->Substring( p->LastIndexOf('\\')+1 ) + "\"" );
+			}
+			else 
+			{
+				errors = true;
+				log->displayMsg( "Error adding file: " + Environment::NewLine + "\tDuplicate file entry detected: \"" + p->Substring( p->LastIndexOf('\\')+1 ) + "\"" );
+			}
 			continue;
 		}
 		fileSizes[tmp] = bytes;
@@ -363,6 +415,18 @@ System::Void frmMain::lstPakContents_DragDrop(System::Object^  sender, System::W
 		item->Checked = true; // defaults to checked. since you are manually adding the file, it's assumed that you want to include it in your pak
 		lstPakContents->Items->Add( item ); // finally add the item to the list
 	}
+
+	log->addBreak();
+
+	if ( !log->Visible && errors ) // if there were errors and the log isn't visible, warn them that there were errors and ask to display the log, otherwise we don't want to bug the user
+	{
+		System::Windows::Forms::DialogResult result = MessageBox::Show( "There were errors performing the previous action. Would you like to view the error log?",  "Errors", MessageBoxButtons::YesNo, MessageBoxIcon::Error );
+		if ( result == System::Windows::Forms::DialogResult::Yes )
+		{
+			log->Visible = true;
+		}
+	}
+
 }
 
 // This event occurs when the user clicks the Select all button

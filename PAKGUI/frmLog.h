@@ -15,12 +15,21 @@ namespace PAKGUI {
 	public ref class frmLog : public System::Windows::Forms::Form
 	{
 	public:
+		System::Windows::Forms::TextBox^  txtLog;
 		frmLog(void)
 		{
 			InitializeComponent();
 			//
 			//TODO: Add the constructor code here
 			//
+		}
+
+		System::Void displayMsg( String ^msg ) {
+			txtLog->AppendText( msg + Environment::NewLine );
+		}
+
+		System::Void addBreak( void ) {
+			txtLog->AppendText( "------------------------------" + Environment::NewLine );
 		}
 
 	protected:
@@ -34,7 +43,6 @@ namespace PAKGUI {
 				delete components;
 			}
 		}
-	private: System::Windows::Forms::TextBox^  txtLog;
 	protected: 
 
 	protected: 
@@ -70,6 +78,7 @@ namespace PAKGUI {
 			// txtLog
 			// 
 			this->txtLog->AcceptsReturn = true;
+			this->txtLog->AcceptsTab = true;
 			this->txtLog->Dock = System::Windows::Forms::DockStyle::Fill;
 			this->txtLog->Location = System::Drawing::Point(3, 3);
 			this->txtLog->Multiline = true;
@@ -153,13 +162,14 @@ namespace PAKGUI {
 	private: System::Void btnOK_Click(System::Object^  sender, System::EventArgs^  e) {
 				 this->Visible = false;
 			 }
-private: System::Void frmLog_FormClosing(System::Object^  sender, System::Windows::Forms::FormClosingEventArgs^  e) {
-			 this->Visible = false;
-			 e->Cancel = true;
-		 }
+	private: System::Void frmLog_FormClosing(System::Object^  sender, System::Windows::Forms::FormClosingEventArgs^  e) {
+				 this->Visible = false;
+				 e->Cancel = true;
+			 }
 
-private: System::Void btnClear_Click(System::Object^  sender, System::EventArgs^  e) {
-			 txtLog->Text = "";
-		 }
-};
+	private: System::Void btnClear_Click(System::Object^  sender, System::EventArgs^  e) {
+				 txtLog->Text = "";
+			 }
+
+	};
 }

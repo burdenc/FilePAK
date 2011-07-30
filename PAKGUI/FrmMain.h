@@ -19,7 +19,8 @@ namespace PAKGUI {
 	public ref class frmMain : public System::Windows::Forms::Form
 	{
 
-	private: System::Windows::Forms::Form ^log;
+	//private: System::Windows::Forms::Form ^log;
+	private: frmLog ^log;
 
 	public:
 		frmMain(void)
@@ -798,6 +799,7 @@ namespace PAKGUI {
 	private: System::Void btnSaveDirBrowse_Click(System::Object^  sender, System::EventArgs^  e);
 	private: System::Void logToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e);
 	private: System::Void frmLog_VisibleChanged(System::Object^  sender, System::EventArgs^  e);
+
 	};	
 
 }
