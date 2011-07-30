@@ -437,9 +437,23 @@ System::Void frmMain::btnSelectAll_Click(System::Object^  sender, System::EventA
 		item->Checked = true;
 	}
 }
+System::Void frmMain::selectAllToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e)
+{
+	for each ( ListViewItem^ item in lstPakContents->Items )
+	{
+		item->Checked = true;
+	}
+}
 
 // This event occurs when the user clicks the Select none button
 System::Void frmMain::btnSelectNone_Click(System::Object^  sender, System::EventArgs^  e)
+{
+	for each ( ListViewItem^ item in lstPakContents->Items )
+	{
+		item->Checked = false;
+	}
+}
+System::Void frmMain::selectNoneToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e)
 {
 	for each ( ListViewItem^ item in lstPakContents->Items )
 	{
