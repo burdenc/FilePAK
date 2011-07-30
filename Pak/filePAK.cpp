@@ -327,8 +327,16 @@ bool filePAK::rebuildPAK()
 		remove(pakname.c_str()); //deleting old PAK
 
 		char* filename = new char[150];
+
+		// windows complains when we don't use the secure alternatives to strcpy and strcat,
+		// so we might as well use them and reap whatever benefits they may provide
+#ifdef _WINDOWS_
+		strcpy_s(filename, pakname.length(), pakname.c_str());
+		strcat_s(filename, 4, ".new");
+#else
 		strcpy(filename, pakname.c_str());
 		strcat(filename, ".new");
+#endif
 
 		rename(filename, pakname.c_str());
 		delete filename;

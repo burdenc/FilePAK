@@ -100,17 +100,21 @@ namespace PAKGUI {
 	private: System::Windows::Forms::ToolStripMenuItem^  newToolStripMenuItem;
 	private: System::Windows::Forms::ToolStripMenuItem^  openToolStripMenuItem;
 	private: System::Windows::Forms::ToolStripSeparator^  toolStripMenuItem1;
-	private: System::Windows::Forms::ToolStripMenuItem^  selectAllToolStripMenuItem;
-	private: System::Windows::Forms::ToolStripMenuItem^  selectNoneToolStripMenuItem;
+	private: System::Windows::Forms::ToolStripMenuItem^  checkAllToolStripMenuItem;
+	private: System::Windows::Forms::ToolStripMenuItem^  checkNoneToolStripMenuItem;
+
+
 	private: System::Windows::Forms::ToolStripMenuItem^  pAKToolStripMenuItem;
 	private: System::Windows::Forms::ToolStripMenuItem^  menuPak;
 	private: System::Windows::Forms::ToolStripMenuItem^  menuUnpak;
+	private: System::Windows::Forms::Button^  btnCheckNone;
 
 
 
-	private: System::Windows::Forms::Button^  btnSelectNone;
 
-	private: System::Windows::Forms::Button^  btnSelectAll;
+	private: System::Windows::Forms::Button^  btnCheckAll;
+
+
 	private: System::Windows::Forms::OpenFileDialog^  openPakDialog;
 	private: System::Windows::Forms::SaveFileDialog^  savePakDialog;
 
@@ -154,8 +158,10 @@ namespace PAKGUI {
 	private: System::Windows::Forms::ToolStripMenuItem^  viewToolStripMenuItem;
 	private: System::Windows::Forms::ToolStripMenuItem^  logToolStripMenuItem;
 private: System::Windows::Forms::ToolStripSeparator^  toolStripMenuItem2;
-private: System::Windows::Forms::ToolStripMenuItem^  selectAllToolStripMenuItem1;
-private: System::Windows::Forms::ToolStripMenuItem^  selectNoneToolStripMenuItem1;
+private: System::Windows::Forms::ToolStripMenuItem^  selectAllToolStripMenuItem;
+private: System::Windows::Forms::ToolStripMenuItem^  selectNoneToolStripMenuItem;
+
+
 
 
 
@@ -181,6 +187,9 @@ private: System::Windows::Forms::ToolStripMenuItem^  selectNoneToolStripMenuItem
 			this->toolStripMenuItem1 = (gcnew System::Windows::Forms::ToolStripSeparator());
 			this->exitToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->editToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->checkAllToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->checkNoneToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->toolStripMenuItem2 = (gcnew System::Windows::Forms::ToolStripSeparator());
 			this->selectAllToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->selectNoneToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->viewToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
@@ -198,8 +207,8 @@ private: System::Windows::Forms::ToolStripMenuItem^  selectNoneToolStripMenuItem
 			this->btnAddFiles = (gcnew System::Windows::Forms::Button());
 			this->btnBrowseDir = (gcnew System::Windows::Forms::Button());
 			this->btnDeleteSelected = (gcnew System::Windows::Forms::Button());
-			this->btnSelectNone = (gcnew System::Windows::Forms::Button());
-			this->btnSelectAll = (gcnew System::Windows::Forms::Button());
+			this->btnCheckNone = (gcnew System::Windows::Forms::Button());
+			this->btnCheckAll = (gcnew System::Windows::Forms::Button());
 			this->panel3 = (gcnew System::Windows::Forms::Panel());
 			this->lblPercentProg = (gcnew System::Windows::Forms::Label());
 			this->lblItemProg = (gcnew System::Windows::Forms::Label());
@@ -227,9 +236,6 @@ private: System::Windows::Forms::ToolStripMenuItem^  selectNoneToolStripMenuItem
 			this->txtSaveDir = (gcnew System::Windows::Forms::TextBox());
 			this->label3 = (gcnew System::Windows::Forms::Label());
 			this->groupBox1 = (gcnew System::Windows::Forms::GroupBox());
-			this->toolStripMenuItem2 = (gcnew System::Windows::Forms::ToolStripSeparator());
-			this->selectAllToolStripMenuItem1 = (gcnew System::Windows::Forms::ToolStripMenuItem());
-			this->selectNoneToolStripMenuItem1 = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->menuStrip1->SuspendLayout();
 			this->groupBox2->SuspendLayout();
 			this->panel3->SuspendLayout();
@@ -288,27 +294,48 @@ private: System::Windows::Forms::ToolStripMenuItem^  selectNoneToolStripMenuItem
 			// 
 			// editToolStripMenuItem
 			// 
-			this->editToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(5) {this->selectAllToolStripMenuItem, 
-				this->selectNoneToolStripMenuItem, this->toolStripMenuItem2, this->selectAllToolStripMenuItem1, this->selectNoneToolStripMenuItem1});
+			this->editToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(5) {this->checkAllToolStripMenuItem, 
+				this->checkNoneToolStripMenuItem, this->toolStripMenuItem2, this->selectAllToolStripMenuItem, this->selectNoneToolStripMenuItem});
 			this->editToolStripMenuItem->Name = L"editToolStripMenuItem";
 			this->editToolStripMenuItem->Size = System::Drawing::Size(39, 20);
 			this->editToolStripMenuItem->Text = L"Edit";
 			// 
+			// checkAllToolStripMenuItem
+			// 
+			this->checkAllToolStripMenuItem->Name = L"checkAllToolStripMenuItem";
+			this->checkAllToolStripMenuItem->ShortcutKeys = static_cast<System::Windows::Forms::Keys>((System::Windows::Forms::Keys::Control | System::Windows::Forms::Keys::A));
+			this->checkAllToolStripMenuItem->Size = System::Drawing::Size(209, 22);
+			this->checkAllToolStripMenuItem->Text = L"Check all";
+			this->checkAllToolStripMenuItem->Click += gcnew System::EventHandler(this, &frmMain::checkAllToolStripMenuItem_Click);
+			// 
+			// checkNoneToolStripMenuItem
+			// 
+			this->checkNoneToolStripMenuItem->Name = L"checkNoneToolStripMenuItem";
+			this->checkNoneToolStripMenuItem->ShortcutKeys = static_cast<System::Windows::Forms::Keys>((System::Windows::Forms::Keys::Control | System::Windows::Forms::Keys::D));
+			this->checkNoneToolStripMenuItem->Size = System::Drawing::Size(209, 22);
+			this->checkNoneToolStripMenuItem->Text = L"Check none";
+			this->checkNoneToolStripMenuItem->Click += gcnew System::EventHandler(this, &frmMain::checkNoneToolStripMenuItem_Click);
+			// 
+			// toolStripMenuItem2
+			// 
+			this->toolStripMenuItem2->Name = L"toolStripMenuItem2";
+			this->toolStripMenuItem2->Size = System::Drawing::Size(206, 6);
+			// 
 			// selectAllToolStripMenuItem
 			// 
 			this->selectAllToolStripMenuItem->Name = L"selectAllToolStripMenuItem";
-			this->selectAllToolStripMenuItem->ShortcutKeys = static_cast<System::Windows::Forms::Keys>((System::Windows::Forms::Keys::Control | System::Windows::Forms::Keys::A));
-			this->selectAllToolStripMenuItem->Size = System::Drawing::Size(179, 22);
-			this->selectAllToolStripMenuItem->Text = L"Check all";
-			this->selectAllToolStripMenuItem->Click += gcnew System::EventHandler(this, &frmMain::checkAllToolStripMenuItem_Click);
+			this->selectAllToolStripMenuItem->ShortcutKeys = static_cast<System::Windows::Forms::Keys>(((System::Windows::Forms::Keys::Control | System::Windows::Forms::Keys::Shift) 
+				| System::Windows::Forms::Keys::A));
+			this->selectAllToolStripMenuItem->Size = System::Drawing::Size(209, 22);
+			this->selectAllToolStripMenuItem->Text = L"Select all";
 			// 
 			// selectNoneToolStripMenuItem
 			// 
 			this->selectNoneToolStripMenuItem->Name = L"selectNoneToolStripMenuItem";
-			this->selectNoneToolStripMenuItem->ShortcutKeys = static_cast<System::Windows::Forms::Keys>((System::Windows::Forms::Keys::Control | System::Windows::Forms::Keys::D));
-			this->selectNoneToolStripMenuItem->Size = System::Drawing::Size(179, 22);
-			this->selectNoneToolStripMenuItem->Text = L"Check none";
-			this->selectNoneToolStripMenuItem->Click += gcnew System::EventHandler(this, &frmMain::checkNoneToolStripMenuItem_Click);
+			this->selectNoneToolStripMenuItem->ShortcutKeys = static_cast<System::Windows::Forms::Keys>(((System::Windows::Forms::Keys::Control | System::Windows::Forms::Keys::Shift) 
+				| System::Windows::Forms::Keys::D));
+			this->selectNoneToolStripMenuItem->Size = System::Drawing::Size(209, 22);
+			this->selectNoneToolStripMenuItem->Text = L"Select none";
 			// 
 			// viewToolStripMenuItem
 			// 
@@ -356,8 +383,8 @@ private: System::Windows::Forms::ToolStripMenuItem^  selectNoneToolStripMenuItem
 			this->groupBox2->Controls->Add(this->btnAddFiles);
 			this->groupBox2->Controls->Add(this->btnBrowseDir);
 			this->groupBox2->Controls->Add(this->btnDeleteSelected);
-			this->groupBox2->Controls->Add(this->btnSelectNone);
-			this->groupBox2->Controls->Add(this->btnSelectAll);
+			this->groupBox2->Controls->Add(this->btnCheckNone);
+			this->groupBox2->Controls->Add(this->btnCheckAll);
 			this->groupBox2->Location = System::Drawing::Point(14, 151);
 			this->groupBox2->Margin = System::Windows::Forms::Padding(5);
 			this->groupBox2->Name = L"groupBox2";
@@ -444,25 +471,25 @@ private: System::Windows::Forms::ToolStripMenuItem^  selectNoneToolStripMenuItem
 			this->btnDeleteSelected->Text = L"Delete highlighted";
 			this->btnDeleteSelected->UseVisualStyleBackColor = true;
 			// 
-			// btnSelectNone
+			// btnCheckNone
 			// 
-			this->btnSelectNone->Location = System::Drawing::Point(97, 26);
-			this->btnSelectNone->Name = L"btnSelectNone";
-			this->btnSelectNone->Size = System::Drawing::Size(75, 23);
-			this->btnSelectNone->TabIndex = 3;
-			this->btnSelectNone->Text = L"Check none";
-			this->btnSelectNone->UseVisualStyleBackColor = true;
-			this->btnSelectNone->Click += gcnew System::EventHandler(this, &frmMain::btnCheckNone_Click);
+			this->btnCheckNone->Location = System::Drawing::Point(97, 26);
+			this->btnCheckNone->Name = L"btnCheckNone";
+			this->btnCheckNone->Size = System::Drawing::Size(75, 23);
+			this->btnCheckNone->TabIndex = 3;
+			this->btnCheckNone->Text = L"Check none";
+			this->btnCheckNone->UseVisualStyleBackColor = true;
+			this->btnCheckNone->Click += gcnew System::EventHandler(this, &frmMain::btnCheckNone_Click);
 			// 
-			// btnSelectAll
+			// btnCheckAll
 			// 
-			this->btnSelectAll->Location = System::Drawing::Point(16, 26);
-			this->btnSelectAll->Name = L"btnSelectAll";
-			this->btnSelectAll->Size = System::Drawing::Size(75, 23);
-			this->btnSelectAll->TabIndex = 2;
-			this->btnSelectAll->Text = L"Check all";
-			this->btnSelectAll->UseVisualStyleBackColor = true;
-			this->btnSelectAll->Click += gcnew System::EventHandler(this, &frmMain::btnCheckAll_Click);
+			this->btnCheckAll->Location = System::Drawing::Point(16, 26);
+			this->btnCheckAll->Name = L"btnCheckAll";
+			this->btnCheckAll->Size = System::Drawing::Size(75, 23);
+			this->btnCheckAll->TabIndex = 2;
+			this->btnCheckAll->Text = L"Check all";
+			this->btnCheckAll->UseVisualStyleBackColor = true;
+			this->btnCheckAll->Click += gcnew System::EventHandler(this, &frmMain::btnCheckAll_Click);
 			// 
 			// panel3
 			// 
@@ -730,27 +757,6 @@ private: System::Windows::Forms::ToolStripMenuItem^  selectNoneToolStripMenuItem
 			this->groupBox1->TabIndex = 11;
 			this->groupBox1->TabStop = false;
 			this->groupBox1->Text = L"PAK";
-			// 
-			// toolStripMenuItem2
-			// 
-			this->toolStripMenuItem2->Name = L"toolStripMenuItem2";
-			this->toolStripMenuItem2->Size = System::Drawing::Size(176, 6);
-			// 
-			// selectAllToolStripMenuItem1
-			// 
-			this->selectAllToolStripMenuItem1->Name = L"selectAllToolStripMenuItem1";
-			this->selectAllToolStripMenuItem1->ShortcutKeys = static_cast<System::Windows::Forms::Keys>(((System::Windows::Forms::Keys::Control | System::Windows::Forms::Keys::Shift) 
-				| System::Windows::Forms::Keys::A));
-			this->selectAllToolStripMenuItem1->Size = System::Drawing::Size(209, 22);
-			this->selectAllToolStripMenuItem1->Text = L"Select all";
-			// 
-			// selectNoneToolStripMenuItem1
-			// 
-			this->selectNoneToolStripMenuItem1->Name = L"selectNoneToolStripMenuItem1";
-			this->selectNoneToolStripMenuItem1->ShortcutKeys = static_cast<System::Windows::Forms::Keys>(((System::Windows::Forms::Keys::Control | System::Windows::Forms::Keys::Shift) 
-				| System::Windows::Forms::Keys::D));
-			this->selectNoneToolStripMenuItem1->Size = System::Drawing::Size(209, 22);
-			this->selectNoneToolStripMenuItem1->Text = L"Select none";
 			// 
 			// frmMain
 			// 
