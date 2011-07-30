@@ -13,6 +13,18 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\Events">
+      <UniqueIdentifier>{626a7ea8-79be-46d2-a2cf-dc2d8ab9ee7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\libPAK">
+      <UniqueIdentifier>{842ca364-5d2c-48e5-b72e-bc1413d838e0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Events">
+      <UniqueIdentifier>{e5ba6053-d0e8-439f-9e44-abe717a8fcb0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\libPAK">
+      <UniqueIdentifier>{144ac93d-87ab-44db-9fa8-4541c2b0c49a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.ico">
@@ -29,26 +41,23 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Events.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="filePAK.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="frmLog.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="btnEvents.cpp">
+      <Filter>Source Files\Events</Filter>
     </ClCompile>
     <ClCompile Include="logEvents.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="btnEvents.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="menuEvents.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Events</Filter>
     </ClCompile>
     <ClCompile Include="lstEvents.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Events</Filter>
+    </ClCompile>
+    <ClCompile Include="menuEvents.cpp">
+      <Filter>Source Files\Events</Filter>
+    </ClCompile>
+    <ClCompile Include="Events.cpp">
+      <Filter>Source Files\Events</Filter>
+    </ClCompile>
+    <ClCompile Include="filePAK.cpp">
+      <Filter>Source Files\libPAK</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -61,14 +70,14 @@
     <ClInclude Include="frmMain.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="filePAK.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="frmLog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="filePAK.h">
+      <Filter>Header Files\libPAK</Filter>
+    </ClInclude>
     <ClInclude Include="Events.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Events</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

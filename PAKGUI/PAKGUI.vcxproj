@@ -89,7 +89,6 @@
     <ClCompile Include="btnEvents.cpp" />
     <ClCompile Include="Events.cpp" />
     <ClCompile Include="filePAK.cpp" />
-    <ClCompile Include="frmLog.cpp" />
     <ClCompile Include="logEvents.cpp" />
     <ClCompile Include="lstEvents.cpp" />
     <ClCompile Include="menuEvents.cpp" />
