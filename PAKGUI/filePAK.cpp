@@ -191,6 +191,7 @@ bool filePAK::readPAK(string PAKpath)
 {
 	ifstream PAKread;
 	PAKread.open(PAKpath, ios::binary);
+	pakname = PAKpath;
 	if(PAKread.is_open())
 	{
 

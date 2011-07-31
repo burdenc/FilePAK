@@ -2,6 +2,7 @@
 #include "Events.h"
 
 #include <sstream>
+#include <fstream>
 
 
 using namespace PAKGUI;
@@ -30,6 +31,16 @@ System::Void frmMain::btnUnpak_Click(System::Object^  sender, System::EventArgs^
 {
 	unpakFolderBrowserDialog->ShowDialog(); // open folder browser
 
+	if ( unpakFolderBrowserDialog->SelectedPath->Length <= 0 ) // if the user didn't select any files
+	{
+		return;
+	}
+
+	//unpakFolderBrowserDialog->SelectedPath;
+	// need to implement dialog that deals with replacing files
+	// give the user option to say no, no to all, yes, yes to all
+
+
 	IEnumerator^ items = lstPakContents->CheckedIndices->GetEnumerator(); // This is an enum for cycling through the checked items
 	bool errors = false;
 	while ( items->MoveNext() )
@@ -49,6 +60,59 @@ System::Void frmMain::btnUnpak_Click(System::Object^  sender, System::EventArgs^
 				log->displayMsg( "Error UnPAK'ing files: " + Environment::NewLine + "\tFile \"" + lstPakContents->Items[ itemIndex ]->Text + "\" is not in the PAK file." );
 			}
 			continue;
+		}
+
+		// if the file already exists
+		if ( File::Exists( unpakFolderBrowserDialog->SelectedPath + "\\" + lstPakContents->Items[ itemIndex ]->Text ) )
+		{
+			// we need to get the user's attention and ask them whether the want to overwrite the file before we continue
+			System::Windows::Forms::DialogResult result = MessageBox::Show( "This folder already contains a file named '" + lstPakContents->Items[ itemIndex ]->Text + "'\nDo you want to replace it?",  "Confirm File Replace", MessageBoxButtons::YesNoCancel, MessageBoxIcon::Warning );
+			if ( result == System::Windows::Forms::DialogResult::Yes )
+			{
+				// don't do anything. we'll keep going as if the file didn't already exist and the unpak function will overwrite it
+			}
+			else if ( result == System::Windows::Forms::DialogResult::No )
+			{
+				continue;
+			}
+			else // cancel or possibly closed dialog with X
+			{
+				return;
+			}
+		}
+
+		string name, dir;
+		MarshalString( unpakFolderBrowserDialog->SelectedPath + "\\" + lstPakContents->Items[ itemIndex ]->Text, dir );
+		MarshalString( lstPakContents->Items[ itemIndex ]->Text, name );
+
+		//pak.unPAKEntry( name, dir );
+
+		ofstream f; //output
+
+		char *buffer;
+		buffer = pak.getPAKEntryData(name);
+		int ofsize;
+		ofsize = pak.getPAKEntrySize(name);
+		if(buffer == NULL || ofsize <= 0)
+		{
+			//cout << "Critical error: Cannot find file listed in PAK\n";
+			//system("pause");
+			//return 1;
+		}
+
+		f.open(dir, ofstream::binary); // open in binary
+
+		if (f.is_open())  // make sure it opened
+		{
+			f.write(buffer, ofsize); // write the buffer to the output file with the size of the original file
+		}
+		else
+		{
+			// to do: make an crash function to display error messages and such
+			delete [] buffer;
+			//cout << "Critical error: Output file could not be opened\n";
+			//system("pause");
+			//return 1;
 		}
 
 	}
