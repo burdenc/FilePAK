@@ -80,6 +80,8 @@ System::Void frmMain::openToolStripMenuItem_Click(System::Object^  sender, Syste
 
 			// calc file size
 			String ^size = getFileSize( pak.getPAKEntry( name )->size );
+			long bytes = pak.getPAKEntry( name )->size;
+			fileSizes[name] = bytes;
 
 			ListViewItem^ item = gcnew ListViewItem( filename ); // create the item and give it name column
 			item->SubItems->Add( openPakDialog->FileName ); // directory column
@@ -89,18 +91,14 @@ System::Void frmMain::openToolStripMenuItem_Click(System::Object^  sender, Syste
 			item->Checked = true; // defaults to checked. since you are manually adding the file, it's assumed that you want to include it in your pak
 			lstPakContents->Items->Add( item ); // finally add the item to the list
 
-			long bytes = getFileBytes( openPakDialog->FileName );
-			string tmp;
-			MarshalString( filename, tmp );
-			fileSizes[tmp] = bytes;
-
-			lblPakSize->Text = getFileSize( bytes );
-			lblPakSizeAfterPak->Text = lblPakSize->Text;
 			lblNumFiles->Text = pak.getNumPAKEntries() + " Files";
 			txtSaveDir->Text = openPakDialog->FileName;
 			lblOrigDir->Text = openPakDialog->FileName;
 
 		}
+
+		lblPakSize->Text = getFileSize( currentEstimatedSize );
+		lblPakSizeAfterPak->Text = lblPakSize->Text;
 
 	}
 	else

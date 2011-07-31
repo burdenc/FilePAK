@@ -27,13 +27,13 @@ System::Void frmMain::lstPakContents_ItemCheck(System::Object^  sender, System::
 	{
 		++numChecked;
 		//lblPakSizeAfterPak->Text = atoi( cursize.c_str() ) + atoi( checkedsize.c_str() ) + " KB"; // Update Estimated size of PAK file after PAK'ing
-		currentEstimatedSize += checkedsize; // calculate the new size (remember, still in bytes)
+		currentEstimatedSize += std::max( checkedsize, (long) 1024 ); // calculate the new size (remember, still in bytes). also, we want to at least display 1KB of difference
 	}
 	else // If the event was triggered by an uncheck
 	{
 		--numChecked;
 		//lblPakSizeAfterPak->Text = atoi( cursize.c_str() ) - atoi( checkedsize.c_str() ) + " KB"; // Update Estimated size of PAK file after PAK'ing
-		currentEstimatedSize -= checkedsize; // calculate the new size (remember, still in bytes)
+		currentEstimatedSize -= std::max( checkedsize, (long) 1024 ); // calculate the new size (remember, still in bytes). also, we want to at least display 1KB of difference
 	}
 
 	// finally, determine the new units
