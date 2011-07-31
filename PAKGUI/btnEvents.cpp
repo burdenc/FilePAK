@@ -26,6 +26,11 @@ System::Void frmMain::btnCheckNone_Click(System::Object^  sender, System::EventA
 	}
 }
 
+System::Void frmMain::btnDeleteSelected_Click(System::Object^  sender, System::EventArgs^  e) {
+	// check for any original pak files
+	// then modify btnPak->Text = "RePAK";
+}
+
 // This event occurs when the user clicks the Unpak button
 System::Void frmMain::btnUnpak_Click(System::Object^  sender, System::EventArgs^  e) 
 {

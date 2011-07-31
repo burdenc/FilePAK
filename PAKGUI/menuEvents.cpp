@@ -99,6 +99,7 @@ System::Void frmMain::openToolStripMenuItem_Click(System::Object^  sender, Syste
 
 		lblPakSize->Text = getFileSize( currentEstimatedSize );
 		lblPakSizeAfterPak->Text = lblPakSize->Text;
+		btnPak->Text = "RePAK";
 
 	}
 	else

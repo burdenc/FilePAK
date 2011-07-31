@@ -19,7 +19,7 @@ namespace PAKGUI {
 	public ref class frmMain : public System::Windows::Forms::Form
 	{
 
-	//private: System::Windows::Forms::Form ^log;
+		//private: System::Windows::Forms::Form ^log;
 	private: frmLog ^log;
 
 	public:
@@ -157,10 +157,10 @@ namespace PAKGUI {
 	private: System::Windows::Forms::Label^  label4;
 	private: System::Windows::Forms::ToolStripMenuItem^  viewToolStripMenuItem;
 	private: System::Windows::Forms::ToolStripMenuItem^  logToolStripMenuItem;
-private: System::Windows::Forms::ToolStripSeparator^  toolStripMenuItem2;
-private: System::Windows::Forms::ToolStripMenuItem^  selectAllToolStripMenuItem;
-private: System::Windows::Forms::ToolStripMenuItem^  selectNoneToolStripMenuItem;
-private: System::Windows::Forms::FolderBrowserDialog^  unpakFolderBrowserDialog;
+	private: System::Windows::Forms::ToolStripSeparator^  toolStripMenuItem2;
+	private: System::Windows::Forms::ToolStripMenuItem^  selectAllToolStripMenuItem;
+	private: System::Windows::Forms::ToolStripMenuItem^  selectNoneToolStripMenuItem;
+	private: System::Windows::Forms::FolderBrowserDialog^  unpakFolderBrowserDialog;
 
 
 
@@ -472,6 +472,7 @@ private: System::Windows::Forms::FolderBrowserDialog^  unpakFolderBrowserDialog;
 			this->btnDeleteSelected->TabIndex = 5;
 			this->btnDeleteSelected->Text = L"Delete highlighted";
 			this->btnDeleteSelected->UseVisualStyleBackColor = true;
+			this->btnDeleteSelected->Click += gcnew System::EventHandler(this, &frmMain::btnDeleteSelected_Click);
 			// 
 			// btnCheckNone
 			// 
@@ -564,7 +565,7 @@ private: System::Windows::Forms::FolderBrowserDialog^  unpakFolderBrowserDialog;
 			this->btnUnpak->Name = L"btnUnpak";
 			this->btnUnpak->Size = System::Drawing::Size(95, 43);
 			this->btnUnpak->TabIndex = 8;
-			this->btnUnpak->Text = L"UnPAK Checked";
+			this->btnUnpak->Text = L"UnPAK";
 			this->btnUnpak->UseVisualStyleBackColor = true;
 			this->btnUnpak->Click += gcnew System::EventHandler(this, &frmMain::btnUnpak_Click);
 			// 
@@ -575,7 +576,7 @@ private: System::Windows::Forms::FolderBrowserDialog^  unpakFolderBrowserDialog;
 			this->btnPak->Name = L"btnPak";
 			this->btnPak->Size = System::Drawing::Size(95, 43);
 			this->btnPak->TabIndex = 9;
-			this->btnPak->Text = L"PAK/RePAK Checked";
+			this->btnPak->Text = L"PAK\r\n";
 			this->btnPak->UseVisualStyleBackColor = true;
 			this->btnPak->Click += gcnew System::EventHandler(this, &frmMain::btnPak_Click);
 			// 
@@ -801,7 +802,7 @@ private: System::Windows::Forms::FolderBrowserDialog^  unpakFolderBrowserDialog;
 		}
 #pragma endregion
 
-			// This event occurs every time an item in the PAK Contents list is checked or unchecked.
+		// This event occurs every time an item in the PAK Contents list is checked or unchecked.
 	private: System::Void lstPakContents_ItemCheck(System::Object^  sender, System::Windows::Forms::ItemCheckEventArgs^  e);
 
 			 // This event occurs when the Browse button is hit to add an entire directory to the PAK
@@ -850,7 +851,9 @@ private: System::Windows::Forms::FolderBrowserDialog^  unpakFolderBrowserDialog;
 	private: System::Void checkAllToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e);
 	private: System::Void checkNoneToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e);
 	private: System::Void btnPak_Click(System::Object^  sender, System::EventArgs^  e);
-};	
+	private: System::Void btnDeleteSelected_Click(System::Object^  sender, System::EventArgs^  e);
+
+	};	
 
 }
 
