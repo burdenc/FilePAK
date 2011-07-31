@@ -120,7 +120,7 @@ namespace PAKGUI {
 
 
 
-	private: System::Windows::Forms::FolderBrowserDialog^  folderBrowserDialog;
+	private: System::Windows::Forms::FolderBrowserDialog^  addFolderBrowserDialog;
 	private: System::Windows::Forms::Button^  btnAddFiles;
 
 	private: System::Windows::Forms::Button^  btnDeleteSelected;
@@ -160,6 +160,7 @@ namespace PAKGUI {
 private: System::Windows::Forms::ToolStripSeparator^  toolStripMenuItem2;
 private: System::Windows::Forms::ToolStripMenuItem^  selectAllToolStripMenuItem;
 private: System::Windows::Forms::ToolStripMenuItem^  selectNoneToolStripMenuItem;
+private: System::Windows::Forms::FolderBrowserDialog^  unpakFolderBrowserDialog;
 
 
 
@@ -222,7 +223,7 @@ private: System::Windows::Forms::ToolStripMenuItem^  selectNoneToolStripMenuItem
 			this->stsStatus = (gcnew System::Windows::Forms::ToolStripStatusLabel());
 			this->openPakDialog = (gcnew System::Windows::Forms::OpenFileDialog());
 			this->savePakDialog = (gcnew System::Windows::Forms::SaveFileDialog());
-			this->folderBrowserDialog = (gcnew System::Windows::Forms::FolderBrowserDialog());
+			this->addFolderBrowserDialog = (gcnew System::Windows::Forms::FolderBrowserDialog());
 			this->groupBox3 = (gcnew System::Windows::Forms::GroupBox());
 			this->lblOrigDir = (gcnew System::Windows::Forms::Label());
 			this->label4 = (gcnew System::Windows::Forms::Label());
@@ -236,6 +237,7 @@ private: System::Windows::Forms::ToolStripMenuItem^  selectNoneToolStripMenuItem
 			this->txtSaveDir = (gcnew System::Windows::Forms::TextBox());
 			this->label3 = (gcnew System::Windows::Forms::Label());
 			this->groupBox1 = (gcnew System::Windows::Forms::GroupBox());
+			this->unpakFolderBrowserDialog = (gcnew System::Windows::Forms::FolderBrowserDialog());
 			this->menuStrip1->SuspendLayout();
 			this->groupBox2->SuspendLayout();
 			this->panel3->SuspendLayout();
@@ -551,15 +553,16 @@ private: System::Windows::Forms::ToolStripMenuItem^  selectNoneToolStripMenuItem
 			this->progressBar->Enabled = false;
 			this->progressBar->Location = System::Drawing::Point(153, 8);
 			this->progressBar->Name = L"progressBar";
-			this->progressBar->Size = System::Drawing::Size(385, 37);
+			this->progressBar->Size = System::Drawing::Size(417, 37);
 			this->progressBar->TabIndex = 2;
 			// 
 			// btnUnpak
 			// 
 			this->btnUnpak->Enabled = false;
-			this->btnUnpak->Location = System::Drawing::Point(544, 5);
+			this->btnUnpak->Location = System::Drawing::Point(583, 5);
+			this->btnUnpak->Margin = System::Windows::Forms::Padding(10, 3, 3, 3);
 			this->btnUnpak->Name = L"btnUnpak";
-			this->btnUnpak->Size = System::Drawing::Size(112, 43);
+			this->btnUnpak->Size = System::Drawing::Size(95, 43);
 			this->btnUnpak->TabIndex = 8;
 			this->btnUnpak->Text = L"UnPAK Checked";
 			this->btnUnpak->UseVisualStyleBackColor = true;
@@ -568,9 +571,9 @@ private: System::Windows::Forms::ToolStripMenuItem^  selectNoneToolStripMenuItem
 			// btnPak
 			// 
 			this->btnPak->Enabled = false;
-			this->btnPak->Location = System::Drawing::Point(662, 5);
+			this->btnPak->Location = System::Drawing::Point(684, 5);
 			this->btnPak->Name = L"btnPak";
-			this->btnPak->Size = System::Drawing::Size(112, 43);
+			this->btnPak->Size = System::Drawing::Size(95, 43);
 			this->btnPak->TabIndex = 9;
 			this->btnPak->Text = L"PAK/RePAK Checked";
 			this->btnPak->UseVisualStyleBackColor = true;
@@ -614,9 +617,10 @@ private: System::Windows::Forms::ToolStripMenuItem^  selectNoneToolStripMenuItem
 			this->savePakDialog->SupportMultiDottedExtensions = true;
 			this->savePakDialog->Title = L"Save PAK file";
 			// 
-			// folderBrowserDialog
+			// addFolderBrowserDialog
 			// 
-			this->folderBrowserDialog->Description = L"Select a folder to UnPAK the files to:";
+			this->addFolderBrowserDialog->Description = L"Select a folder to add:";
+			this->addFolderBrowserDialog->ShowNewFolderButton = false;
 			// 
 			// groupBox3
 			// 
@@ -758,6 +762,10 @@ private: System::Windows::Forms::ToolStripMenuItem^  selectNoneToolStripMenuItem
 			this->groupBox1->TabIndex = 11;
 			this->groupBox1->TabStop = false;
 			this->groupBox1->Text = L"PAK";
+			// 
+			// unpakFolderBrowserDialog
+			// 
+			this->unpakFolderBrowserDialog->Description = L"Select a folder to UnPAK the files to:";
 			// 
 			// frmMain
 			// 

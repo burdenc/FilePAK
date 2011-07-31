@@ -3,9 +3,9 @@
 #include <map>
 
 extern filePAK pak;
-extern map<string, long> fileSizes;
-extern long currentEstimatedSize;
+extern map<string, unsigned long long> fileSizes;
+extern unsigned long long currentEstimatedSize;
 
 extern void MarshalString ( System::String ^ s, string& os );
-extern long getFileBytes( System::String ^filename );
-extern System::String ^getFileSize( long bytes );
+extern unsigned long long getFileBytes( System::String ^filename );
+extern System::String ^getFileSize( unsigned long long bytes );

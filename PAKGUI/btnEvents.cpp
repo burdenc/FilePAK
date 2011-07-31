@@ -28,7 +28,44 @@ System::Void frmMain::btnCheckNone_Click(System::Object^  sender, System::EventA
 // This event occurs when the user clicks the Unpak button
 System::Void frmMain::btnUnpak_Click(System::Object^  sender, System::EventArgs^  e) 
 {
-	folderBrowserDialog->ShowDialog(); // open folder browser
+	unpakFolderBrowserDialog->ShowDialog(); // open folder browser
+
+	IEnumerator^ items = lstPakContents->CheckedIndices->GetEnumerator(); // This is an enum for cycling through the checked items
+	bool errors = false;
+	while ( items->MoveNext() )
+	{
+		Int32 itemIndex = *safe_cast<Int32^>(items->Current);
+
+		// Make sure the user is trying to UnPAK files that are actually in the PAK
+		if ( lstPakContents->Items[ itemIndex ]->SubItems[3]->Text == "Not in PAK" )
+		{
+			if ( errors )
+			{
+				log->displayMsg( "\tFile \"" + lstPakContents->Items[ itemIndex ]->Text + "\" is not in the PAK file." );
+			}
+			else
+			{
+				errors = true;
+				log->displayMsg( "Error UnPAK'ing files: " + Environment::NewLine + "\tFile \"" + lstPakContents->Items[ itemIndex ]->Text + "\" is not in the PAK file." );
+			}
+			continue;
+		}
+
+	}
+
+	if ( errors ) // if there were errors and the log isn't visible, warn them that there were errors and ask to display the log, otherwise we don't want to bug the user
+	{
+		log->addBreak();
+		if ( !log->Visible )
+		{
+			System::Windows::Forms::DialogResult result = MessageBox::Show( "There were errors performing the previous action. Would you like to view the error log?",  "Errors", MessageBoxButtons::YesNo, MessageBoxIcon::Error );
+			if ( result == System::Windows::Forms::DialogResult::Yes )
+			{
+				log->Visible = true;
+			}
+		}
+	}
+
 }
 
 // This event occurs when the user clicks the Pak button
@@ -42,21 +79,21 @@ System::Void frmMain::btnPak_Click(System::Object^  sender, System::EventArgs^  
 // This event occurs when the Browse button is hit to add an entire directory to the PAK
 System::Void frmMain::btnBrowseDir_Click(System::Object^  sender, System::EventArgs^  e)
 {
-	folderBrowserDialog->ShowDialog(); // This displays the folder selection dialog
+	addFolderBrowserDialog->ShowDialog(); // This displays the folder selection dialog
 
-	if ( folderBrowserDialog->SelectedPath->Length <= 0 ) // if the user didn't select any files
+	if ( addFolderBrowserDialog->SelectedPath->Length <= 0 ) // if the user didn't select any files
 	{
 		return;
 	}
 
-	array<String^> ^files = Directory::GetFiles( folderBrowserDialog->SelectedPath );
+	array<String^> ^files = Directory::GetFiles( addFolderBrowserDialog->SelectedPath );
 
 	bool errors = false;
 
 	for each ( String ^file in files )
 	{
 		// calc file size
-		long bytes = getFileBytes( file );
+		unsigned long long bytes = getFileBytes( file );
 		string tmp;
 		MarshalString( file->Substring( file->LastIndexOf('\\') + 1 ), tmp );
 		if ( fileSizes[tmp] != 0 )
@@ -99,14 +136,16 @@ System::Void frmMain::btnBrowseDir_Click(System::Object^  sender, System::EventA
 
 	}
 
-	log->addBreak();
-
-	if ( !log->Visible && errors ) // if there were errors and the log isn't visible, warn them that there were errors and ask to display the log, otherwise we don't want to bug the user
+	if ( errors ) // if there were errors and the log isn't visible, warn them that there were errors and ask to display the log, otherwise we don't want to bug the user
 	{
-		System::Windows::Forms::DialogResult result = MessageBox::Show( "There were errors performing the previous action. Would you like to view the error log?",  "Errors", MessageBoxButtons::YesNo, MessageBoxIcon::Error );
-		if ( result == System::Windows::Forms::DialogResult::Yes )
+		log->addBreak();
+		if ( !log->Visible )
 		{
-			log->Visible = true;
+			System::Windows::Forms::DialogResult result = MessageBox::Show( "There were errors performing the previous action. Would you like to view the error log?",  "Errors", MessageBoxButtons::YesNo, MessageBoxIcon::Error );
+			if ( result == System::Windows::Forms::DialogResult::Yes )
+			{
+				log->Visible = true;
+			}
 		}
 	}
 }

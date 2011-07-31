@@ -7,12 +7,9 @@ using namespace PAKGUI;
 // This event occurs every time an item in the PAK Contents list is checked or unchecked.
 System::Void frmMain::lstPakContents_ItemCheck(System::Object^  sender, System::Windows::Forms::ItemCheckEventArgs^  e)
 {
-	/////////////////////////////
-	// Item Progress Label
-	/////////////////////////////
-	IEnumerator^ myEnum1 = lstPakContents->CheckedIndices->GetEnumerator(); // This is an enum for cycling through the checked items
+	IEnumerator^ item = lstPakContents->CheckedIndices->GetEnumerator(); // This is an enum for cycling through the checked items
 	int numChecked = 0; // The number of items checked
-	while ( myEnum1->MoveNext() )
+	while ( item->MoveNext() )
 	{
 		++numChecked;
 	}
@@ -121,14 +118,16 @@ System::Void frmMain::lstPakContents_DragDrop(System::Object^  sender, System::W
 		lstPakContents->Items->Add( item ); // finally add the item to the list
 	}
 
-	log->addBreak();
-
-	if ( !log->Visible && errors ) // if there were errors and the log isn't visible, warn them that there were errors and ask to display the log, otherwise we don't want to bug the user
+	if ( errors ) // if there were errors and the log isn't visible, warn them that there were errors and ask to display the log, otherwise we don't want to bug the user
 	{
-		System::Windows::Forms::DialogResult result = MessageBox::Show( "There were errors performing the previous action. Would you like to view the error log?",  "Errors", MessageBoxButtons::YesNo, MessageBoxIcon::Error );
-		if ( result == System::Windows::Forms::DialogResult::Yes )
+		log->addBreak();
+		if ( !log->Visible )
 		{
-			log->Visible = true;
+			System::Windows::Forms::DialogResult result = MessageBox::Show( "There were errors performing the previous action. Would you like to view the error log?",  "Errors", MessageBoxButtons::YesNo, MessageBoxIcon::Error );
+			if ( result == System::Windows::Forms::DialogResult::Yes )
+			{
+				log->Visible = true;
+			}
 		}
 	}
 

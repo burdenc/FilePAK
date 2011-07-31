@@ -346,8 +346,8 @@ bool filePAK::rebuildPAK()
 		// windows complains when we don't use the secure alternatives to strcpy and strcat,
 		// so we might as well use them and reap whatever benefits they may provide
 #ifdef _WINDOWS_
-		strcpy_s(filename, pakname.length(), pakname.c_str());
-		strcat_s(filename, 4, ".new");
+		strcpy_s(filename, 150, pakname.c_str()); // I'm not exactly sure what the middle argument should be, but I found that 150 doesn't give me errors :/
+		strcat_s(filename, 150, ".new");
 #else
 		strcpy(filename, pakname.c_str());
 		strcat(filename, ".new");
