@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include "filePAK.h"
 
 #include <iostream>
 #include <fstream>
@@ -16,6 +16,7 @@
 filePAK::filePAK(void)
 {
 	pakloaded = false;
+	lastEntry = 0;
 }
 
 
@@ -40,7 +41,7 @@ bool filePAK::createPAK(string name, string entryPath, string types)
 
 	vector<string> correctTypes = filetypes(types);
 	DIR *dir; //dirent.h stuff to accumulate all files within a folder
-	dirent *entry;
+	dirent *entry = NULL;
 	if(dir = opendir(entryPath.c_str()))
 	{
 		while(entry = readdir(dir))
@@ -52,37 +53,22 @@ bool filePAK::createPAK(string name, string entryPath, string types)
 				else
 				{
 					for(unsigned int i = 0; i < correctTypes.size(); i++)
-						if(!entry->d_name+correctTypes[i].compare(entry->d_name))
+					{
+						string comparestr = entry->d_name;
+						int found = comparestr.find_last_of('.');
+						comparestr = comparestr.substr(found);
+
+						if(!comparestr.compare(correctTypes[i]))
 							correctType = true;
+					}
 				}
 
 
 				if(correctType)
 				{
 					numberFiles++;
-
-					PAKfileEntry fentry; //creates a new table of contents entry
-
-					string entryName; //Sets up the path/name strings
-					entryName += entryPath;
-					entryName += entry->d_name;
-					memcpy(fentry.name, entry->d_name, 50); //only the file name
-					memcpy(fentry.fullname, entryName.c_str(), 100); //file name + folders
-
-					fileIn.open(entryName, ifstream::binary | ifstream::ate);
-
-					if(fileIn.is_open())
-					{
-						fentry.size = (unsigned int) fileIn.tellg(); //to calculate the file's size
-						fileIn.close();
-					}
-					else return false;
-
-					fentry.offset = 0; //unknown right now
-
-					entries.push_back(fentry); //append to the vector
+					if(!createEntry(entryPath, entry->d_name)) return false;
 				}
-
 			}
 		}
 	}
@@ -266,7 +252,7 @@ bool filePAK::rebuildPAK()
 		if(PAKout.is_open())
 		{
 			PAKout.write((char *) &header, sizeof(header)); //write out header
-
+			
 			char *buffer;
 
 			for(unsigned int i = 0; i < entries.size(); i++)
@@ -355,7 +341,7 @@ bool filePAK::rebuildPAK()
 #endif
 
 		rename(filename, pakname.c_str());
-		delete filename;
+		delete []filename;
 	}
 	else return false;
 
