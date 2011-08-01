@@ -3,7 +3,7 @@
 using namespace PAKGUI;
 
 
-System::Void frmMain::logToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e)
+System::Void inline frmMain::logToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e)
 {
 	if ( !logToolStripMenuItem->Checked )
 	{
@@ -15,7 +15,7 @@ System::Void frmMain::logToolStripMenuItem_Click(System::Object^  sender, System
 	}
 }
 
-System::Void frmMain::frmLog_VisibleChanged(System::Object^  sender, System::EventArgs^  e)
+System::Void inline frmMain::frmLog_VisibleChanged(System::Object^  sender, System::EventArgs^  e)
 {
 	if ( log->Visible ) {
 		logToolStripMenuItem->Checked = true;
@@ -26,18 +26,18 @@ System::Void frmMain::frmLog_VisibleChanged(System::Object^  sender, System::Eve
 	}
 }
 
-System::Void frmLog::btnOK_Click(System::Object^  sender, System::EventArgs^  e)
+System::Void inline frmLog::btnOK_Click(System::Object^  sender, System::EventArgs^  e)
 {
 	this->Visible = false;
 }
 
-System::Void frmLog::frmLog_FormClosing(System::Object^  sender, System::Windows::Forms::FormClosingEventArgs^  e)
+System::Void inline frmLog::frmLog_FormClosing(System::Object^  sender, System::Windows::Forms::FormClosingEventArgs^  e)
 {
 	this->Visible = false;
 	e->Cancel = true;
 }
 
-System::Void frmLog::btnClear_Click(System::Object^  sender, System::EventArgs^  e)
+System::Void inline frmLog::btnClear_Click(System::Object^  sender, System::EventArgs^  e)
 {
 	txtLog->Text = "";
 }

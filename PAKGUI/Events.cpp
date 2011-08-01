@@ -12,7 +12,7 @@ map<string, unsigned long long> fileSizes;
 unsigned long long currentEstimatedSize = 0;
 
 // convert System::String (String ^) to std::string for use with LibPAK
-void MarshalString ( String ^ s, string& os )
+inline void MarshalString ( String ^ s, string& os )
 {
 	using namespace Runtime::InteropServices;
 	const char* chars = 

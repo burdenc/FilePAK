@@ -816,7 +816,7 @@ namespace PAKGUI {
 
 			 // This event occurs when the user drags a file into the pak contents area
 	private: System::Void lstPakContents_DragDrop(System::Object^  sender, System::Windows::Forms::DragEventArgs^  e);
-	private: System::Void lstPakContents_DragOver(System::Object^  sender, System::Windows::Forms::DragEventArgs^  e) {
+	private: inline System::Void lstPakContents_DragOver(System::Object^  sender, System::Windows::Forms::DragEventArgs^  e) {
 				 if(e->Data->GetDataPresent(DataFormats::FileDrop))
 				 {
 					 e->Effect = DragDropEffects::All;
@@ -834,7 +834,7 @@ namespace PAKGUI {
 	private: System::Void btnCheckNone_Click(System::Object^  sender, System::EventArgs^  e);
 
 			 // exit menu item clicked
-	private: System::Void exitToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
+	private: inline System::Void exitToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
 				 this->Visible = false;
 				 delete this;
 			 }
@@ -846,8 +846,8 @@ namespace PAKGUI {
 			 // ADD COMMENTS TO FUNCS BELOW
 
 	private: System::Void btnSaveDirBrowse_Click(System::Object^  sender, System::EventArgs^  e);
-	private: System::Void logToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e);
-	private: System::Void frmLog_VisibleChanged(System::Object^  sender, System::EventArgs^  e);
+	private: inline System::Void logToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e);
+	private: inline System::Void frmLog_VisibleChanged(System::Object^  sender, System::EventArgs^  e);
 	private: System::Void checkAllToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e);
 	private: System::Void checkNoneToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e);
 	private: System::Void btnPak_Click(System::Object^  sender, System::EventArgs^  e);
