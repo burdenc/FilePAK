@@ -46,9 +46,10 @@ System::Void frmMain::openToolStripMenuItem_Click(System::Object^  sender, Syste
 		}
 
 		fileSizes.clear();
+		numChecked = 0;
+		currentEstimatedSize = 0;
 
 		// adjust controls to reflect a new pak open
-		lblItemProg->Text = "0 / " + pak.getNumPAKEntries();
 		btnUnpak->Enabled = true;
 		btnPak->Enabled = true;
 		menuPak->Enabled = true;
@@ -126,6 +127,7 @@ System::Void frmMain::newToolStripMenuItem_Click(System::Object^  sender, System
 	// reset all items in the form to their original values
 	itemProgressed = 0;
 	numChecked = 0;
+	prog = IDLE;
 	updateStatus();
 	btnUnpak->Enabled = false;
 	btnPak->Enabled = false;

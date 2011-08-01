@@ -89,6 +89,10 @@ String ^getFileSize( unsigned long long bytes )
 
 inline System::Void frmMain::updateStatus()
 {
+	if ( prog == DONE && lblPercentProg->Text == "Done" )
+	{
+		prog = IDLE;
+	}
 	lblItemProg->Text = itemProgressed + " / " + numChecked;
 	lblPercentProg->Text = gcnew String( prog.c_str() );
 	stsStatus->Text = gcnew String( prog.c_str() );

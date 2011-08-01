@@ -41,7 +41,7 @@ System::Void frmMain::lstPakContents_ItemCheck(System::Object^  sender, System::
 		menuUnpak->Enabled = false; // menu unpak button
 	}
 
-	lblItemProg->Text = "0 / " + numChecked; // Update the item progress label
+	updateStatus();
 }
 
 // This event occurs when the user drags a file into the pak contents area

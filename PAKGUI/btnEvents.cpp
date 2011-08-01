@@ -121,6 +121,8 @@ System::Void frmMain::btnUnpak_Click(System::Object^  sender, System::EventArgs^
 				btnBrowseDir->Enabled = true;
 				btnDeleteSelected->Enabled = true;
 
+				itemProgressed = 0;
+				percentProg = 0;
 				prog = CANCEL;
 				updateStatus();
 				return;
