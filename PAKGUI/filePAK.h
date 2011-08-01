@@ -83,7 +83,7 @@ public:
 	bool rebuildPAK();
 
 	//
-	bool filePAK::removeFile(string name);
+	bool removeFile(string name);
 
 	//Get a file data stored in the PAK file
 	//name - name of the file stored in the PAK file (don't include the folder/path)

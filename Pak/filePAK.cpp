@@ -16,6 +16,7 @@
 filePAK::filePAK(void)
 {
 	pakloaded = false;
+	lastEntry = 0;
 }
 
 
@@ -40,7 +41,7 @@ bool filePAK::createPAK(string name, string entryPath, string types)
 
 	vector<string> correctTypes = filetypes(types);
 	DIR *dir; //dirent.h stuff to accumulate all files within a folder
-	dirent *entry;
+	dirent *entry = NULL;
 	if(dir = opendir(entryPath.c_str()))
 	{
 		while(entry = readdir(dir))
@@ -340,7 +341,7 @@ bool filePAK::rebuildPAK()
 #endif
 
 		rename(filename, pakname.c_str());
-		delete filename;
+		delete []filename;
 	}
 	else return false;
 

@@ -203,7 +203,7 @@ static DIR *opendir(const char *dirname)
    }
 
    /* construct new DIR structure */
-   dirp = (DIR*) malloc (sizeof (struct DIR));
+   dirp = (DIR*) malloc (sizeof (DIR));
    if (dirp != NULL) {
       int error;
 
