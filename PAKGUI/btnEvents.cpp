@@ -140,9 +140,7 @@ System::Void frmMain::btnUnpak_Click(System::Object^  sender, System::EventArgs^
 // This event occurs when the user clicks the Pak button
 System::Void frmMain::btnPak_Click(System::Object^  sender, System::EventArgs^  e)
 {
-	stringstream s;
-	s << currentEstimatedSize;
-	log->displayMsg( gcnew String( s.str().c_str() ) );
+	
 }
 
 // This event occurs when the Browse button is hit to add an entire directory to the PAK

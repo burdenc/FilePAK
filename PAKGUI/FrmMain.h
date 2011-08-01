@@ -370,6 +370,7 @@ namespace PAKGUI {
 			this->menuPak->ShortcutKeys = static_cast<System::Windows::Forms::Keys>((System::Windows::Forms::Keys::Control | System::Windows::Forms::Keys::P));
 			this->menuPak->Size = System::Drawing::Size(183, 22);
 			this->menuPak->Text = L"PAK / RePAK";
+			this->menuPak->Click += gcnew System::EventHandler(this, &frmMain::menuPak_Click);
 			// 
 			// menuUnpak
 			// 
@@ -378,6 +379,7 @@ namespace PAKGUI {
 			this->menuUnpak->ShortcutKeys = static_cast<System::Windows::Forms::Keys>((System::Windows::Forms::Keys::Control | System::Windows::Forms::Keys::U));
 			this->menuUnpak->Size = System::Drawing::Size(183, 22);
 			this->menuUnpak->Text = L"UnPAK";
+			this->menuUnpak->Click += gcnew System::EventHandler(this, &frmMain::menuUnpak_Click);
 			// 
 			// groupBox2
 			// 
@@ -816,7 +818,8 @@ namespace PAKGUI {
 
 			 // This event occurs when the user drags a file into the pak contents area
 	private: System::Void lstPakContents_DragDrop(System::Object^  sender, System::Windows::Forms::DragEventArgs^  e);
-	private: inline System::Void lstPakContents_DragOver(System::Object^  sender, System::Windows::Forms::DragEventArgs^  e) {
+	private: inline System::Void lstPakContents_DragOver(System::Object^  sender, System::Windows::Forms::DragEventArgs^  e)
+			 {
 				 if(e->Data->GetDataPresent(DataFormats::FileDrop))
 				 {
 					 e->Effect = DragDropEffects::All;
@@ -834,7 +837,8 @@ namespace PAKGUI {
 	private: System::Void btnCheckNone_Click(System::Object^  sender, System::EventArgs^  e);
 
 			 // exit menu item clicked
-	private: inline System::Void exitToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e) {
+	private: inline System::Void exitToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e)
+			 {
 				 this->Visible = false;
 				 delete this;
 			 }
@@ -848,11 +852,24 @@ namespace PAKGUI {
 	private: System::Void btnSaveDirBrowse_Click(System::Object^  sender, System::EventArgs^  e);
 	private: inline System::Void logToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e);
 	private: inline System::Void frmLog_VisibleChanged(System::Object^  sender, System::EventArgs^  e);
-	private: System::Void checkAllToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e);
-	private: System::Void checkNoneToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e);
+	private: inline System::Void checkAllToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e)
+			 {
+				 btnCheckAll_Click( sender, e );
+			 }
+	private: inline System::Void checkNoneToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e)
+			 {
+				 btnCheckNone_Click( sender, e );
+			 }
 	private: System::Void btnPak_Click(System::Object^  sender, System::EventArgs^  e);
 	private: System::Void btnDeleteSelected_Click(System::Object^  sender, System::EventArgs^  e);
-
+	private: inline System::Void menuPak_Click(System::Object^  sender, System::EventArgs^  e)
+			 {
+				 btnPak_Click( sender, e );
+			 }
+	private: inline System::Void menuUnpak_Click(System::Object^  sender, System::EventArgs^  e)
+			 {
+				 btnUnpak_Click( sender, e );
+			 }
 	};	
 
 }

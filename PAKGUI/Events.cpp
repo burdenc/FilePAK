@@ -10,6 +10,9 @@ using namespace PAKGUI;
 filePAK pak;
 map<string, unsigned long long> fileSizes;
 unsigned long long currentEstimatedSize = 0;
+int numChecked = 0;
+int itemProgressed = 0;
+
 
 // convert System::String (String ^) to std::string for use with LibPAK
 inline void MarshalString ( String ^ s, string& os )

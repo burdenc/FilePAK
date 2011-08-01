@@ -4,24 +4,6 @@
 using namespace PAKGUI;
 
 
-// This event occurs when the user clicks the Check all menu item
-System::Void frmMain::checkAllToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e)
-{
-	for each ( ListViewItem^ item in lstPakContents->Items )
-	{
-		item->Checked = true;
-	}
-}
-
-// This event occurs when the user clicks the Check none menu item
-System::Void frmMain::checkNoneToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e)
-{
-	for each ( ListViewItem^ item in lstPakContents->Items )
-	{
-		item->Checked = false;
-	}
-}
-
 // This event occurs when the Open menu item is clicked
 System::Void frmMain::openToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e)
 {
