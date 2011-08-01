@@ -3,10 +3,6 @@
 
 #include <fstream>
 #include <sstream>
-#include <iostream>
-#include <cmath>
-#include <algorithm>
-#include <map>
 
 using namespace PAKGUI;
 
