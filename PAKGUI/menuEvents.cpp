@@ -20,8 +20,7 @@ System::Void frmMain::openToolStripMenuItem_Click(System::Object^  sender, Syste
 		{
 			progressBar->Value = 0;
 			progressBar->Enabled = false;
-			lblPercentProg->Text = "Idle";
-			stsStatus->Text = "Idle";
+			
 			lblItemProg->Text = "0 " + lblItemProg->Text->Substring( lblItemProg->Text->IndexOf('/') );
 		}
 	}
@@ -125,7 +124,9 @@ System::Void frmMain::newToolStripMenuItem_Click(System::Object^  sender, System
 	}
 
 	// reset all items in the form to their original values
-	lblItemProg->Text = "0 / 0";
+	itemProgressed = 0;
+	numChecked = 0;
+	updateStatus();
 	btnUnpak->Enabled = false;
 	btnPak->Enabled = false;
 	menuPak->Enabled = false;

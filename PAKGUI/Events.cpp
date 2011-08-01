@@ -12,6 +12,8 @@ map<string, unsigned long long> fileSizes;
 unsigned long long currentEstimatedSize = 0;
 int numChecked = 0;
 int itemProgressed = 0;
+int percentProg = 0;
+string prog = IDLE;
 
 
 // convert System::String (String ^) to std::string for use with LibPAK
@@ -83,4 +85,11 @@ String ^getFileSize( unsigned long long bytes )
 	}
 
 	return gcnew String( size.str().c_str() );
+}
+
+inline System::Void frmMain::updateStatus()
+{
+	lblItemProg->Text = itemProgressed + " / " + numChecked;
+	lblPercentProg->Text = gcnew String( prog.c_str() );
+	stsStatus->Text = gcnew String( prog.c_str() );
 }

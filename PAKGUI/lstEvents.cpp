@@ -7,29 +7,19 @@ using namespace PAKGUI;
 // This event occurs every time an item in the PAK Contents list is checked or unchecked.
 System::Void frmMain::lstPakContents_ItemCheck(System::Object^  sender, System::Windows::Forms::ItemCheckEventArgs^  e)
 {
-	IEnumerator^ item = lstPakContents->CheckedIndices->GetEnumerator(); // This is an enum for cycling through the checked items
-	int numChecked = 0; // The number of items checked
-	while ( item->MoveNext() )
-	{
-		++numChecked;
-	}
-
 	string tmp;
 	MarshalString( lstPakContents->Items[ e->Index ]->Text, tmp );
 	unsigned long long checkedsize = fileSizes[ tmp ];
 
-	// Because of the way the checked items are updated in relation to the event, we have to account for a difference of 1 on two occasions.
-	// these if-statements also allow us to perform actions specific to a check or uncheck event
+	// determine if the event was triggered by either a check or an uncheck
 	if ( e->CurrentValue == CheckState::Unchecked ) // If the event was triggered by a check
 	{
 		++numChecked;
-		//lblPakSizeAfterPak->Text = atoi( cursize.c_str() ) + atoi( checkedsize.c_str() ) + " KB"; // Update Estimated size of PAK file after PAK'ing
 		currentEstimatedSize += std::max( checkedsize, (unsigned long long) 1024 ); // calculate the new size (remember, still in bytes). also, we want to at least display 1KB of difference
 	}
 	else // If the event was triggered by an uncheck
 	{
 		--numChecked;
-		//lblPakSizeAfterPak->Text = atoi( cursize.c_str() ) - atoi( checkedsize.c_str() ) + " KB"; // Update Estimated size of PAK file after PAK'ing
 		currentEstimatedSize -= std::max( checkedsize, (unsigned long long) 1024 ); // calculate the new size (remember, still in bytes). also, we want to at least display 1KB of difference
 	}
 

@@ -100,8 +100,10 @@ namespace PAKGUI {
 	private: System::Windows::Forms::ToolStripMenuItem^  newToolStripMenuItem;
 	private: System::Windows::Forms::ToolStripMenuItem^  openToolStripMenuItem;
 	private: System::Windows::Forms::ToolStripSeparator^  toolStripMenuItem1;
-	private: System::Windows::Forms::ToolStripMenuItem^  checkAllToolStripMenuItem;
-	private: System::Windows::Forms::ToolStripMenuItem^  checkNoneToolStripMenuItem;
+	private: System::Windows::Forms::ToolStripMenuItem^  menuCheckAll;
+	private: System::Windows::Forms::ToolStripMenuItem^  menuCheckNone;
+
+
 
 
 	private: System::Windows::Forms::ToolStripMenuItem^  pAKToolStripMenuItem;
@@ -161,6 +163,8 @@ namespace PAKGUI {
 	private: System::Windows::Forms::ToolStripMenuItem^  selectAllToolStripMenuItem;
 	private: System::Windows::Forms::ToolStripMenuItem^  selectNoneToolStripMenuItem;
 	private: System::Windows::Forms::FolderBrowserDialog^  unpakFolderBrowserDialog;
+private: System::Windows::Forms::Button^  btnCancel;
+private: System::Windows::Forms::ToolStripMenuItem^  menuCancel;
 
 
 
@@ -188,8 +192,8 @@ namespace PAKGUI {
 			this->toolStripMenuItem1 = (gcnew System::Windows::Forms::ToolStripSeparator());
 			this->exitToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->editToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
-			this->checkAllToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
-			this->checkNoneToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->menuCheckAll = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->menuCheckNone = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->toolStripMenuItem2 = (gcnew System::Windows::Forms::ToolStripSeparator());
 			this->selectAllToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->selectNoneToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
@@ -211,6 +215,7 @@ namespace PAKGUI {
 			this->btnCheckNone = (gcnew System::Windows::Forms::Button());
 			this->btnCheckAll = (gcnew System::Windows::Forms::Button());
 			this->panel3 = (gcnew System::Windows::Forms::Panel());
+			this->btnCancel = (gcnew System::Windows::Forms::Button());
 			this->lblPercentProg = (gcnew System::Windows::Forms::Label());
 			this->lblItemProg = (gcnew System::Windows::Forms::Label());
 			this->label2 = (gcnew System::Windows::Forms::Label());
@@ -238,6 +243,7 @@ namespace PAKGUI {
 			this->label3 = (gcnew System::Windows::Forms::Label());
 			this->groupBox1 = (gcnew System::Windows::Forms::GroupBox());
 			this->unpakFolderBrowserDialog = (gcnew System::Windows::Forms::FolderBrowserDialog());
+			this->menuCancel = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->menuStrip1->SuspendLayout();
 			this->groupBox2->SuspendLayout();
 			this->panel3->SuspendLayout();
@@ -296,27 +302,27 @@ namespace PAKGUI {
 			// 
 			// editToolStripMenuItem
 			// 
-			this->editToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(5) {this->checkAllToolStripMenuItem, 
-				this->checkNoneToolStripMenuItem, this->toolStripMenuItem2, this->selectAllToolStripMenuItem, this->selectNoneToolStripMenuItem});
+			this->editToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(5) {this->menuCheckAll, 
+				this->menuCheckNone, this->toolStripMenuItem2, this->selectAllToolStripMenuItem, this->selectNoneToolStripMenuItem});
 			this->editToolStripMenuItem->Name = L"editToolStripMenuItem";
 			this->editToolStripMenuItem->Size = System::Drawing::Size(39, 20);
 			this->editToolStripMenuItem->Text = L"Edit";
 			// 
-			// checkAllToolStripMenuItem
+			// menuCheckAll
 			// 
-			this->checkAllToolStripMenuItem->Name = L"checkAllToolStripMenuItem";
-			this->checkAllToolStripMenuItem->ShortcutKeys = static_cast<System::Windows::Forms::Keys>((System::Windows::Forms::Keys::Control | System::Windows::Forms::Keys::A));
-			this->checkAllToolStripMenuItem->Size = System::Drawing::Size(209, 22);
-			this->checkAllToolStripMenuItem->Text = L"Check all";
-			this->checkAllToolStripMenuItem->Click += gcnew System::EventHandler(this, &frmMain::checkAllToolStripMenuItem_Click);
+			this->menuCheckAll->Name = L"menuCheckAll";
+			this->menuCheckAll->ShortcutKeys = static_cast<System::Windows::Forms::Keys>((System::Windows::Forms::Keys::Control | System::Windows::Forms::Keys::A));
+			this->menuCheckAll->Size = System::Drawing::Size(209, 22);
+			this->menuCheckAll->Text = L"Check all";
+			this->menuCheckAll->Click += gcnew System::EventHandler(this, &frmMain::checkAllToolStripMenuItem_Click);
 			// 
-			// checkNoneToolStripMenuItem
+			// menuCheckNone
 			// 
-			this->checkNoneToolStripMenuItem->Name = L"checkNoneToolStripMenuItem";
-			this->checkNoneToolStripMenuItem->ShortcutKeys = static_cast<System::Windows::Forms::Keys>((System::Windows::Forms::Keys::Control | System::Windows::Forms::Keys::D));
-			this->checkNoneToolStripMenuItem->Size = System::Drawing::Size(209, 22);
-			this->checkNoneToolStripMenuItem->Text = L"Check none";
-			this->checkNoneToolStripMenuItem->Click += gcnew System::EventHandler(this, &frmMain::checkNoneToolStripMenuItem_Click);
+			this->menuCheckNone->Name = L"menuCheckNone";
+			this->menuCheckNone->ShortcutKeys = static_cast<System::Windows::Forms::Keys>((System::Windows::Forms::Keys::Control | System::Windows::Forms::Keys::D));
+			this->menuCheckNone->Size = System::Drawing::Size(209, 22);
+			this->menuCheckNone->Text = L"Check none";
+			this->menuCheckNone->Click += gcnew System::EventHandler(this, &frmMain::checkNoneToolStripMenuItem_Click);
 			// 
 			// toolStripMenuItem2
 			// 
@@ -357,8 +363,8 @@ namespace PAKGUI {
 			// 
 			// pAKToolStripMenuItem
 			// 
-			this->pAKToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(2) {this->menuPak, 
-				this->menuUnpak});
+			this->pAKToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(3) {this->menuPak, 
+				this->menuUnpak, this->menuCancel});
 			this->pAKToolStripMenuItem->Name = L"pAKToolStripMenuItem";
 			this->pAKToolStripMenuItem->Size = System::Drawing::Size(41, 20);
 			this->pAKToolStripMenuItem->Text = L"PAK";
@@ -505,6 +511,7 @@ namespace PAKGUI {
 			this->panel3->Controls->Add(this->progressBar);
 			this->panel3->Controls->Add(this->btnUnpak);
 			this->panel3->Controls->Add(this->btnPak);
+			this->panel3->Controls->Add(this->btnCancel);
 			this->panel3->Dock = System::Windows::Forms::DockStyle::Fill;
 			this->panel3->Location = System::Drawing::Point(3, 16);
 			this->panel3->Margin = System::Windows::Forms::Padding(10);
@@ -513,25 +520,33 @@ namespace PAKGUI {
 			this->panel3->Size = System::Drawing::Size(786, 53);
 			this->panel3->TabIndex = 5;
 			// 
+			// btnCancel
+			// 
+			this->btnCancel->Location = System::Drawing::Point(611, 5);
+			this->btnCancel->Name = L"btnCancel";
+			this->btnCancel->Size = System::Drawing::Size(136, 43);
+			this->btnCancel->TabIndex = 10;
+			this->btnCancel->Text = L"Cancel";
+			this->btnCancel->UseVisualStyleBackColor = true;
+			this->btnCancel->Visible = false;
+			// 
 			// lblPercentProg
 			// 
-			this->lblPercentProg->AutoSize = true;
-			this->lblPercentProg->Location = System::Drawing::Point(90, 8);
+			this->lblPercentProg->Location = System::Drawing::Point(70, 8);
 			this->lblPercentProg->Name = L"lblPercentProg";
-			this->lblPercentProg->Size = System::Drawing::Size(24, 13);
+			this->lblPercentProg->Size = System::Drawing::Size(77, 13);
 			this->lblPercentProg->TabIndex = 6;
 			this->lblPercentProg->Text = L"Idle";
 			this->lblPercentProg->TextAlign = System::Drawing::ContentAlignment::TopCenter;
 			// 
 			// lblItemProg
 			// 
-			this->lblItemProg->AutoSize = true;
-			this->lblItemProg->Location = System::Drawing::Point(86, 25);
+			this->lblItemProg->Location = System::Drawing::Point(70, 25);
 			this->lblItemProg->Name = L"lblItemProg";
-			this->lblItemProg->Size = System::Drawing::Size(30, 13);
+			this->lblItemProg->Size = System::Drawing::Size(77, 13);
 			this->lblItemProg->TabIndex = 5;
 			this->lblItemProg->Text = L"0 / 0";
-			this->lblItemProg->TextAlign = System::Drawing::ContentAlignment::TopRight;
+			this->lblItemProg->TextAlign = System::Drawing::ContentAlignment::TopCenter;
 			// 
 			// label2
 			// 
@@ -770,6 +785,14 @@ namespace PAKGUI {
 			// 
 			this->unpakFolderBrowserDialog->Description = L"Select a folder to UnPAK the files to:";
 			// 
+			// menuCancel
+			// 
+			this->menuCancel->Enabled = false;
+			this->menuCancel->Name = L"menuCancel";
+			this->menuCancel->Size = System::Drawing::Size(183, 22);
+			this->menuCancel->Text = L"Cancel";
+			this->menuCancel->Visible = false;
+			// 
 			// frmMain
 			// 
 			this->AcceptButton = this->btnPak;
@@ -870,6 +893,8 @@ namespace PAKGUI {
 			 {
 				 btnUnpak_Click( sender, e );
 			 }
+
+			 private: inline System::Void updateStatus();
 	};	
 
 }

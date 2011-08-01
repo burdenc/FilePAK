@@ -41,15 +41,36 @@ System::Void frmMain::btnUnpak_Click(System::Object^  sender, System::EventArgs^
 		return;
 	}
 
-	//unpakFolderBrowserDialog->SelectedPath;
-	// need to implement dialog that deals with replacing files
+	// may implement dialog that deals with replacing files
 	// give the user option to say no, no to all, yes, yes to all
 
+	lstPakContents->Enabled = false;
+	btnPak->Visible = false;
+	btnUnpak->Visible = false;
+	menuPak->Visible = false;
+	menuUnpak->Visible = false;
+	menuPak->Enabled = false;
+	menuUnpak->Enabled = false;
+	menuCancel->Visible = true;
+	menuCancel->Enabled = true;
+	btnCancel->Visible = true;
+	btnCheckAll->Enabled = false;
+	btnCheckNone->Enabled = false;
+	menuCheckAll->Enabled = false;
+	menuCheckNone->Enabled = false;
+	btnAddFiles->Enabled = false;
+	btnBrowseDir->Enabled = false;
+	btnDeleteSelected->Enabled = false;
 
 	IEnumerator^ items = lstPakContents->CheckedIndices->GetEnumerator(); // This is an enum for cycling through the checked items
 	bool errors = false;
 	while ( items->MoveNext() )
 	{
+
+		itemProgressed++;
+		prog = UNPAK;
+		updateStatus();
+
 		Int32 itemIndex = *safe_cast<Int32^>(items->Current);
 
 		// Make sure the user is trying to UnPAK files that are actually in the PAK
@@ -82,6 +103,26 @@ System::Void frmMain::btnUnpak_Click(System::Object^  sender, System::EventArgs^
 			}
 			else // cancel or possibly closed dialog with X
 			{
+				lstPakContents->Enabled = true;
+				btnPak->Visible = true;
+				btnUnpak->Visible = true;
+				menuPak->Visible = true;
+				menuUnpak->Visible = true;
+				menuPak->Enabled = true;
+				menuUnpak->Enabled = true;
+				menuCancel->Visible = false;
+				menuCancel->Enabled = false;
+				btnCancel->Visible = false;
+				btnCheckAll->Enabled = true;
+				btnCheckNone->Enabled = true;
+				menuCheckAll->Enabled = true;
+				menuCheckNone->Enabled = true;
+				btnAddFiles->Enabled = true;
+				btnBrowseDir->Enabled = true;
+				btnDeleteSelected->Enabled = true;
+
+				prog = CANCEL;
+				updateStatus();
 				return;
 			}
 		}
@@ -121,6 +162,27 @@ System::Void frmMain::btnUnpak_Click(System::Object^  sender, System::EventArgs^
 		}
 
 	}
+
+	lstPakContents->Enabled = true;
+	btnPak->Visible = true;
+	btnUnpak->Visible = true;
+	menuPak->Visible = true;
+	menuUnpak->Visible = true;
+	menuPak->Enabled = true;
+	menuUnpak->Enabled = true;
+	menuCancel->Visible = false;
+	menuCancel->Enabled = false;
+	btnCancel->Visible = false;
+	btnCheckAll->Enabled = true;
+	btnCheckNone->Enabled = true;
+	menuCheckAll->Enabled = true;
+	menuCheckNone->Enabled = true;
+	btnAddFiles->Enabled = true;
+	btnBrowseDir->Enabled = true;
+	btnDeleteSelected->Enabled = true;
+
+	prog = DONE;
+	updateStatus();
 
 	if ( errors ) // if there were errors and the log isn't visible, warn them that there were errors and ask to display the log, otherwise we don't want to bug the user
 	{
