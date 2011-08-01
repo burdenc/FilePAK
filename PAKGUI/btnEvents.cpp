@@ -61,6 +61,13 @@ System::Void frmMain::btnUnpak_Click(System::Object^  sender, System::EventArgs^
 	btnAddFiles->Enabled = false;
 	btnBrowseDir->Enabled = false;
 	btnDeleteSelected->Enabled = false;
+	progressBar->Enabled = true;
+
+	percentProg = 0;
+	stringstream s;
+	s << percentProg;
+	prog = UNPAK + s.str() + "%";
+	updateStatus();
 
 	IEnumerator^ items = lstPakContents->CheckedIndices->GetEnumerator(); // This is an enum for cycling through the checked items
 	bool errors = false;
@@ -68,8 +75,10 @@ System::Void frmMain::btnUnpak_Click(System::Object^  sender, System::EventArgs^
 	{
 
 		itemProgressed++;
-		prog = UNPAK;
-		updateStatus();
+		percentProg = (int) ( (double)itemProgressed / (double)numChecked * 100.0 );
+		stringstream s;
+		s << percentProg;
+		prog = UNPAK + s.str() + "%";
 
 		Int32 itemIndex = *safe_cast<Int32^>(items->Current);
 
@@ -99,6 +108,7 @@ System::Void frmMain::btnUnpak_Click(System::Object^  sender, System::EventArgs^
 			}
 			else if ( result == System::Windows::Forms::DialogResult::No )
 			{
+				updateStatus();
 				continue;
 			}
 			else // cancel or possibly closed dialog with X
@@ -120,6 +130,187 @@ System::Void frmMain::btnUnpak_Click(System::Object^  sender, System::EventArgs^
 				btnAddFiles->Enabled = true;
 				btnBrowseDir->Enabled = true;
 				btnDeleteSelected->Enabled = true;
+				progressBar->Enabled = false;
+
+				itemProgressed = 0;
+				percentProg = 0;
+				prog = CANCEL;
+				updateStatus();
+				return;
+			}
+		}
+
+		string name, dir;
+		MarshalString( unpakFolderBrowserDialog->SelectedPath + "\\" + lstPakContents->Items[ itemIndex ]->Text, dir );
+		MarshalString( lstPakContents->Items[ itemIndex ]->Text, name );
+
+		ofstream f; //output
+
+		char *buffer;
+		buffer = pak.getPAKEntryData(name);
+		int ofsize;
+		ofsize = pak.getPAKEntrySize(name);
+		if(buffer == NULL || ofsize <= 0)
+		{
+			errors = true;
+			log->displayMsg( "Error reading PAK:" + Environment::NewLine + "\tCould not find '" + gcnew String( name.c_str() ) + "' in PAK." ); // but still log it anyways
+		}
+
+		f.open(dir, ofstream::binary); // open in binary
+
+		if (f.is_open())  // make sure it opened
+		{
+			f.write(buffer, ofsize); // write the buffer to the output file with the size of the original file
+		}
+		else
+		{
+			delete [] buffer;
+			errors = true;
+			log->displayMsg( "Error opening file:" + Environment::NewLine + "\tCould not open '" + gcnew String( dir.c_str() ) + "' for writing." ); // but still log it anyways
+		}
+
+		updateStatus();
+
+	}
+
+	lstPakContents->Enabled = true;
+	btnPak->Visible = true;
+	btnUnpak->Visible = true;
+	menuPak->Visible = true;
+	menuUnpak->Visible = true;
+	menuPak->Enabled = true;
+	menuUnpak->Enabled = true;
+	menuCancel->Visible = false;
+	menuCancel->Enabled = false;
+	btnCancel->Visible = false;
+	btnCheckAll->Enabled = true;
+	btnCheckNone->Enabled = true;
+	menuCheckAll->Enabled = true;
+	menuCheckNone->Enabled = true;
+	btnAddFiles->Enabled = true;
+	btnBrowseDir->Enabled = true;
+	btnDeleteSelected->Enabled = true;
+	progressBar->Enabled = false;
+
+	prog = DONE;
+	itemProgressed = 0;
+	updateStatus();
+
+	if ( errors ) // if there were errors and the log isn't visible, warn them that there were errors and ask to display the log, otherwise we don't want to bug the user
+	{
+		log->addBreak();
+		if ( !log->Visible )
+		{
+			System::Windows::Forms::DialogResult result = MessageBox::Show( "There were errors performing the previous action. Would you like to view the error log?",  "Errors", MessageBoxButtons::YesNo, MessageBoxIcon::Error );
+			if ( result == System::Windows::Forms::DialogResult::Yes )
+			{
+				log->Visible = true;
+			}
+		}
+	}
+
+}
+
+// This event occurs when the user clicks the Pak button
+System::Void frmMain::btnPak_Click(System::Object^  sender, System::EventArgs^  e)
+{
+	unpakFolderBrowserDialog->ShowDialog(); // open folder browser
+
+	if ( unpakFolderBrowserDialog->SelectedPath->Length <= 0 ) // if the user didn't select any files
+	{
+		return;
+	}
+
+	// may implement dialog that deals with replacing files
+	// give the user option to say no, no to all, yes, yes to all
+
+	lstPakContents->Enabled = false;
+	btnPak->Visible = false;
+	btnUnpak->Visible = false;
+	menuPak->Visible = false;
+	menuUnpak->Visible = false;
+	menuPak->Enabled = false;
+	menuUnpak->Enabled = false;
+	menuCancel->Visible = true;
+	menuCancel->Enabled = true;
+	btnCancel->Visible = true;
+	btnCheckAll->Enabled = false;
+	btnCheckNone->Enabled = false;
+	menuCheckAll->Enabled = false;
+	menuCheckNone->Enabled = false;
+	btnAddFiles->Enabled = false;
+	btnBrowseDir->Enabled = false;
+	btnDeleteSelected->Enabled = false;
+	progressBar->Enabled = true;
+
+	percentProg = 0;
+	stringstream s;
+	s << percentProg;
+	prog = UNPAK + s.str() + "%";
+	updateStatus();
+
+	IEnumerator^ items = lstPakContents->CheckedIndices->GetEnumerator(); // This is an enum for cycling through the checked items
+	bool errors = false;
+	while ( items->MoveNext() )
+	{
+
+		itemProgressed++;
+		percentProg = (int) ( (double)itemProgressed / (double)numChecked * 100.0 );
+		stringstream s;
+		s << percentProg;
+		prog = UNPAK + s.str() + "%";
+
+		Int32 itemIndex = *safe_cast<Int32^>(items->Current);
+
+		// Make sure the user is trying to UnPAK files that are actually in the PAK
+		if ( lstPakContents->Items[ itemIndex ]->SubItems[3]->Text == "Not in PAK" )
+		{
+			if ( errors )
+			{
+				log->displayMsg( "\tFile \"" + lstPakContents->Items[ itemIndex ]->Text + "\" is not in the PAK file." );
+			}
+			else
+			{
+				errors = true;
+				log->displayMsg( "Error UnPAK'ing files: " + Environment::NewLine + "\tFile \"" + lstPakContents->Items[ itemIndex ]->Text + "\" is not in the PAK file." );
+			}
+			continue;
+		}
+
+		// if the file already exists
+		if ( File::Exists( unpakFolderBrowserDialog->SelectedPath + "\\" + lstPakContents->Items[ itemIndex ]->Text ) )
+		{
+			// we need to get the user's attention and ask them whether the want to overwrite the file before we continue
+			System::Windows::Forms::DialogResult result = MessageBox::Show( "This folder already contains a file named '" + lstPakContents->Items[ itemIndex ]->Text + "'\nDo you want to replace it?",  "Confirm File Replace", MessageBoxButtons::YesNoCancel, MessageBoxIcon::Warning );
+			if ( result == System::Windows::Forms::DialogResult::Yes )
+			{
+				// don't do anything. we'll keep going as if the file didn't already exist and the unpak function will overwrite it
+			}
+			else if ( result == System::Windows::Forms::DialogResult::No )
+			{
+				updateStatus();
+				continue;
+			}
+			else // cancel or possibly closed dialog with X
+			{
+				lstPakContents->Enabled = true;
+				btnPak->Visible = true;
+				btnUnpak->Visible = true;
+				menuPak->Visible = true;
+				menuUnpak->Visible = true;
+				menuPak->Enabled = true;
+				menuUnpak->Enabled = true;
+				menuCancel->Visible = false;
+				menuCancel->Enabled = false;
+				btnCancel->Visible = false;
+				btnCheckAll->Enabled = true;
+				btnCheckNone->Enabled = true;
+				menuCheckAll->Enabled = true;
+				menuCheckNone->Enabled = true;
+				btnAddFiles->Enabled = true;
+				btnBrowseDir->Enabled = true;
+				btnDeleteSelected->Enabled = true;
+				progressBar->Enabled = false;
 
 				itemProgressed = 0;
 				percentProg = 0;
@@ -163,6 +354,8 @@ System::Void frmMain::btnUnpak_Click(System::Object^  sender, System::EventArgs^
 			//return 1;
 		}
 
+		updateStatus();
+
 	}
 
 	lstPakContents->Enabled = true;
@@ -182,8 +375,10 @@ System::Void frmMain::btnUnpak_Click(System::Object^  sender, System::EventArgs^
 	btnAddFiles->Enabled = true;
 	btnBrowseDir->Enabled = true;
 	btnDeleteSelected->Enabled = true;
+	progressBar->Enabled = false;
 
 	prog = DONE;
+	itemProgressed = 0;
 	updateStatus();
 
 	if ( errors ) // if there were errors and the log isn't visible, warn them that there were errors and ask to display the log, otherwise we don't want to bug the user
@@ -198,13 +393,6 @@ System::Void frmMain::btnUnpak_Click(System::Object^  sender, System::EventArgs^
 			}
 		}
 	}
-
-}
-
-// This event occurs when the user clicks the Pak button
-System::Void frmMain::btnPak_Click(System::Object^  sender, System::EventArgs^  e)
-{
-	
 }
 
 // This event occurs when the Browse button is hit to add an entire directory to the PAK

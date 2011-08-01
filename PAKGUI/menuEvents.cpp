@@ -107,11 +107,8 @@ System::Void frmMain::newToolStripMenuItem_Click(System::Object^  sender, System
 		}
 		else // perform resets on items in the form that are specific to performing an operation
 		{
-			progressBar->Value = 0;
+			itemProgressed = 0;
 			progressBar->Enabled = false;
-			lblPercentProg->Text = "Idle";
-			stsStatus->Text = "Idle";
-			lblItemProg->Text = "0 " + lblItemProg->Text->Substring( lblItemProg->Text->IndexOf('/') );
 		}
 	}
 	if ( lstPakContents->Items->Count ) // if the contents list contains any items, this signifies that there is a PAK file open
@@ -124,8 +121,9 @@ System::Void frmMain::newToolStripMenuItem_Click(System::Object^  sender, System
 		}
 	}
 
+
 	// reset all items in the form to their original values
-	itemProgressed = 0;
+	percentProg = 0;
 	numChecked = 0;
 	prog = IDLE;
 	updateStatus();
@@ -137,6 +135,7 @@ System::Void frmMain::newToolStripMenuItem_Click(System::Object^  sender, System
 	lblOrigDir->Text = "None";
 	lblPakSize->Text = "0 KB";
 	lblPakSizeAfterPak->Text = "0 KB";
+	currentEstimatedSize = 0;
 	lblNumFiles->Text = "0 Files";
 
 	// clear the content list
@@ -144,4 +143,6 @@ System::Void frmMain::newToolStripMenuItem_Click(System::Object^  sender, System
 	{
 		item->Remove();
 	}
+
+	updateStatus();
 }

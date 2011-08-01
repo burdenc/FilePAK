@@ -202,6 +202,7 @@ private: System::Windows::Forms::ToolStripMenuItem^  menuCancel;
 			this->pAKToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->menuPak = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->menuUnpak = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->menuCancel = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->groupBox2 = (gcnew System::Windows::Forms::GroupBox());
 			this->lstPakContents = (gcnew System::Windows::Forms::ListView());
 			this->columnHeader1 = (gcnew System::Windows::Forms::ColumnHeader());
@@ -215,7 +216,6 @@ private: System::Windows::Forms::ToolStripMenuItem^  menuCancel;
 			this->btnCheckNone = (gcnew System::Windows::Forms::Button());
 			this->btnCheckAll = (gcnew System::Windows::Forms::Button());
 			this->panel3 = (gcnew System::Windows::Forms::Panel());
-			this->btnCancel = (gcnew System::Windows::Forms::Button());
 			this->lblPercentProg = (gcnew System::Windows::Forms::Label());
 			this->lblItemProg = (gcnew System::Windows::Forms::Label());
 			this->label2 = (gcnew System::Windows::Forms::Label());
@@ -223,6 +223,7 @@ private: System::Windows::Forms::ToolStripMenuItem^  menuCancel;
 			this->progressBar = (gcnew System::Windows::Forms::ProgressBar());
 			this->btnUnpak = (gcnew System::Windows::Forms::Button());
 			this->btnPak = (gcnew System::Windows::Forms::Button());
+			this->btnCancel = (gcnew System::Windows::Forms::Button());
 			this->statusStrip1 = (gcnew System::Windows::Forms::StatusStrip());
 			this->stsLblStatus = (gcnew System::Windows::Forms::ToolStripStatusLabel());
 			this->stsStatus = (gcnew System::Windows::Forms::ToolStripStatusLabel());
@@ -243,7 +244,6 @@ private: System::Windows::Forms::ToolStripMenuItem^  menuCancel;
 			this->label3 = (gcnew System::Windows::Forms::Label());
 			this->groupBox1 = (gcnew System::Windows::Forms::GroupBox());
 			this->unpakFolderBrowserDialog = (gcnew System::Windows::Forms::FolderBrowserDialog());
-			this->menuCancel = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->menuStrip1->SuspendLayout();
 			this->groupBox2->SuspendLayout();
 			this->panel3->SuspendLayout();
@@ -387,6 +387,14 @@ private: System::Windows::Forms::ToolStripMenuItem^  menuCancel;
 			this->menuUnpak->Text = L"UnPAK";
 			this->menuUnpak->Click += gcnew System::EventHandler(this, &frmMain::menuUnpak_Click);
 			// 
+			// menuCancel
+			// 
+			this->menuCancel->Enabled = false;
+			this->menuCancel->Name = L"menuCancel";
+			this->menuCancel->Size = System::Drawing::Size(183, 22);
+			this->menuCancel->Text = L"Cancel";
+			this->menuCancel->Visible = false;
+			// 
 			// groupBox2
 			// 
 			this->groupBox2->Controls->Add(this->lstPakContents);
@@ -520,21 +528,11 @@ private: System::Windows::Forms::ToolStripMenuItem^  menuCancel;
 			this->panel3->Size = System::Drawing::Size(786, 53);
 			this->panel3->TabIndex = 5;
 			// 
-			// btnCancel
-			// 
-			this->btnCancel->Location = System::Drawing::Point(611, 5);
-			this->btnCancel->Name = L"btnCancel";
-			this->btnCancel->Size = System::Drawing::Size(136, 43);
-			this->btnCancel->TabIndex = 10;
-			this->btnCancel->Text = L"Cancel";
-			this->btnCancel->UseVisualStyleBackColor = true;
-			this->btnCancel->Visible = false;
-			// 
 			// lblPercentProg
 			// 
 			this->lblPercentProg->Location = System::Drawing::Point(70, 8);
 			this->lblPercentProg->Name = L"lblPercentProg";
-			this->lblPercentProg->Size = System::Drawing::Size(77, 13);
+			this->lblPercentProg->Size = System::Drawing::Size(99, 13);
 			this->lblPercentProg->TabIndex = 6;
 			this->lblPercentProg->Text = L"Idle";
 			this->lblPercentProg->TextAlign = System::Drawing::ContentAlignment::TopCenter;
@@ -543,7 +541,7 @@ private: System::Windows::Forms::ToolStripMenuItem^  menuCancel;
 			// 
 			this->lblItemProg->Location = System::Drawing::Point(70, 25);
 			this->lblItemProg->Name = L"lblItemProg";
-			this->lblItemProg->Size = System::Drawing::Size(77, 13);
+			this->lblItemProg->Size = System::Drawing::Size(99, 13);
 			this->lblItemProg->TabIndex = 5;
 			this->lblItemProg->Text = L"0 / 0";
 			this->lblItemProg->TextAlign = System::Drawing::ContentAlignment::TopCenter;
@@ -569,9 +567,10 @@ private: System::Windows::Forms::ToolStripMenuItem^  menuCancel;
 			// progressBar
 			// 
 			this->progressBar->Enabled = false;
-			this->progressBar->Location = System::Drawing::Point(153, 8);
+			this->progressBar->Location = System::Drawing::Point(175, 8);
 			this->progressBar->Name = L"progressBar";
-			this->progressBar->Size = System::Drawing::Size(417, 37);
+			this->progressBar->Size = System::Drawing::Size(395, 37);
+			this->progressBar->Style = System::Windows::Forms::ProgressBarStyle::Continuous;
 			this->progressBar->TabIndex = 2;
 			// 
 			// btnUnpak
@@ -596,6 +595,16 @@ private: System::Windows::Forms::ToolStripMenuItem^  menuCancel;
 			this->btnPak->Text = L"PAK\r\n";
 			this->btnPak->UseVisualStyleBackColor = true;
 			this->btnPak->Click += gcnew System::EventHandler(this, &frmMain::btnPak_Click);
+			// 
+			// btnCancel
+			// 
+			this->btnCancel->Location = System::Drawing::Point(611, 5);
+			this->btnCancel->Name = L"btnCancel";
+			this->btnCancel->Size = System::Drawing::Size(136, 43);
+			this->btnCancel->TabIndex = 10;
+			this->btnCancel->Text = L"Cancel";
+			this->btnCancel->UseVisualStyleBackColor = true;
+			this->btnCancel->Visible = false;
 			// 
 			// statusStrip1
 			// 
@@ -784,14 +793,6 @@ private: System::Windows::Forms::ToolStripMenuItem^  menuCancel;
 			// unpakFolderBrowserDialog
 			// 
 			this->unpakFolderBrowserDialog->Description = L"Select a folder to UnPAK the files to:";
-			// 
-			// menuCancel
-			// 
-			this->menuCancel->Enabled = false;
-			this->menuCancel->Name = L"menuCancel";
-			this->menuCancel->Size = System::Drawing::Size(183, 22);
-			this->menuCancel->Text = L"Cancel";
-			this->menuCancel->Visible = false;
 			// 
 			// frmMain
 			// 

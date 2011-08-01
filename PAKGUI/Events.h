@@ -4,8 +4,8 @@
 
 
 #define		IDLE	"Idle"
-#define		UNPAK	"UnPAK'ing"
-#define		PAK		"PAK'ing"
+#define		UNPAK	"UnPAK'ing - "
+#define		PAK		"PAK'ing - "
 #define		DONE	"Done"
 #define		CANCEL	"Cancelled"
 
