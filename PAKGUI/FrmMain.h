@@ -937,7 +937,7 @@ namespace PAKGUI {
 				MarshalString( (dynamic_cast<ListViewItem^>(x))->Text, xtmp );
 				MarshalString( (dynamic_cast<ListViewItem^>(y))->Text, ytmp );
 
-				return (int) ( sort * ( fileSizes[ ytmp ] - fileSizes[ xtmp ] ) );
+				return (int) Math::Round( ( sort * ( ( fileSizes[ xtmp ]/1024.0 - fileSizes[ ytmp ]/1024.0 ) ) ) );
 			}
 			else
 			{

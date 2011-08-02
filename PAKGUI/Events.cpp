@@ -28,9 +28,7 @@ inline void MarshalString ( String ^ s, string& os )
 
 inline long long getFileBytes( String ^filename )
 {
-
 	FileInfo^ file = gcnew FileInfo( filename );
-
 	return file->Length;
 }
 
@@ -46,27 +44,25 @@ String ^getFileSize( long long origbytes )
 
 	double bytes = (double) origbytes;
 
-	for ( i = 0; bytes > 1024; ++i, bytes *= ( 1.0/1024.0 ) ) {} // convert from bytes to a more readable unit
+	for ( i = 0; bytes > 1024.0; ++i, bytes *= ( 1.0/1024.0 ) ) {} // convert from bytes to a more readable unit
 
 	stringstream size; // this holds the final string to be returned
 
 	// append size unit to the end of the stringstream (GB = max supported unit, KB = min supported unit)
-	// we only need decimal places for MB and GB
+	// we only need decimal places for GB
 	if ( i == 1 )
 	{
-		size << (int) bytes << " KB";
+		size << Math::Round( bytes ) << " KB"; // we want to make sure we round because typecasting will truncate and may cause problems later
 	}
 	else if ( i == 2 )
 	{
-		size << (int) bytes;
-		size << " MB";
+		size << Math::Round( bytes ) << " MB"; // we want to make sure we round because typecasting will truncate and may cause problems later
 	}
 	else if ( i >= 3 )
 	{
 		size.setf( ios::fixed, ios::floatfield ); // set decimal
 		size.precision(1);
-		size << bytes;
-		size << " GB";
+		size << bytes << " GB";
 	}
 	else // if less than 1KB, round up to 1KB
 	{
