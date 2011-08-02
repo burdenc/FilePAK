@@ -34,45 +34,43 @@ inline long long getFileBytes( String ^filename )
 	return file->Length;
 }
 
-String ^getFileSize( long long bytes )
+String ^getFileSize( long long origbytes )
 {
 	// Convert
 	int i; // number of iterations through the loop determine what unit to use
 	//double sizeconvert = bytes; // the size of the file in bytes
-	if ( bytes == 0 )
+	if ( origbytes == 0 )
 	{
 		return gcnew String( "0 KB" ); // there was nothing in the file
 	}
-	for ( i = 0; bytes > 1024; ++i, bytes = (long long) ( bytes * 1.0/1024.0 ) ) {} // convert from bytes to a more readable unit
+
+	double bytes = (double) origbytes;
+
+	for ( i = 0; bytes > 1024; ++i, bytes *= ( 1.0/1024.0 ) ) {} // convert from bytes to a more readable unit
 
 	stringstream size; // this holds the final string to be returned
-	size << bytes; // convert to string
 
 	// append size unit to the end of the stringstream (GB = max supported unit, KB = min supported unit)
 	// we only need decimal places for MB and GB
 	if ( i == 1 )
 	{
-		size << " KB";
+		size << (int) bytes << " KB";
 	}
 	else if ( i == 2 )
 	{
-		size.str(string()); // clear stringstream
-		size.setf( ios::fixed, ios::floatfield ); // set decimal
-		size.precision(1);
-		size << bytes;
+		size << (int) bytes;
 		size << " MB";
 	}
 	else if ( i >= 3 )
 	{
-		size.str(string()); // clear stringstream
 		size.setf( ios::fixed, ios::floatfield ); // set decimal
-		size.precision(2);
+		size.precision(1);
 		size << bytes;
 		size << " GB";
 	}
 	else // if less than 1KB, round up to 1KB
 	{
-		size.str(string()); // clear stringstream
+		size.str( string() ); // clear stringstream
 		size << "1 KB";
 	}
 

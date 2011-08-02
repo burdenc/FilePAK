@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Events.h"
 #include "frmLog.h"
 
 namespace PAKGUI {
@@ -930,8 +931,19 @@ namespace PAKGUI {
 		}
 		virtual int Compare( Object^ x, Object^ y )
 		{
-			return sort * String::Compare( (dynamic_cast<ListViewItem^>(x))->SubItems[ col ]->Text,
-				(dynamic_cast<ListViewItem^>(y))->SubItems[ col ]->Text );
+			if ( col == 2 ) // this is needed to correctly sort the file size column
+			{
+				string xtmp, ytmp;
+				MarshalString( (dynamic_cast<ListViewItem^>(x))->Text, xtmp );
+				MarshalString( (dynamic_cast<ListViewItem^>(y))->Text, ytmp );
+
+				return (int) ( sort * ( fileSizes[ ytmp ] - fileSizes[ xtmp ] ) );
+			}
+			else
+			{
+				return sort * String::Compare( (dynamic_cast<ListViewItem^>(x))->SubItems[ col ]->Text,
+					(dynamic_cast<ListViewItem^>(y))->SubItems[ col ]->Text );
+			}
 		}
 	};
 
