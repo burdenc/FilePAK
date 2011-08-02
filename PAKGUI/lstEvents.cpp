@@ -65,6 +65,12 @@ System::Void frmMain::lstPakContents_DragDrop(System::Object^  sender, System::W
 	// cycle through all the files that were dragged and add them to the list
 	for each ( String ^p in s )
 	{
+		// this is mainly to detect if the user dropped a folder
+		if ( !File::Exists( p ) )
+		{
+			continue;
+		}
+
 		// calc file size
 		long long bytes = getFileBytes( p );
 		if ( bytes <= 0 )
