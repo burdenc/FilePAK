@@ -14,8 +14,8 @@
 
 
 extern	filePAK								pak;
-extern	map<string, unsigned long long>		fileSizes;
-extern	unsigned long long					currentEstimatedSize;
+extern	map<string, long long>				fileSizes;
+extern	long long							currentEstimatedSize;
 extern	int									numChecked;
 extern	int									itemProgressed;
 extern	int									percentProg;
@@ -24,5 +24,5 @@ extern	int									sorting;
 
 
 extern	inline void			MarshalString ( System::String ^ s, string& os );
-extern	unsigned long long	getFileBytes( System::String ^filename );
-extern	System::String		^getFileSize( unsigned long long bytes );
+extern	inline long long	getFileBytes( System::String ^filename );
+extern	System::String		^getFileSize( long long bytes );

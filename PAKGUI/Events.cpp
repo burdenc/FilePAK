@@ -8,8 +8,8 @@ using namespace PAKGUI;
 
 
 filePAK pak;
-map<string, unsigned long long> fileSizes;
-unsigned long long currentEstimatedSize = 0;
+map<string, long long> fileSizes;
+long long currentEstimatedSize = 0;
 int numChecked = 0;
 int itemProgressed = 0;
 int percentProg = 0;
@@ -27,23 +27,15 @@ inline void MarshalString ( String ^ s, string& os )
 	Marshal::FreeHGlobal(IntPtr((void*)chars));
 }
 
-unsigned long long getFileBytes( String ^filename )
+inline long long getFileBytes( String ^filename )
 {
-	string dir;
-	MarshalString( filename, dir );
-	// Calculate file size in bytes
-	int beg;
-	unsigned long long end;
-	ifstream file ( dir, ios::in|ios::binary); // open file
-	beg = (int)file.tellg(); // beginning of file
-	file.seekg (0, ios::end); // seek to end
-	end = (unsigned long long)file.tellg(); // end of file
-	file.close(); // close file
 
-	return end - beg;
+	FileInfo^ file = gcnew FileInfo( filename );
+
+	return file->Length;
 }
 
-String ^getFileSize( unsigned long long bytes )
+String ^getFileSize( long long bytes )
 {
 	// Convert
 	int i; // number of iterations through the loop determine what unit to use
@@ -52,7 +44,7 @@ String ^getFileSize( unsigned long long bytes )
 	{
 		return gcnew String( "0 KB" ); // there was nothing in the file
 	}
-	for ( i = 0; bytes > 1024; ++i, bytes /= 1024 ) {} // convert from bytes to a more readable unit
+	for ( i = 0; bytes > 1024; ++i, bytes = (long long) ( bytes * 1.0/1024.0 ) ) {} // convert from bytes to a more readable unit
 
 	stringstream size; // this holds the final string to be returned
 	size << bytes; // convert to string

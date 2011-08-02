@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "Events.h"
 
 using namespace PAKGUI;
@@ -9,18 +9,18 @@ System::Void frmMain::lstPakContents_ItemCheck(System::Object^  sender, System::
 {
 	string tmp;
 	MarshalString( lstPakContents->Items[ e->Index ]->Text, tmp );
-	unsigned long long checkedsize = fileSizes[ tmp ];
+	long long checkedsize = fileSizes[ tmp ];
 
 	// determine if the event was triggered by either a check or an uncheck
 	if ( e->CurrentValue == CheckState::Unchecked ) // If the event was triggered by a check
 	{
 		++numChecked;
-		currentEstimatedSize += std::max( checkedsize, (unsigned long long) 1024 ); // calculate the new size (remember, still in bytes). also, we want to at least display 1KB of difference
+		currentEstimatedSize += std::max( checkedsize, (long long) 1024 ); // calculate the new size (remember, still in bytes). also, we want to at least display 1KB of difference
 	}
 	else // If the event was triggered by an uncheck
 	{
 		--numChecked;
-		currentEstimatedSize -= std::max( checkedsize, (unsigned long long) 1024 ); // calculate the new size (remember, still in bytes). also, we want to at least display 1KB of difference
+		currentEstimatedSize -= std::max( checkedsize, (long long) 1024 ); // calculate the new size (remember, still in bytes). also, we want to at least display 1KB of difference
 	}
 
 	// finally, determine the new units
@@ -66,7 +66,7 @@ System::Void frmMain::lstPakContents_DragDrop(System::Object^  sender, System::W
 	for each ( String ^p in s )
 	{
 		// calc file size
-		unsigned long long bytes = getFileBytes( p );
+		long long bytes = getFileBytes( p );
 		if ( bytes <= 0 )
 		{
 			if ( errors )
@@ -125,7 +125,6 @@ System::Void frmMain::lstPakContents_DragDrop(System::Object^  sender, System::W
 
 inline System::Void frmMain::lstPakContents_ColumnClick(System::Object^  sender, System::Windows::Forms::ColumnClickEventArgs^  e)
 {
-
 	if ( sorting == ASCENDING )
 	{
 		sorting = DESCENDING;

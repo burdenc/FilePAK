@@ -126,7 +126,6 @@ System::Void frmMain::newToolStripMenuItem_Click(System::Object^  sender, System
 	percentProg = 0;
 	numChecked = 0;
 	prog = IDLE;
-	updateStatus();
 	btnUnpak->Enabled = false;
 	btnPak->Enabled = false;
 	menuPak->Enabled = false;
@@ -137,6 +136,7 @@ System::Void frmMain::newToolStripMenuItem_Click(System::Object^  sender, System
 	lblPakSizeAfterPak->Text = "0 KB";
 	currentEstimatedSize = 0;
 	lblNumFiles->Text = "0 Files";
+	fileSizes.clear();
 
 	// clear the content list
 	for each ( ListViewItem ^item in lstPakContents->Items )

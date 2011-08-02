@@ -26,19 +26,55 @@ System::Void frmMain::btnCheckNone_Click(System::Object^  sender, System::EventA
 	}
 }
 
-System::Void frmMain::btnDeleteSelected_Click(System::Object^  sender, System::EventArgs^  e) {
-	// check for any original pak files
-	// then modify btnPak->Text = "RePAK";
+System::Void frmMain::btnDeleteSelected_Click(System::Object^  sender, System::EventArgs^  e)
+{
+	for each ( ListViewItem^ item in lstPakContents->SelectedItems )
+	{
+		item->Checked = false;
+		string tmp;
+		MarshalString( item->Text, tmp );
+		fileSizes[ tmp ] = 0;
+		item->Remove();
+
+	}
+
+	if ( !lstPakContents->Items->Count ) // if no items are left after this, treat it as if almost a new file
+	{
+		// reset several items in the form to their original values
+		btnPak->Text = "PAK";
+		percentProg = 0;
+		numChecked = 0;
+		prog = IDLE;
+		btnUnpak->Enabled = false;
+		btnPak->Enabled = false;
+		menuPak->Enabled = false;
+		menuUnpak->Enabled = false;
+		lblPakSizeAfterPak->Text = "0 KB";
+		currentEstimatedSize = 0;
+
+		updateStatus();
+
+		return;
+	}
+
+	for each ( ListViewItem^ item in lstPakContents->Items )
+	{
+		if ( item->SubItems[3]->Text == "In PAK" )
+		{
+			MessageBox::Show( "dixx");
+			return;
+		}
+	}
+	btnPak->Text = "PAK";
 }
 
 // This event occurs when the user clicks the Unpak button
 System::Void frmMain::btnUnpak_Click(System::Object^  sender, System::EventArgs^  e) 
 {
-	unpakFolderBrowserDialog->ShowDialog(); // open folder browser
-
-	if ( unpakFolderBrowserDialog->SelectedPath->Length <= 0 ) // if the user didn't select any files
+	if ( unpakFolderBrowserDialog->ShowDialog() == System::Windows::Forms::DialogResult::Yes
+		|| unpakFolderBrowserDialog->SelectedPath->Length <= 0 ) // if the user didn't select any files
 	{
-		return;
+		return; // the user didn't make a selection, so don't do anything
 	}
 
 	// may implement dialog that deals with replacing files
@@ -214,9 +250,8 @@ System::Void frmMain::btnUnpak_Click(System::Object^  sender, System::EventArgs^
 // This event occurs when the user clicks the Pak button
 System::Void frmMain::btnPak_Click(System::Object^  sender, System::EventArgs^  e)
 {
-	unpakFolderBrowserDialog->ShowDialog(); // open folder browser
-
-	if ( unpakFolderBrowserDialog->SelectedPath->Length <= 0 ) // if the user didn't select any files
+	// open folder browser
+	if ( unpakFolderBrowserDialog->ShowDialog() == System::Windows::Forms::DialogResult::Cancel || unpakFolderBrowserDialog->SelectedPath->Length <= 0 ) // show the dialog
 	{
 		return;
 	}
@@ -398,7 +433,10 @@ System::Void frmMain::btnPak_Click(System::Object^  sender, System::EventArgs^  
 // This event occurs when the Browse button is hit to add an entire directory to the PAK
 System::Void frmMain::btnBrowseDir_Click(System::Object^  sender, System::EventArgs^  e)
 {
-	addFolderBrowserDialog->ShowDialog(); // This displays the folder selection dialog
+	if ( addFolderBrowserDialog->ShowDialog() == System::Windows::Forms::DialogResult::Cancel ) // This displays the folder selection dialog
+	{
+		return; // if the user didn't make a selection, then don't do anything
+	}
 
 	if ( addFolderBrowserDialog->SelectedPath->Length <= 0 ) // if the user didn't select any files
 	{
@@ -412,7 +450,7 @@ System::Void frmMain::btnBrowseDir_Click(System::Object^  sender, System::EventA
 	for each ( String ^file in files )
 	{
 		// calc file size
-		unsigned long long bytes = getFileBytes( file );
+		long long bytes = getFileBytes( file );
 		string tmp;
 		MarshalString( file->Substring( file->LastIndexOf('\\') + 1 ), tmp );
 		if ( fileSizes[tmp] != 0 )
