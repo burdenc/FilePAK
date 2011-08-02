@@ -122,3 +122,18 @@ System::Void frmMain::lstPakContents_DragDrop(System::Object^  sender, System::W
 	}
 
 }
+
+inline System::Void frmMain::lstPakContents_ColumnClick(System::Object^  sender, System::Windows::Forms::ColumnClickEventArgs^  e)
+{
+
+	if ( sorting == ASCENDING )
+	{
+		sorting = DESCENDING;
+	}
+	else
+	{
+		sorting = ASCENDING;
+	}
+
+	lstPakContents->ListViewItemSorter = gcnew ListViewItemComparer( e->Column, sorting );
+}

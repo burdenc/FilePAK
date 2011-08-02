@@ -14,6 +14,7 @@ int numChecked = 0;
 int itemProgressed = 0;
 int percentProg = 0;
 string prog = IDLE;
+int sorting = ASCENDING;
 
 
 // convert System::String (String ^) to std::string for use with LibPAK

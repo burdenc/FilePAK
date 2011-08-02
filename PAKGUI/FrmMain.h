@@ -12,6 +12,7 @@ namespace PAKGUI {
 	using namespace System::Drawing;
 	using namespace System::IO;
 
+
 	/// <summary>
 	/// Summary for frmMain
 	/// </summary>
@@ -163,8 +164,8 @@ namespace PAKGUI {
 	private: System::Windows::Forms::ToolStripMenuItem^  selectAllToolStripMenuItem;
 	private: System::Windows::Forms::ToolStripMenuItem^  selectNoneToolStripMenuItem;
 	private: System::Windows::Forms::FolderBrowserDialog^  unpakFolderBrowserDialog;
-private: System::Windows::Forms::Button^  btnCancel;
-private: System::Windows::Forms::ToolStripMenuItem^  menuCancel;
+	private: System::Windows::Forms::Button^  btnCancel;
+	private: System::Windows::Forms::ToolStripMenuItem^  menuCancel;
 
 
 
@@ -424,10 +425,10 @@ private: System::Windows::Forms::ToolStripMenuItem^  menuCancel;
 			this->lstPakContents->Location = System::Drawing::Point(10, 58);
 			this->lstPakContents->Name = L"lstPakContents";
 			this->lstPakContents->Size = System::Drawing::Size(772, 266);
-			this->lstPakContents->Sorting = System::Windows::Forms::SortOrder::Ascending;
 			this->lstPakContents->TabIndex = 7;
 			this->lstPakContents->UseCompatibleStateImageBehavior = false;
 			this->lstPakContents->View = System::Windows::Forms::View::Details;
+			this->lstPakContents->ColumnClick += gcnew System::Windows::Forms::ColumnClickEventHandler(this, &frmMain::lstPakContents_ColumnClick);
 			this->lstPakContents->ItemCheck += gcnew System::Windows::Forms::ItemCheckEventHandler(this, &frmMain::lstPakContents_ItemCheck);
 			this->lstPakContents->DragDrop += gcnew System::Windows::Forms::DragEventHandler(this, &frmMain::lstPakContents_DragDrop);
 			this->lstPakContents->DragOver += gcnew System::Windows::Forms::DragEventHandler(this, &frmMain::lstPakContents_DragOver);
@@ -895,8 +896,44 @@ private: System::Windows::Forms::ToolStripMenuItem^  menuCancel;
 				 btnUnpak_Click( sender, e );
 			 }
 
-			 private: inline System::Void updateStatus();
+	private: inline System::Void updateStatus();
+
+			 // This event occurs when a column head is clicked
+	private: inline System::Void lstPakContents_ColumnClick(System::Object^  sender, System::Windows::Forms::ColumnClickEventArgs^  e);
+
 	};	
+
+	// Implements the manual sorting of items by columns.
+	ref class ListViewItemComparer: public IComparer
+	{
+	private:
+		int col;
+		int sort; // 1 = ascending, -1 = descending
+
+	public:
+		ListViewItemComparer()
+		{
+			col = 0;
+			sort = 1; // default ascending
+		}
+
+		ListViewItemComparer( int column )
+		{
+			col = column;
+			sort = 1;
+		}
+
+		ListViewItemComparer( int column, int sorting )
+		{
+			col = column;
+			sort = sorting;
+		}
+		virtual int Compare( Object^ x, Object^ y )
+		{
+			return sort * String::Compare( (dynamic_cast<ListViewItem^>(x))->SubItems[ col ]->Text,
+				(dynamic_cast<ListViewItem^>(y))->SubItems[ col ]->Text );
+		}
+	};
 
 }
 
