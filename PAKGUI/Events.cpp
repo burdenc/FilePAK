@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "Events.h"
 
-#include <fstream>
 #include <sstream>
 
 using namespace PAKGUI;
