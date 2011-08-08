@@ -899,6 +899,8 @@ namespace PAKGUI {
 
 	private: inline System::Void updateStatus();
 
+	private: inline System::Void logScrollToBottom(); // scroll the log to the bottom
+
 			 // This event occurs when a column head is clicked
 	private: inline System::Void lstPakContents_ColumnClick(System::Object^  sender, System::Windows::Forms::ColumnClickEventArgs^  e);
 
@@ -946,5 +948,4 @@ namespace PAKGUI {
 			}
 		}
 	};
-
 }

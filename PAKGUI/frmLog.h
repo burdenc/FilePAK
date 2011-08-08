@@ -83,6 +83,7 @@ namespace PAKGUI {
 			this->txtLog->Location = System::Drawing::Point(3, 3);
 			this->txtLog->Multiline = true;
 			this->txtLog->Name = L"txtLog";
+			this->txtLog->ReadOnly = true;
 			this->txtLog->ScrollBars = System::Windows::Forms::ScrollBars::Both;
 			this->txtLog->Size = System::Drawing::Size(577, 279);
 			this->txtLog->TabIndex = 0;
@@ -152,6 +153,7 @@ namespace PAKGUI {
 			this->Text = L"Log";
 			this->TopMost = true;
 			this->FormClosing += gcnew System::Windows::Forms::FormClosingEventHandler(this, &frmLog::frmLog_FormClosing);
+			this->Shown += gcnew System::EventHandler(this, &frmLog::frmLog_Shown);
 			this->tableLayoutPanel1->ResumeLayout(false);
 			this->tableLayoutPanel1->PerformLayout();
 			this->panel1->ResumeLayout(false);
@@ -162,6 +164,13 @@ namespace PAKGUI {
 	private: inline System::Void btnOK_Click(System::Object^  sender, System::EventArgs^  e);
 	private: inline System::Void frmLog_FormClosing(System::Object^  sender, System::Windows::Forms::FormClosingEventArgs^  e);
 	private: inline System::Void btnClear_Click(System::Object^  sender, System::EventArgs^  e);
-
-	};
+	private: System::Void frmLog_Shown(System::Object^  sender, System::EventArgs^  e)
+			 {
+				 // Scrolls txtbox to the bottom
+				 // This has to be done in this separate event for the sole reason that the visiblechanged event causes the ScrollToCaret method to fail the first time the dialog is shown.
+				 txtLog->Focus();
+				 txtLog->Select( txtLog->Text->Length, 0 ); // put the caret at the bottom
+				 txtLog->ScrollToCaret(); // scroll to the caret
+			 }
+};
 }

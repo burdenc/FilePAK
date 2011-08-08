@@ -7,11 +7,11 @@ System::Void inline frmMain::logToolStripMenuItem_Click(System::Object^  sender,
 {
 	if ( !logToolStripMenuItem->Checked )
 	{
-		frmMain::log->Visible = false;
+		log->Visible = false;
 	}
 	else
 	{
-		frmMain::log->Visible = true;
+		log->Visible = true;
 	}
 }
 
@@ -19,6 +19,8 @@ System::Void inline frmMain::frmLog_VisibleChanged(System::Object^  sender, Syst
 {
 	if ( log->Visible ) {
 		logToolStripMenuItem->Checked = true;
+		log->DesktopLocation = Point( frmMain::DesktopLocation.X + 100, frmMain::DesktopLocation.Y + 100 );
+		logScrollToBottom(); // scroll the log to the bottom. For some reason, this works better outside of the if's below.
 	}
 	else
 	{

@@ -35,7 +35,6 @@ System::Void frmMain::btnDeleteSelected_Click(System::Object^  sender, System::E
 		MarshalString( item->Text, tmp );
 		fileSizes[ tmp ] = 0;
 		item->Remove();
-
 	}
 
 	if ( !lstPakContents->Items->Count ) // if no items are left after this, treat it as if almost a new file

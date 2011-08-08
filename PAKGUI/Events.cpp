@@ -32,6 +32,13 @@ inline long long getFileBytes( String ^filename )
 	return file->Length;
 }
 
+inline System::Void frmMain::logScrollToBottom()
+{
+	log->txtLog->Focus();
+	log->txtLog->Select( log->txtLog->Text->Length, 0 ); // put the caret at the bottom
+	log->txtLog->ScrollToCaret(); // scroll to the caret
+}
+
 String ^getFileSize( long long origbytes )
 {
 	// Convert
