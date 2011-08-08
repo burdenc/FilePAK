@@ -62,6 +62,8 @@ System::Void frmMain::lstPakContents_DragDrop(System::Object^  sender, System::W
 	System::Collections::Specialized::StringCollection ^s = o->GetFileDropList();
 
 	bool errors = false; // if there were errors adding files, this will be true
+
+	lstPakContents->BeginUpdate();
 	// cycle through all the files that were dragged and add them to the list
 	for each ( String ^p in s )
 	{
@@ -109,10 +111,18 @@ System::Void frmMain::lstPakContents_DragDrop(System::Object^  sender, System::W
 		item->SubItems->Add( p ); // directory column
 		item->SubItems->Add( size ); // file size column
 		item->SubItems->Add( "Not in PAK" ); // origin column. since you're manually adding the file, it can't already be in the pak
-		item->SubItems->Add( p->Substring( p->LastIndexOf('.') ) ); // extension column
+		if ( p->LastIndexOf('.') == -1 )
+		{
+			item->SubItems->Add( "" ); // extension column
+		}
+		else
+		{
+			item->SubItems->Add( p->Substring( p->LastIndexOf('.') ) ); // extension column
+		}
 		item->Checked = true; // defaults to checked. since you are manually adding the file, it's assumed that you want to include it in your pak
 		lstPakContents->Items->Add( item ); // finally add the item to the list
 	}
+	lstPakContents->EndUpdate();
 
 	if ( errors ) // if there were errors and the log isn't visible, warn them that there were errors and ask to display the log, otherwise we don't want to bug the user
 	{
@@ -131,6 +141,8 @@ System::Void frmMain::lstPakContents_DragDrop(System::Object^  sender, System::W
 
 inline System::Void frmMain::lstPakContents_ColumnClick(System::Object^  sender, System::Windows::Forms::ColumnClickEventArgs^  e)
 {
+	lstPakContents->BeginUpdate();
+
 	if ( sorting == ASCENDING )
 	{
 		sorting = DESCENDING;
@@ -141,4 +153,6 @@ inline System::Void frmMain::lstPakContents_ColumnClick(System::Object^  sender,
 	}
 
 	lstPakContents->ListViewItemSorter = gcnew ListViewItemComparer( e->Column, sorting );
+
+	lstPakContents->EndUpdate();
 }

@@ -69,7 +69,14 @@ System::Void frmMain::openToolStripMenuItem_Click(System::Object^  sender, Syste
 			item->SubItems->Add( openPakDialog->FileName ); // directory column
 			item->SubItems->Add( size ); // file size column
 			item->SubItems->Add( "In PAK" ); // origin column. since you're opening the pak, it must be in the pak
-			item->SubItems->Add( filename->Substring( filename->LastIndexOf('.') ) ); // extension column
+			if ( filename->LastIndexOf('.') == -1 )
+			{
+				item->SubItems->Add( "" ); // extension column
+			}
+			else
+			{
+				item->SubItems->Add( filename->Substring( filename->LastIndexOf('.') ) ); // extension column
+			}
 			item->Checked = true; // defaults to checked. since you are manually adding the file, it's assumed that you want to include it in your pak
 			lstPakContents->Items->Add( item ); // finally add the item to the list
 
@@ -138,11 +145,13 @@ System::Void frmMain::newToolStripMenuItem_Click(System::Object^  sender, System
 	lblNumFiles->Text = "0 Files";
 	fileSizes.clear();
 
+	lstPakContents->BeginUpdate();
 	// clear the content list
 	for each ( ListViewItem ^item in lstPakContents->Items )
 	{
 		item->Remove();
 	}
+	lstPakContents->EndUpdate();
 
 	updateStatus();
 }

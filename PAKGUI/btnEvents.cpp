@@ -11,23 +11,52 @@ using namespace PAKGUI;
 // This event occurs when the user clicks the Check all button
 System::Void frmMain::btnCheckAll_Click(System::Object^  sender, System::EventArgs^  e)
 {
+	lstPakContents->BeginUpdate();
 	for each ( ListViewItem^ item in lstPakContents->Items )
 	{
 		item->Checked = true;
 	}
+	lstPakContents->EndUpdate();
 }
 
 // This event occurs when the user clicks the Check none button
 System::Void frmMain::btnCheckNone_Click(System::Object^  sender, System::EventArgs^  e)
 {
+	lstPakContents->BeginUpdate();
 	for each ( ListViewItem^ item in lstPakContents->Items )
 	{
 		item->Checked = false;
 	}
+	lstPakContents->EndUpdate();
+}
+
+// This event occurs when the user clicks the Select all button
+System::Void frmMain::btnSelectAll_Click(System::Object^  sender, System::EventArgs^  e)
+{
+	lstPakContents->BeginUpdate();
+	for each ( ListViewItem^ item in lstPakContents->Items )
+	{
+		item->Selected = true;
+	}
+	lstPakContents->EndUpdate();
+	lstPakContents->Focus(); // This is required because for some reason, the listview will not show the selected items unless the control has focus.
+}
+
+// This event occurs when the user clicks the Select none button
+System::Void frmMain::btnSelectNone_Click(System::Object^  sender, System::EventArgs^  e)
+{
+	lstPakContents->BeginUpdate();
+	for each ( ListViewItem^ item in lstPakContents->Items )
+	{
+		item->Selected = false;
+	}
+	lstPakContents->EndUpdate();
+	lstPakContents->Focus(); // This is required because for some reason, the listview will not show the selected items unless the control has focus.
 }
 
 System::Void frmMain::btnDeleteSelected_Click(System::Object^  sender, System::EventArgs^  e)
 {
+	lstPakContents->BeginUpdate();
 	for each ( ListViewItem^ item in lstPakContents->SelectedItems )
 	{
 		item->Checked = false;
@@ -36,6 +65,7 @@ System::Void frmMain::btnDeleteSelected_Click(System::Object^  sender, System::E
 		fileSizes[ tmp ] = 0;
 		item->Remove();
 	}
+	lstPakContents->EndUpdate();
 
 	if ( !lstPakContents->Items->Count ) // if no items are left after this, treat it as if almost a new file
 	{
@@ -56,15 +86,6 @@ System::Void frmMain::btnDeleteSelected_Click(System::Object^  sender, System::E
 		return;
 	}
 
-	for each ( ListViewItem^ item in lstPakContents->Items )
-	{
-		if ( item->SubItems[3]->Text == "In PAK" )
-		{
-			MessageBox::Show( "dixx");
-			return;
-		}
-	}
-	btnPak->Text = "PAK";
 }
 
 // This event occurs when the user clicks the Unpak button
@@ -446,6 +467,7 @@ System::Void frmMain::btnBrowseDir_Click(System::Object^  sender, System::EventA
 
 	bool errors = false;
 
+	lstPakContents->BeginUpdate();
 	for each ( String ^file in files )
 	{
 		// calc file size
@@ -486,11 +508,19 @@ System::Void frmMain::btnBrowseDir_Click(System::Object^  sender, System::EventA
 		item->SubItems->Add( file ); // directory column
 		item->SubItems->Add( size ); // file size column
 		item->SubItems->Add( "Not in PAK" ); // origin column. since you're manually adding the file, it can't already be in the pak
-		item->SubItems->Add( file->Substring( file->LastIndexOf('.') ) ); // extension column
+		if ( file->LastIndexOf('.') == -1 )
+		{
+			item->SubItems->Add( "" ); // extension column
+		}
+		else
+		{
+			item->SubItems->Add( file->Substring( file->LastIndexOf('.') ) ); // extension column
+		}
 		item->Checked = true; // defaults to checked. since you are manually adding the file, it's assumed that you want to include it in your pak
 		lstPakContents->Items->Add( item ); // finally add the item to the list
 
 	}
+	lstPakContents->EndUpdate();
 
 	if ( errors ) // if there were errors and the log isn't visible, warn them that there were errors and ask to display the log, otherwise we don't want to bug the user
 	{
