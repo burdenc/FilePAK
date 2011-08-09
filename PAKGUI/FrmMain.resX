@@ -120,6 +120,18 @@
   <metadata name="menuStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>133, 17</value>
   </metadata>
+  <metadata name="toolTip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>31, 17</value>
+  </metadata>
+  <data name="btnUnpak.ToolTip" xml:space="preserve">
+    <value>This button will UnPAK any items checked in the list above (provided they are currently in a PAK file).
+A dialog will be displayed that will allow you to select the destination for the UnPAK'ed files.</value>
+  </data>
+  <data name="btnPak.ToolTip" xml:space="preserve">
+    <value>This button will PAK or RePAK (if there is a current PAK file open) any items checked in the list above.
+If any items in the original opened PAK file are unchecked, they will be removed from the PAK.
+The PAK file will be saved at the location specified above the list in the "PAK Save location" box.</value>
+  </data>
   <metadata name="statusStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>248, 17</value>
   </metadata>

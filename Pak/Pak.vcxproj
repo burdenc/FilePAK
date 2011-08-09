@@ -13,7 +13,7 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{00DED9FF-7B5B-413C-8BFB-E4A73DEF6B04}</ProjectGuid>
     <RootNamespace>Pak</RootNamespace>
-    <ProjectName>LibPAK</ProjectName>
+    <ProjectName>libPAK</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

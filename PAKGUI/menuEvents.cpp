@@ -36,6 +36,12 @@ System::Void frmMain::openToolStripMenuItem_Click(System::Object^  sender, Syste
 
 	openPakDialog->ShowDialog(); // display file selection dialog
 	string dir = ""; // will hold the full path to the pak
+
+	if (openPakDialog->FileName->Length <= 0) // If the user canceled or somehow didn't make a selection.
+	{
+		return;
+	}
+
 	MarshalString( openPakDialog->FileName, dir ); // convert the dialog result to a string that we can use
 	if ( pak.readPAK( dir ) && pak.getNumPAKEntries() > 0 ) {
 

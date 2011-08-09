@@ -169,6 +169,7 @@ namespace PAKGUI {
 	private: System::Windows::Forms::ToolStripMenuItem^  menuCancel;
 	private: System::Windows::Forms::Button^  btnSelectNone;
 	private: System::Windows::Forms::Button^  btnSelectAll;
+private: System::Windows::Forms::ToolTip^  toolTip;
 
 
 
@@ -191,6 +192,8 @@ namespace PAKGUI {
 		/// </summary>
 		void InitializeComponent(void)
 		{
+			this->components = (gcnew System::ComponentModel::Container());
+			System::ComponentModel::ComponentResourceManager^  resources = (gcnew System::ComponentModel::ComponentResourceManager(frmMain::typeid));
 			this->menuStrip1 = (gcnew System::Windows::Forms::MenuStrip());
 			this->fileToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->newToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
@@ -252,6 +255,7 @@ namespace PAKGUI {
 			this->label3 = (gcnew System::Windows::Forms::Label());
 			this->groupBox1 = (gcnew System::Windows::Forms::GroupBox());
 			this->unpakFolderBrowserDialog = (gcnew System::Windows::Forms::FolderBrowserDialog());
+			this->toolTip = (gcnew System::Windows::Forms::ToolTip(this->components));
 			this->menuStrip1->SuspendLayout();
 			this->groupBox2->SuspendLayout();
 			this->panel3->SuspendLayout();
@@ -431,6 +435,7 @@ namespace PAKGUI {
 			this->btnSelectNone->Size = System::Drawing::Size(75, 23);
 			this->btnSelectNone->TabIndex = 9;
 			this->btnSelectNone->Text = L"Select none";
+			this->toolTip->SetToolTip(this->btnSelectNone, L"This button unhighlights all the items in the list below.");
 			this->btnSelectNone->UseVisualStyleBackColor = true;
 			this->btnSelectNone->Click += gcnew System::EventHandler(this, &frmMain::btnSelectNone_Click);
 			// 
@@ -442,6 +447,7 @@ namespace PAKGUI {
 			this->btnSelectAll->Size = System::Drawing::Size(75, 23);
 			this->btnSelectAll->TabIndex = 8;
 			this->btnSelectAll->Text = L"Select all";
+			this->toolTip->SetToolTip(this->btnSelectAll, L"This button highlights all the items in the list below.");
 			this->btnSelectAll->UseVisualStyleBackColor = true;
 			this->btnSelectAll->Click += gcnew System::EventHandler(this, &frmMain::btnSelectAll_Click);
 			// 
@@ -458,6 +464,8 @@ namespace PAKGUI {
 			this->lstPakContents->Name = L"lstPakContents";
 			this->lstPakContents->Size = System::Drawing::Size(772, 266);
 			this->lstPakContents->TabIndex = 7;
+			this->toolTip->SetToolTip(this->lstPakContents, L"This list holds the contents of any PAK you\'ve opened and/or any files you wish t" 
+				L"o PAK or UnPAK.");
 			this->lstPakContents->UseCompatibleStateImageBehavior = false;
 			this->lstPakContents->View = System::Windows::Forms::View::Details;
 			this->lstPakContents->ColumnClick += gcnew System::Windows::Forms::ColumnClickEventHandler(this, &frmMain::lstPakContents_ColumnClick);
@@ -500,6 +508,8 @@ namespace PAKGUI {
 			this->btnAddFiles->Size = System::Drawing::Size(75, 23);
 			this->btnAddFiles->TabIndex = 4;
 			this->btnAddFiles->Text = L"Add file(s)";
+			this->toolTip->SetToolTip(this->btnAddFiles, L"This button opens a dialog that allows you to select a single file or multiple fi" 
+				L"les to add to the list below.");
 			this->btnAddFiles->UseVisualStyleBackColor = true;
 			// 
 			// btnBrowseDir
@@ -510,6 +520,9 @@ namespace PAKGUI {
 			this->btnBrowseDir->Size = System::Drawing::Size(94, 23);
 			this->btnBrowseDir->TabIndex = 6;
 			this->btnBrowseDir->Text = L"Add directory";
+			this->toolTip->SetToolTip(this->btnBrowseDir, L"This button will add the contents of an entire directory to the list below.\r\nNote" 
+				L": this operation is not recursive: it will not add the contents of any subdirect" 
+				L"ories.");
 			this->btnBrowseDir->UseVisualStyleBackColor = true;
 			this->btnBrowseDir->Click += gcnew System::EventHandler(this, &frmMain::btnBrowseDir_Click);
 			// 
@@ -520,6 +533,8 @@ namespace PAKGUI {
 			this->btnDeleteSelected->Size = System::Drawing::Size(100, 23);
 			this->btnDeleteSelected->TabIndex = 5;
 			this->btnDeleteSelected->Text = L"Delete highlighted";
+			this->toolTip->SetToolTip(this->btnDeleteSelected, L"This button removes any highlighted items from the list below.\r\nNote: upon removi" 
+				L"ng an item, it will no longer be included in any PAK or UnPAK actions.");
 			this->btnDeleteSelected->UseVisualStyleBackColor = true;
 			this->btnDeleteSelected->Click += gcnew System::EventHandler(this, &frmMain::btnDeleteSelected_Click);
 			// 
@@ -530,6 +545,7 @@ namespace PAKGUI {
 			this->btnCheckNone->Size = System::Drawing::Size(75, 23);
 			this->btnCheckNone->TabIndex = 3;
 			this->btnCheckNone->Text = L"Check none";
+			this->toolTip->SetToolTip(this->btnCheckNone, L"This button unchecks all the items in the list below.");
 			this->btnCheckNone->UseVisualStyleBackColor = true;
 			this->btnCheckNone->Click += gcnew System::EventHandler(this, &frmMain::btnCheckNone_Click);
 			// 
@@ -540,6 +556,7 @@ namespace PAKGUI {
 			this->btnCheckAll->Size = System::Drawing::Size(75, 23);
 			this->btnCheckAll->TabIndex = 2;
 			this->btnCheckAll->Text = L"Check all";
+			this->toolTip->SetToolTip(this->btnCheckAll, L"This button checks all the items in the list below.");
 			this->btnCheckAll->UseVisualStyleBackColor = true;
 			this->btnCheckAll->Click += gcnew System::EventHandler(this, &frmMain::btnCheckAll_Click);
 			// 
@@ -569,6 +586,7 @@ namespace PAKGUI {
 			this->lblPercentProg->TabIndex = 6;
 			this->lblPercentProg->Text = L"Idle";
 			this->lblPercentProg->TextAlign = System::Drawing::ContentAlignment::TopCenter;
+			this->toolTip->SetToolTip(this->lblPercentProg, L"This displays the operation currently being performed.");
 			// 
 			// lblItemProg
 			// 
@@ -578,6 +596,7 @@ namespace PAKGUI {
 			this->lblItemProg->TabIndex = 5;
 			this->lblItemProg->Text = L"0 / 0";
 			this->lblItemProg->TextAlign = System::Drawing::ContentAlignment::TopCenter;
+			this->toolTip->SetToolTip(this->lblItemProg, L"This displays the item being processed for the current operation.");
 			// 
 			// label2
 			// 
@@ -587,6 +606,7 @@ namespace PAKGUI {
 			this->label2->Size = System::Drawing::Size(30, 13);
 			this->label2->TabIndex = 4;
 			this->label2->Text = L"Item:";
+			this->toolTip->SetToolTip(this->label2, L"This displays the item being processed for the current operation.");
 			// 
 			// label1
 			// 
@@ -596,6 +616,7 @@ namespace PAKGUI {
 			this->label1->Size = System::Drawing::Size(51, 13);
 			this->label1->TabIndex = 3;
 			this->label1->Text = L"Progress:";
+			this->toolTip->SetToolTip(this->label1, L"This displays the operation currently being performed.");
 			// 
 			// progressBar
 			// 
@@ -605,6 +626,7 @@ namespace PAKGUI {
 			this->progressBar->Size = System::Drawing::Size(395, 37);
 			this->progressBar->Style = System::Windows::Forms::ProgressBarStyle::Continuous;
 			this->progressBar->TabIndex = 2;
+			this->toolTip->SetToolTip(this->progressBar, L"This displays the progress of the current operation.");
 			// 
 			// btnUnpak
 			// 
@@ -615,6 +637,7 @@ namespace PAKGUI {
 			this->btnUnpak->Size = System::Drawing::Size(95, 43);
 			this->btnUnpak->TabIndex = 8;
 			this->btnUnpak->Text = L"UnPAK";
+			this->toolTip->SetToolTip(this->btnUnpak, resources->GetString(L"btnUnpak.ToolTip"));
 			this->btnUnpak->UseVisualStyleBackColor = true;
 			this->btnUnpak->Click += gcnew System::EventHandler(this, &frmMain::btnUnpak_Click);
 			// 
@@ -626,6 +649,7 @@ namespace PAKGUI {
 			this->btnPak->Size = System::Drawing::Size(95, 43);
 			this->btnPak->TabIndex = 9;
 			this->btnPak->Text = L"PAK\r\n";
+			this->toolTip->SetToolTip(this->btnPak, resources->GetString(L"btnPak.ToolTip"));
 			this->btnPak->UseVisualStyleBackColor = true;
 			this->btnPak->Click += gcnew System::EventHandler(this, &frmMain::btnPak_Click);
 			// 
@@ -636,6 +660,7 @@ namespace PAKGUI {
 			this->btnCancel->Size = System::Drawing::Size(136, 43);
 			this->btnCancel->TabIndex = 10;
 			this->btnCancel->Text = L"Cancel";
+			this->toolTip->SetToolTip(this->btnCancel, L"This will cancel the current operation.");
 			this->btnCancel->UseVisualStyleBackColor = true;
 			this->btnCancel->Visible = false;
 			// 
@@ -712,6 +737,8 @@ namespace PAKGUI {
 			this->lblOrigDir->Size = System::Drawing::Size(310, 19);
 			this->lblOrigDir->TabIndex = 12;
 			this->lblOrigDir->Text = L"None";
+			this->toolTip->SetToolTip(this->lblOrigDir, L"This displays the original location of the current PAK file you have open (if any" 
+				L").");
 			// 
 			// label4
 			// 
@@ -722,6 +749,8 @@ namespace PAKGUI {
 			this->label4->Size = System::Drawing::Size(112, 13);
 			this->label4->TabIndex = 11;
 			this->label4->Text = L"Original PAK directory:";
+			this->toolTip->SetToolTip(this->label4, L"This displays the original location of the current PAK file you have open (if any" 
+				L").");
 			// 
 			// lblNumFiles
 			// 
@@ -731,6 +760,8 @@ namespace PAKGUI {
 			this->lblNumFiles->TabIndex = 10;
 			this->lblNumFiles->Text = L"0 Files";
 			this->lblNumFiles->TextAlign = System::Drawing::ContentAlignment::TopRight;
+			this->toolTip->SetToolTip(this->lblNumFiles, L"This displays the number of files that are currently in the opened PAK before PAK" 
+				L"/RePAK\'ing.");
 			// 
 			// lblPakSizeAfterPak
 			// 
@@ -740,6 +771,7 @@ namespace PAKGUI {
 			this->lblPakSizeAfterPak->TabIndex = 9;
 			this->lblPakSizeAfterPak->Text = L"0 KB";
 			this->lblPakSizeAfterPak->TextAlign = System::Drawing::ContentAlignment::TopRight;
+			this->toolTip->SetToolTip(this->lblPakSizeAfterPak, L"This displays the estimated size of the PAK file after PAK/RePAK\'ing.");
 			// 
 			// lblPakSize
 			// 
@@ -749,6 +781,8 @@ namespace PAKGUI {
 			this->lblPakSize->TabIndex = 8;
 			this->lblPakSize->Text = L"0 KB";
 			this->lblPakSize->TextAlign = System::Drawing::ContentAlignment::TopRight;
+			this->toolTip->SetToolTip(this->lblPakSize, L"This displays the current size of the PAK on your hard drive before PAK/RePAK\'ing" 
+				L".");
 			// 
 			// btnSaveDirBrowse
 			// 
@@ -758,6 +792,8 @@ namespace PAKGUI {
 			this->btnSaveDirBrowse->Size = System::Drawing::Size(75, 23);
 			this->btnSaveDirBrowse->TabIndex = 1;
 			this->btnSaveDirBrowse->Text = L"Browse";
+			this->toolTip->SetToolTip(this->btnSaveDirBrowse, L"This button will open a dialog allowing you to select a location for your current" 
+				L" PAK to be saved.");
 			this->btnSaveDirBrowse->UseVisualStyleBackColor = true;
 			this->btnSaveDirBrowse->Click += gcnew System::EventHandler(this, &frmMain::btnSaveDirBrowse_Click);
 			// 
@@ -771,6 +807,8 @@ namespace PAKGUI {
 			this->label7->TabIndex = 6;
 			this->label7->Text = L"Number of files currently in PAK:";
 			this->label7->TextAlign = System::Drawing::ContentAlignment::TopRight;
+			this->toolTip->SetToolTip(this->label7, L"This displays the number of files that are currently in the opened PAK before PAK" 
+				L"/RePAK\'ing.");
 			// 
 			// label8
 			// 
@@ -782,6 +820,7 @@ namespace PAKGUI {
 			this->label8->TabIndex = 5;
 			this->label8->Text = L"Estimated Size after PAK\'ing:";
 			this->label8->TextAlign = System::Drawing::ContentAlignment::TopRight;
+			this->toolTip->SetToolTip(this->label8, L"This displays the estimated size of the PAK file after PAK/RePAK\'ing.");
 			// 
 			// label5
 			// 
@@ -793,6 +832,8 @@ namespace PAKGUI {
 			this->label5->TabIndex = 4;
 			this->label5->Text = L"Current PAK Size on disk:";
 			this->label5->TextAlign = System::Drawing::ContentAlignment::TopRight;
+			this->toolTip->SetToolTip(this->label5, L"This displays the current size of the PAK on your hard drive before PAK/RePAK\'ing" 
+				L".");
 			// 
 			// txtSaveDir
 			// 
@@ -801,6 +842,7 @@ namespace PAKGUI {
 			this->txtSaveDir->Name = L"txtSaveDir";
 			this->txtSaveDir->Size = System::Drawing::Size(222, 20);
 			this->txtSaveDir->TabIndex = 0;
+			this->toolTip->SetToolTip(this->txtSaveDir, L"This displays where your current PAK will be saved.");
 			// 
 			// label3
 			// 
@@ -811,6 +853,7 @@ namespace PAKGUI {
 			this->label3->Size = System::Drawing::Size(99, 13);
 			this->label3->TabIndex = 0;
 			this->label3->Text = L"PAK Save location:";
+			this->toolTip->SetToolTip(this->label3, L"This displays where your current PAK will be saved.");
 			// 
 			// groupBox1
 			// 
@@ -826,6 +869,12 @@ namespace PAKGUI {
 			// unpakFolderBrowserDialog
 			// 
 			this->unpakFolderBrowserDialog->Description = L"Select a folder to UnPAK the files to:";
+			// 
+			// toolTip
+			// 
+			this->toolTip->AutoPopDelay = 7000;
+			this->toolTip->InitialDelay = 500;
+			this->toolTip->ReshowDelay = 100;
 			// 
 			// frmMain
 			// 
