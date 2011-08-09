@@ -575,3 +575,88 @@ System::Void frmMain::btnSaveDirBrowse_Click(System::Object^  sender, System::Ev
 		txtSaveDir->Text = savePakDialog->FileName; // put that path in the save file text box
 	}
 }
+
+System::Void frmMain::btnAddFiles_Click(System::Object^  sender, System::EventArgs^  e)
+{
+	addFilesDialog->ShowDialog(); // display file selection dialog
+
+	if (addFilesDialog->FileNames->Length <= 0) // If the user canceled or somehow didn't make a selection.
+	{
+		return;
+	}
+
+	bool errors = false;
+
+	lstPakContents->BeginUpdate();
+	for each ( String ^p in addFilesDialog->FileNames )
+	{
+		// make sure the file exists (not a folder or anything)
+		if ( !File::Exists( p ) )
+		{
+			continue;
+		}
+
+		// calc file size
+		long long bytes = getFileBytes( p );
+		if ( bytes <= 0 )
+		{
+			if ( errors )
+			{
+				log->displayMsg( "\tFile \"" + p->Substring( p->LastIndexOf('\\')+1 ) + "\" contains no data." );
+			}
+			else
+			{
+				errors = true;
+				log->displayMsg( "Error adding files: " + Environment::NewLine + "\tFile \"" + p->Substring( p->LastIndexOf('\\')+1 ) + "\" contains no data." );
+			}
+			continue;
+		}
+		string tmp;
+		MarshalString( p->Substring( p->LastIndexOf('\\') + 1 ), tmp );
+		if ( fileSizes[tmp] != 0 )
+		{
+			if ( errors )
+			{
+				log->displayMsg( "\tDuplicate file entry detected: \"" + p->Substring( p->LastIndexOf('\\')+1 ) + "\"" );
+			}
+			else 
+			{
+				errors = true;
+				log->displayMsg( "Error adding file: " + Environment::NewLine + "\tDuplicate file entry detected: \"" + p->Substring( p->LastIndexOf('\\')+1 ) + "\"" );
+			}
+			continue;
+		}
+		fileSizes[tmp] = bytes;
+		String ^size = getFileSize( bytes );
+
+		// add an item with all the columns
+		ListViewItem^ item = gcnew ListViewItem( p->Substring( p->LastIndexOf('\\') + 1 ) ); // create the item and give it name column
+		item->SubItems->Add( p ); // directory column
+		item->SubItems->Add( size ); // file size column
+		item->SubItems->Add( "Not in PAK" ); // origin column. since you're manually adding the file, it can't already be in the pak
+		if ( p->LastIndexOf('.') == -1 )
+		{
+			item->SubItems->Add( "" ); // extension column
+		}
+		else
+		{
+			item->SubItems->Add( p->Substring( p->LastIndexOf('.') ) ); // extension column
+		}
+		item->Checked = true; // defaults to checked. since you are manually adding the file, it's assumed that you want to include it in your pak
+		lstPakContents->Items->Add( item ); // finally add the item to the list
+	}
+	lstPakContents->EndUpdate();
+
+	if ( errors ) // if there were errors and the log isn't visible, warn them that there were errors and ask to display the log, otherwise we don't want to bug the user
+	{
+		log->addBreak();
+		if ( !log->Visible )
+		{
+			System::Windows::Forms::DialogResult result = MessageBox::Show( "There were errors performing the previous action. Would you like to view the error log?",  "Errors", MessageBoxButtons::YesNo, MessageBoxIcon::Error );
+			if ( result == System::Windows::Forms::DialogResult::Yes )
+			{
+				log->Visible = true;
+			}
+		}
+	}
+}

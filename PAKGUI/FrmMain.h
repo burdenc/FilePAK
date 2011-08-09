@@ -170,6 +170,7 @@ namespace PAKGUI {
 	private: System::Windows::Forms::Button^  btnSelectNone;
 	private: System::Windows::Forms::Button^  btnSelectAll;
 private: System::Windows::Forms::ToolTip^  toolTip;
+private: System::Windows::Forms::OpenFileDialog^  addFilesDialog;
 
 
 
@@ -256,6 +257,7 @@ private: System::Windows::Forms::ToolTip^  toolTip;
 			this->groupBox1 = (gcnew System::Windows::Forms::GroupBox());
 			this->unpakFolderBrowserDialog = (gcnew System::Windows::Forms::FolderBrowserDialog());
 			this->toolTip = (gcnew System::Windows::Forms::ToolTip(this->components));
+			this->addFilesDialog = (gcnew System::Windows::Forms::OpenFileDialog());
 			this->menuStrip1->SuspendLayout();
 			this->groupBox2->SuspendLayout();
 			this->panel3->SuspendLayout();
@@ -511,6 +513,7 @@ private: System::Windows::Forms::ToolTip^  toolTip;
 			this->toolTip->SetToolTip(this->btnAddFiles, L"This button opens a dialog that allows you to select a single file or multiple fi" 
 				L"les to add to the list below.");
 			this->btnAddFiles->UseVisualStyleBackColor = true;
+			this->btnAddFiles->Click += gcnew System::EventHandler(this, &frmMain::btnAddFiles_Click);
 			// 
 			// btnBrowseDir
 			// 
@@ -876,6 +879,14 @@ private: System::Windows::Forms::ToolTip^  toolTip;
 			this->toolTip->InitialDelay = 500;
 			this->toolTip->ReshowDelay = 100;
 			// 
+			// addFilesDialog
+			// 
+			this->addFilesDialog->Filter = L"All files|*.*";
+			this->addFilesDialog->Multiselect = true;
+			this->addFilesDialog->ShowHelp = true;
+			this->addFilesDialog->SupportMultiDottedExtensions = true;
+			this->addFilesDialog->Title = L"Add file(s)";
+			// 
 			// frmMain
 			// 
 			this->AcceptButton = this->btnPak;
@@ -1000,7 +1011,8 @@ private: System::Windows::Forms::ToolTip^  toolTip;
 			 // This event occurs when a column head is clicked
 	private: inline System::Void lstPakContents_ColumnClick(System::Object^  sender, System::Windows::Forms::ColumnClickEventArgs^  e);
 
-	};	
+	private: System::Void btnAddFiles_Click(System::Object^  sender, System::EventArgs^  e);
+};	
 
 	// Implements the manual sorting of items by columns.
 	ref class ListViewItemComparer: public IComparer
