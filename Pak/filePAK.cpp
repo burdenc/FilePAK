@@ -1,6 +1,7 @@
 #include "filePAK.h"
 
 #include <iostream>
+#include <sstream>
 #include <fstream>
 #include <stdio.h>
 #include <random>
@@ -38,7 +39,7 @@ bool filePAK::createPAK(string name, string entryPath, string types)
 	memcpy(header.fileID, "DBPAK\0", 6); //Using memcpy because lol char array
 	memcpy(header.version, "1.0\0", 4);
 
-	vector<string> correctTypes = filetypes(types);
+	vector<string> correctTypes = split(types, '|');
 	DIR *dir; //dirent.h stuff to accumulate all files within a folder
 	dirent *entry = NULL;
 	if(dir = opendir(entryPath.c_str()))
@@ -353,6 +354,11 @@ bool filePAK::rebuildPAK()
 	return true;
 }
 
+vector<int> filePAK::getChanges()
+{
+	return changes;
+}
+
 bool filePAK::appendFile(string name)
 {
 	int found = name.find_last_of("/\\"); //seperating path from filename
@@ -471,31 +477,14 @@ bool filePAK::unPAKEntry(string name, string path)
 	return true;
 }
 
-vector<string> filePAK::filetypes(string types)
-{
-	vector<string> splittypes;
-	if(types.empty()) return splittypes;
-	int numtypes = 0;
-	size_t pos = -1;
-
-	do
-	{
-		pos = types.find('|', pos+1);
-		if(pos == string::npos) { numtypes++; break; }
-		numtypes++;
-	} while(true);
-
-	string splittype;
-	pos = -1;
-
-	for(int i = 0; i < numtypes; i++)
-	{
-		splittype = types.substr(pos+1, types.find('|', pos+1));
-		pos = types.find('|', pos+1);
-		splittypes.push_back(splittype);
-	}
-
-	return splittypes;
+vector<string> split(const string &s, char delim) {
+    vector<string> elems;
+    stringstream ss(s);
+	string item;
+    while(getline(ss, item, delim)) {
+        elems.push_back(item);
+    }
+    return elems;
 }
 
 //Returns the number of entries in the pak file
@@ -521,4 +510,9 @@ bool filePAK::removeFile(string name)
 bool filePAK::isLoaded()
 {
 	return pakloaded;
+}
+
+void filePAK::discardChanges()
+{
+	changes.clear();
 }

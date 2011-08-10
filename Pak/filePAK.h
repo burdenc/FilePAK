@@ -46,7 +46,7 @@ private:
 	vector<int> changes; //corresponds with entries: -1 = deleted, 0 = normal, 1 = added
 
 	//Used to split the parameter types in createPAK() into a vector 
-	vector<string> filetypes(string types);
+	vector<string> split(const string &s, char delim);
 
 	//Create PAKfileEntry
 	bool createEntry(string fullname, string name);
@@ -89,6 +89,12 @@ public:
 	//Rebuilds the PAK file with buffered changes
 	//Returns true if nothing goes wrong, also returns false if there are no changes to flush
 	bool rebuildPAK();
+
+	//Returns changes made
+	vector<int> getChanges();
+
+	//Discards all removes and appends made to the pak file
+	void discardChanges();
 
 	//Get a file data stored in the PAK file
 	//name - name of the file stored in the PAK file (don't include the folder/path)
