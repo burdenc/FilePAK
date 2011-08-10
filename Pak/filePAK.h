@@ -58,9 +58,9 @@ public:
 	//Creates new PAK file
 	//name - name of PAK file to be created
 	//entryPath - path to the folder that contains all the files you want in the PAK file
-	//filetypes - all filetypes to be included, seperate by |, ex: ".jpg|.png|.bmp"
+	//types - all filetypes to be included, seperate by |, ex: ".jpg|.png|.bmp"
 	//Returns true if nothing goes wrong
-	bool createPAK(string name, string entryPath, string types = "");
+	bool createPAK(string name, string entryPath = "", string types = "");
 
 	//Reads a PAK file's header and entries into memory so you can manipulate it/decrypt files stored within it
 	//PAKpath - path to the PAK file to read
@@ -77,8 +77,15 @@ public:
 	//Appends file to PAK
 	//Run rebuildPAK() to flush changes
 	//filePath - path to file to append
-	//Returns true if nothing goes wrong
+	//Returns true if nothing goes wrong, returns false if folder contains a file with the same name as in the PAK
 	bool appendFile(string filePath);
+
+	//Appends folder contents to PAK
+	//Run rebuildPAK() to flush changes
+	//folderPath - path to folder
+	//types - all filetypes to be included, seperate by |, ex: ".jpg|.png|.bmp"
+	//Returns true if nothing goes wrong, returns false if folder contains a file with the same name as in the PAK
+	bool appendFolder(string folderPath, string types);
 
 	//Removes file to PAK
 	//Run rebuildPAK() to flush changes

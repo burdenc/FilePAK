@@ -40,40 +40,43 @@ bool filePAK::createPAK(string name, string entryPath, string types)
 	memcpy(header.version, "1.0\0", 4);
 
 	vector<string> correctTypes = split(types, '|');
-	DIR *dir; //dirent.h stuff to accumulate all files within a folder
-	dirent *entry = NULL;
-	if(dir = opendir(entryPath.c_str()))
+	if(entryPath.empty())
 	{
-		while(entry = readdir(dir))
+		DIR *dir; //dirent.h stuff to accumulate all files within a folder
+		dirent *entry = NULL;
+		if(dir = opendir(entryPath.c_str()))
 		{
-			if(entry->d_type != DT_DIR && entry->d_type == DT_REG) //if it's not a folder and a regular file
+			while(entry = readdir(dir))
 			{
-				bool correctType = false;
-				if(types.empty()) correctType = true;
-				else
+				if(entry->d_type != DT_DIR && entry->d_type == DT_REG) //if it's not a folder and a regular file
 				{
-					for(unsigned int i = 0; i < correctTypes.size(); i++)
+					bool correctType = false;
+					if(types.empty()) correctType = true;
+					else
 					{
-						string comparestr = entry->d_name;
-						int found = comparestr.find_last_of('.');
-						comparestr = comparestr.substr(found);
+						for(unsigned int i = 0; i < correctTypes.size(); i++)
+						{
+							string comparestr = entry->d_name;
+							int found = comparestr.find_last_of('.');
+							comparestr = comparestr.substr(found);
 
-						if(!comparestr.compare(correctTypes[i]))
-							correctType = true;
+							if(!comparestr.compare(correctTypes[i]))
+								correctType = true;
+						}
 					}
-				}
 
 
-				if(correctType)
-				{
-					numberFiles++;
-					if(!createEntry(entryPath, entry->d_name)) return false;
+					if(correctType)
+					{
+						numberFiles++;
+						if(!createEntry(entryPath, entry->d_name)) return false;
+					}
 				}
 			}
 		}
-	}
 
-	delete dir, entry;
+		delete dir, entry;
+	}
 
 	header.numberFiles = numberFiles;
 
@@ -137,9 +140,46 @@ bool filePAK::createPAK(string name, string entryPath, string types)
 		else return false; //PAKout not open
 	}
 
-	if(numberFiles < 1) return false; //no files found :(
-
 	return true;
+}
+
+bool filePAK::appendFolder(string folderPath, string types)
+{
+	vector<string> correctTypes = split(types, '|');
+
+	DIR *dir; //dirent.h stuff to accumulate all files within a folder
+	dirent *entry = NULL;
+	if(dir = opendir(folderPath.c_str()))
+	{
+		while(entry = readdir(dir))
+		{
+			if(entry->d_type != DT_DIR && entry->d_type == DT_REG) //if it's not a folder and a regular file
+			{
+				bool correctType = false;
+				if(types.empty()) correctType = true;
+				else
+				{
+					for(unsigned int i = 0; i < correctTypes.size(); i++)
+					{
+						string comparestr = entry->d_name;
+						int found = comparestr.find_last_of('.');
+						comparestr = comparestr.substr(found);
+
+						if(!comparestr.compare(correctTypes[i]))
+							correctType = true;
+					}
+				}
+
+
+				if(correctType)
+				{
+					if(!appendFile(folderPath + entry->d_name)) return false;
+				}
+			}
+		}
+	}
+
+	delete dir, entry;
 }
 
 bool filePAK::createEntry(string path, string name)
@@ -477,7 +517,7 @@ bool filePAK::unPAKEntry(string name, string path)
 	return true;
 }
 
-vector<string> split(const string &s, char delim) {
+vector<string> filePAK::split(const string &s, char delim) {
     vector<string> elems;
     stringstream ss(s);
 	string item;
