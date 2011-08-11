@@ -173,13 +173,15 @@ bool filePAK::appendFolder(string folderPath, string types)
 
 				if(correctType)
 				{
-					if(!appendFile(folderPath + entry->d_name)) return false;
+					if(appendFile(folderPath + entry->d_name)) return true;
 				}
 			}
 		}
 	}
 
 	delete dir, entry;
+
+	return false;
 }
 
 bool filePAK::createEntry(string path, string name)
@@ -517,11 +519,11 @@ bool filePAK::unPAKEntry(string name, string path)
 		{
 			return false;
 		}
-	}
-	else return false;
 
-	output.close();
-	return true;
+		output.close();
+		return true;
+	}
+	return false;
 }
 
 vector<string> filePAK::split(const string &s, char delim) {
