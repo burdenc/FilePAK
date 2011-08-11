@@ -67,6 +67,9 @@ public:
 	//Returns true if nothing goes wrong
 	bool readPAK(string PAKpath);
 
+	//Returns true if readPAK() has successfully loaded the pak file
+	bool isLoaded();
+
 	//----------------------------------------------------------
 	// The following functions require readPAK to be run first:
 	//----------------------------------------------------------
@@ -75,15 +78,17 @@ public:
 	//Run rebuildPAK() to flush changes
 	//filePath - path to file to append
 	//Returns true if nothing goes wrong
-	//TODO: implement
 	bool appendFile(string filePath);
+
+	//Removes file to PAK
+	//Run rebuildPAK() to flush changes
+	//filePath - path to file to append
+	//Returns true if nothing goes wrong
+	bool removeFile(string filePath);
 
 	//Rebuilds the PAK file with buffered changes
 	//Returns true if nothing goes wrong, also returns false if there are no changes to flush
 	bool rebuildPAK();
-
-	//
-	bool removeFile(string name);
 
 	//Get a file data stored in the PAK file
 	//name - name of the file stored in the PAK file (don't include the folder/path)

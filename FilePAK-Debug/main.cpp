@@ -185,7 +185,7 @@ string chooseEntry()
 	vector<string> entries = pak.getAllPAKEntries();
 	char choice;
 	int pages, page = 0;
-	pages = ceil((double) entries.size()/7);
+	pages = (int) ceil(entries.size()/7.0);
 
 	for(;;)
 	{

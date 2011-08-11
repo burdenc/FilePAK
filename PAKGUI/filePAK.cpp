@@ -3,7 +3,6 @@
 #include <iostream>
 #include <fstream>
 #include <stdio.h>
-#include <windows.h>
 #include <random>
 #include <time.h>
 
@@ -252,7 +251,7 @@ bool filePAK::rebuildPAK()
 		if(PAKout.is_open())
 		{
 			PAKout.write((char *) &header, sizeof(header)); //write out header
-			
+
 			char *buffer;
 
 			for(unsigned int i = 0; i < entries.size(); i++)
@@ -332,7 +331,7 @@ bool filePAK::rebuildPAK()
 
 		// windows complains when we don't use the secure alternatives to strcpy and strcat,
 		// so we might as well use them and reap whatever benefits they may provide
-#ifdef _WINDOWS_
+#if !defined unix && !defined __unix__ && !defined __unix
 		strcpy_s(filename, 150, pakname.c_str()); // I'm not exactly sure what the middle argument should be, but I found that 150 doesn't give me errors :/
 		strcat_s(filename, 150, ".new");
 #else
@@ -517,4 +516,9 @@ bool filePAK::removeFile(string name)
 		}
 	}
 	return false;
+}
+
+bool filePAK::isLoaded()
+{
+	return pakloaded;
 }
