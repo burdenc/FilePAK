@@ -85,7 +85,7 @@ public:
 	//folderPath - path to folder
 	//types - all filetypes to be included, seperate by |, ex: ".jpg|.png|.bmp"
 	//Returns true if nothing goes wrong, returns false if folder contains a file with the same name as in the PAK
-	bool appendFolder(string folderPath, string types);
+	bool appendFolder(string folderPath, string types = "");
 
 	//Removes file to PAK
 	//Run rebuildPAK() to flush changes

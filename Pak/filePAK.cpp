@@ -173,15 +173,19 @@ bool filePAK::appendFolder(string folderPath, string types)
 
 				if(correctType)
 				{
-					if(appendFile(folderPath + entry->d_name)) return true;
+					if(!appendFile(folderPath + entry->d_name)) return false;
 				}
 			}
 		}
 	}
+	else
+	{
+		delete dir, entry;
+		return false;
+	}
 
 	delete dir, entry;
-
-	return false;
+	return true;
 }
 
 bool filePAK::createEntry(string path, string name)
