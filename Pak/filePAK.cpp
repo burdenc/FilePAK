@@ -87,13 +87,13 @@ bool filePAK::createPAK(string name, string entryPath, string types)
 		offset += entries[i].size;
 	}
 
-	if(numberFiles) //if any files were found at all
+	PAKout.open(name, ofstream::binary | ofstream::trunc);
+	if(PAKout.is_open())
 	{
-		PAKout.open(name, ofstream::binary | ofstream::trunc);
-		if(PAKout.is_open())
-		{
-			PAKout.write((char *) &header, sizeof(header)); //write the header
+		PAKout.write((char *) &header, sizeof(header)); //write the header
 
+		if(numberFiles) //if any files were found at all
+		{
 			char *buffer;
 
 			for(unsigned int i = 0; i < entries.size(); i++)
@@ -137,8 +137,8 @@ bool filePAK::createPAK(string name, string entryPath, string types)
 
 			PAKout.close();
 		}
-		else return false; //PAKout not open
 	}
+	else return false; //PAKout not open
 
 	return true;
 }
@@ -223,34 +223,37 @@ bool filePAK::readPAK(string PAKpath)
 
 		PAKread.read((char *) &header, sizeof(PAKheader)); //read in the header information so you can decrypt
 
-		if(strcmp(header.fileID, "DBPAK") != 0 || !(header.numberFiles > 0) || strcmp(header.version, "1.0") != 0) 
-		{ //if the fileIDs or versions don't match or if there's 0 or less files
+		if(strcmp(header.fileID, "DBPAK") != 0 || strcmp(header.version, "1.0") != 0) 
+		{ //if the fileIDs or versions don't match
 			PAKread.close(); 
 			return false;
 		}
 
 		entries.clear(); //entries could be full from createPAK()
 
-		char *buffer;
-
-		for(int i = 0; i < header.numberFiles; i++)
+		if(header.numberFiles > 0) //if it's not an empty pak
 		{
-			buffer = new char[sizeof(PAKfileEntry)];
-			PAKfileEntry entry;
-			PAKread.read(buffer, sizeof(PAKfileEntry));
+			char *buffer;
 
-			for(int j = 0; j < sizeof(PAKfileEntry); j++)
+			for(int i = 0; i < header.numberFiles; i++)
 			{
-				if(header.additionEncrypt) buffer[j] -= header.encryptVal; //decrypt each byte
-				else buffer[j] += header.encryptVal;
+				buffer = new char[sizeof(PAKfileEntry)];
+				PAKfileEntry entry;
+				PAKread.read(buffer, sizeof(PAKfileEntry));
+
+				for(int j = 0; j < sizeof(PAKfileEntry); j++)
+				{
+					if(header.additionEncrypt) buffer[j] -= header.encryptVal; //decrypt each byte
+					else buffer[j] += header.encryptVal;
+				}
+
+				memcpy(&entry, buffer, sizeof(PAKfileEntry)); //store the decrypted stuff into the entry
+
+				entries.push_back(entry); //append to the vector
+
+				delete [] buffer;
+
 			}
-
-			memcpy(&entry, buffer, sizeof(PAKfileEntry)); //store the decrypted stuff into the entry
-
-			entries.push_back(entry); //append to the vector
-
-			delete [] buffer;
-
 		}
 
 		PAKread.close();
@@ -441,7 +444,6 @@ char* filePAK::getPAKEntryData(string name)
 		}
 		else
 		{
-			cout << "Critical error: getPAKEntryData() could not open stream\n";
 			return buffer; //NULL
 		}
 	}
@@ -484,7 +486,7 @@ int filePAK::getPAKEntrySize(string name)
 vector<string> filePAK::getAllPAKEntries()
 {
 	vector<string> allentries;
-	if(pakloaded)
+	if(pakloaded && header.numberFiles > 0)
 	{
 		for(unsigned int i = 0; i < entries.size(); i++)
 		{
@@ -497,21 +499,26 @@ vector<string> filePAK::getAllPAKEntries()
 
 bool filePAK::unPAKEntry(string name, string path)
 {
-	ofstream output;
-	output.open(path, ofstream::binary | ofstream::trunc);
-	if(output.is_open())
+	if(pakloaded)
 	{
-		char *buffer = getPAKEntryData(name);
-		int size = getPAKEntrySize(name);
-		if(buffer == NULL || size <= 0) return false;
+		ofstream output;
+		output.open(path, ofstream::binary | ofstream::trunc);
+		if(output.is_open())
+		{
+			char *buffer = getPAKEntryData(name);
+			if(!buffer) return false;
+			int size = getPAKEntrySize(name);
+			if(buffer == NULL || size <= 0) return false;
 
-		output.write(buffer, size);
-		delete [] buffer;
+			output.write(buffer, size);
+			delete [] buffer;
+		}
+		else
+		{
+			return false;
+		}
 	}
-	else
-	{
-		return false;
-	}
+	else return false;
 
 	output.close();
 	return true;
@@ -527,7 +534,6 @@ vector<string> filePAK::split(const string &s, char delim) {
     return elems;
 }
 
-//Returns the number of entries in the pak file
 int filePAK::getNumPAKEntries()
 {
 	return header.numberFiles;
@@ -535,13 +541,16 @@ int filePAK::getNumPAKEntries()
 
 bool filePAK::removeFile(string name)
 {
-	for(unsigned int i = 0; i < entries.size(); i++)
+	if(pakloaded)
 	{
-		if(name.compare(entries[i].name) == 0)
+		for(unsigned int i = 0; i < entries.size(); i++)
 		{
-			if(changes.empty()) changes.assign(entries.size()-1, 0);
-			changes[i] = -1;
-			return true;
+			if(name.compare(entries[i].name) == 0)
+			{
+				if(changes.empty()) changes.assign(entries.size()-1, 0);
+				changes[i] = -1;
+				return true;
+			}
 		}
 	}
 	return false;
