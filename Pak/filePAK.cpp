@@ -504,11 +504,10 @@ bool filePAK::unPAKEntry(string name, string path)
 	if(pakloaded)
 	{
 		ofstream output;
-		output.open(path, ofstream::binary | ofstream::trunc);
+		output.open(path+name, ofstream::binary | ofstream::trunc);
 		if(output.is_open())
 		{
 			char *buffer = getPAKEntryData(name);
-			if(!buffer) return false;
 			int size = getPAKEntrySize(name);
 			if(buffer == NULL || size <= 0) return false;
 
