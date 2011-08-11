@@ -231,11 +231,11 @@ int menuPrompt()
 	{
 		string menu;
 		if(pak.isLoaded())
-			menu += "[1] Rebuild PAK\n[2] View Files\n[3] Append File\n[4] Remove File\n[5] Unpak File\n[6] Discard Changes\n[7] Load Other PAK\n";
+			menu += "[1] Rebuild PAK\n[2] View Files\n[3] Append File\n[4] Append Folder\n[5] Remove File\n[6] Unpak File\n[7] Display Changes\n[8] Discard Changes\n[9] Load Other PAK\n";
 		else
 			menu += "[1] Create PAK\n[2] Load PAK\n";
 
-		menu += "[9] Help\n[0] Quit\n";
+		menu += "[H] Help\n[0] Quit\n";
 
 		cout << menu;
 
@@ -246,18 +246,21 @@ int menuPrompt()
 		//Exit
 		if(choice == '0')
 		{
-			cout << "Exiting...\n";
-			sys("pause");
 			return 0;
 		}
 
 		//Help
-		else if(choice == '9')
+		else if(choice == 'H' || choice == 'h')
 		{
 			string help;
 			help += "The following tips may help you when using the program:\n\n";
 			help += "Before you can do anything with a pak file (included one just made with the\n";
 			help += "Create PAK option) you need to use the Read PAK option.\n\n";
+
+			help += "To ensure stability a PAK file will automatically be rebuilt when you append\n";
+			help += "anything.\n\n";
+
+			help += "For command line help do "; help += progname; help += " /? or "; help += progname; help += " help\n\n";
 
 			cout << help;
 
@@ -265,7 +268,7 @@ int menuPrompt()
 		}
 
 		//Load PAK
-		else if((pak.isLoaded() && choice == '7') || (!pak.isLoaded() && choice == '2'))
+		else if((pak.isLoaded() && choice == '9') || (!pak.isLoaded() && choice == '2'))
 		{
 			string pakname;
 			cout << "Please provide the name of the pak file to load:\n";
@@ -291,40 +294,38 @@ int menuPrompt()
 			if(choice == '1')
 			{
 				string pakname, entryname, types;
-				for(;;)
+
+				cout << "Please provide the name of the PAK file to create:\n";
+				getline(cin, pakname);
+				cout << "\nPlease provide the file path to the files to include in the PAK file: \n"; 
+				getline(cin, entryname);
+				cout << "\nPlease provide the file type restriction to use (optional, press enter to skip)\n";
+				cout << "(Seperate each with | ex: '.jpg|.bmp' will only use jpg and bmp files):\n";
+				getline(cin, types);
+
+				sys("cls");
+				cout << "Are the following options are correct?\n";
+				cout << "PAK Name: " << pakname << "\n";
+				cout << "Folder Path: " << entryname << "\n";
+				cout << "Type Restriction: " << (types.empty() ? "None" : types) << "\n";
+				cout << "Y = Yes, Others = No\n";
+				char input = sys("getch");
+				sys("cls");
+
+				if(input == 'y' || input == 'Y')
 				{
-					cout << "Please provide the name of the PAK file to create:\n";
-					getline(cin, pakname);
-					cout << "\nPlease provide the file path to the files to include in the PAK file: \n"; 
-					getline(cin, entryname);
-					cout << "\nPlease provide the file type restriction to use (optional, press enter to skip)\n";
-					cout << "(Seperate each with | ex: '.jpg|.bmp' will only use jpg and bmp files):\n";
-					getline(cin, types);
+					if(pak.createPAK(pakname, entryname, types))
+					{
+						cout << "PAK file successfully created!\n\n";
+					}
+					else
+					{
+						cout << "The PAK file could not be created successfully, please check your options and try again.\n";
+						cout << "Make sure you're placing your slashes in the correct place (\"/test/\" isn't the same as \"test/\")\n\n";
+					}
 
-					sys("cls");
-					cout << "Are the following options are correct?\n";
-					cout << "PAK Name: " << pakname << "\n";
-					cout << "Folder Path: " << entryname << "\n";
-					cout << "Type Restriction: " << (types.empty() ? "None" : types) << "\n";
-					cout << "Y = Yes, Others = No\n";
-					char input = sys("getch");
-					if(input == 'y' || input == 'Y') { sys("cls"); break; }
-
-					sys("cls");
-
+					sys("pause");
 				}
-
-				if(pak.createPAK(pakname, entryname, types.empty() ? "" : types))
-				{
-					cout << "PAK file successfully created!\n";
-				}
-				else
-				{
-					cout << "The PAK file could not be created successfully, please check your options and try again.\n";
-					cout << "Make sure you're placing your slashes in the correct place (\"/test/\" isn't the same as \"test/\")\n";
-				}
-
-				sys("pause");
 			}
 		}
 		//PAK Loaded Options
@@ -362,6 +363,7 @@ int menuPrompt()
 			else if(choice == '2')
 			{
 				string choose;
+
 				for(;;)
 				{
 					choose = chooseEntry();
@@ -384,10 +386,6 @@ int menuPrompt()
 			//Append Files
 			else if(choice == '3')
 			{
-				cout << "Caution, there is no check for files being appended multiple times.\nUse at your own discretion.\n\n";
-				sys("pause");
-				sys("cls");
-
 				string choose;
 				cout << "Please put in the file (including path to) that you wish to append:\n";
 				getline(cin, choose);
@@ -402,11 +400,71 @@ int menuPrompt()
 					sys("cls");
 					if(pak.appendFile(choose))
 					{
-						cout << "\"" << choose << "\" was successfully appended to the pak file!\n(Use Rebuild PAK to flush changes)\n\n";
+						cout << "\"" << choose << "\" was successfully appended to the pak file!\nThe PAK will now be rebuilt...\n\n";
+
+						sys("pause");
+						sys("cls");
+
+						if(pak.rebuildPAK())
+						{
+							cout << "The PAK was successfully rebuilt!\n";
+						}
+						else
+						{
+							cout << "The PAK could not be rebuilt.\n";
+						}
 					}
 					else
 					{
-						cout << "\"" << choose << "\" could not be appended. Please ensure you input the file name correctly.\n";
+						cout << "\"" << choose << "\" could not be appended.\n Please ensure you input the file name correctly.\n\n";
+					}
+					sys("pause");
+				}
+
+				sys("cls");
+			}
+
+			//Append Folders
+			else if(choice == '4')
+			{
+				string choose, types;
+				cout << "Please input the folder that you wish to append:\n";
+				getline(cin, choose);
+
+				cout << "\nPlease provide the file type restriction to use (optional, press enter to skip)\n";
+				cout << "(Seperate each with | ex: '.jpg|.bmp' will only use jpg and bmp files):\n";
+				getline(cin, types);
+
+				sys("cls");
+
+				cout << "Are you sure you want to append all the files in \"" << choose << "\" to the PAK\n";
+				cout << "and use the following type restriction : " << (types.empty()) ? "None" : types;
+				cout << "?\n";
+				cout << "Y = Yes, Others = No\n";
+				char input = sys("getch");
+
+				if(input == 'y' || input == 'Y')
+				{
+					sys("cls");
+					if(pak.appendFolder(choose, types))
+					{
+						cout << "The folder \"" << choose << "\" was successfully appended to the pak file!\nThe PAK will now be rebuilt...\n\n";
+
+						sys("pause");
+						sys("cls");
+
+						if(pak.rebuildPAK())
+						{
+							cout << "The PAK was successfully rebuilt!\n";
+						}
+						else
+						{
+							cout << "The PAK could not be rebuilt.\n";
+						}
+					}
+					else
+					{
+						cout << "The folder \"" << choose << "\" could not be appended.\n Please ensure you input the file name correctly.\n\n";
 					}
 					sys("pause");
 				}
@@ -415,7 +473,7 @@ int menuPrompt()
 			}
 
 			//Remove Files
-			else if(choice == '4')
+			else if(choice == '5')
 			{
 				string choose;
 				for(;;)
@@ -446,10 +504,68 @@ int menuPrompt()
 			}
 
 			//UnPAK Files
-			else if(choice == '5')
+			else if(choice == '6')
 			{
+				string choose;
+				for(;;)
+				{
+					choose = chooseEntry();
+					sys("cls");
+					if(choose.empty()) break;
 
+					cout << "Are you sure you want to unpak \"" << choose << "\" from the PAK?\n";
+					cout << "Y = Yes, Others = No\n";
+					char input = sys("getch");
+
+					if(input == 'y' || input == 'Y')
+					{
+						sys("cls");
+						if(pak.unPAKEntry(choose, "./"))
+						{
+							cout << "\"" << choose << "\" was successfully unpaked from the pak file!\n\n";
+						}
+						else
+						{
+							cout << "\"" << choose << "\" could not be unpaked.\n";
+						}
+						sys("pause");
+					}
+					sys("cls");
+				}
 			}
+
+			//Display Changes
+			else if(choice == '7')
+			{
+				cout << "The followning are the current staged changes:\n\n";
+				displayChanges();
+				sys("pause");
+			}
+
+			//Discard Changes
+			else if(choice == '8')
+			{
+				cout << "Are you sure you wish to discard the following staged changes?\n\n";
+				
+				if(displayChanges())
+				{
+
+					cout << "Y = Yes, Others = No\n";
+					char input = sys("getch");
+
+					if(input == 'y' || input == 'Y')
+					{
+						sys("cls");
+						pak.discardChanges();
+						cout << "All staged changes have been discard successfully!\n\n";
+						sys("pause");
+					}
+				}
+				else sys("pause");
+
+				sys("cls");
+			}
+
 		}
 
 		//sys("pause");
@@ -465,27 +581,27 @@ bool displayChanges()
 	vector<int> changes = pak.getChanges();
 	if(!changes.empty())
 	{
-		string append, remove;
-		append += "Appending: \n";
+		string remove;
 		remove += "Removing: \n";
+
+		vector<string> allentries = pak.getAllPAKEntries();
 
 		for(unsigned int i = 0; i < changes.size(); i++)
 		{
 			if(changes[i] == 0) continue;
 
-			string name = pak.getPAKEntry(pak.getAllPAKEntries().at(i))->name;
-			cout << name;
-			if(changes[i] == 1) append += name; else remove += name;
-			if(changes[i] == 1) append += "\n"; else remove += "\n";
+			string name = allentries[i];
+			remove += name;
+			remove += "\n";
 		}
 
-		cout << append << remove << "\n";
+		cout << remove << "\n";
 
 		return true;
 	}
 	else
 	{
-		cout << "No changes have been made to the PAK file that need rebuilding\n";
+		cout << "No changes have been made to the PAK file that need rebuilding.\n\n";
 		return false;
 	}
 }

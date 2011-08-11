@@ -418,10 +418,10 @@ bool filePAK::appendFile(string name)
 		if(!file.compare(entries[i].name))
 			return false;
 
-	if(!createEntry(path, file)) return false;
-
-	if(changes.empty()) changes.assign(entries.size()-1, 0);
+	if(changes.empty()) changes.assign(entries.size(), 0);
 	changes.push_back(1);
+
+	if(!createEntry(path, file)) return false;
 
 	return true;
 }
@@ -552,7 +552,7 @@ bool filePAK::removeFile(string name)
 		{
 			if(name.compare(entries[i].name) == 0)
 			{
-				if(changes.empty()) changes.assign(entries.size()-1, 0);
+				if(changes.empty()) changes.assign(entries.size(), 0);
 				changes[i] = -1;
 				return true;
 			}
@@ -568,5 +568,9 @@ bool filePAK::isLoaded()
 
 void filePAK::discardChanges()
 {
+	if(changes.empty()) return;
+	for(unsigned int i = 0; i < entries.size(); i++)
+		if(changes[i] == 1)
+			entries.erase(entries.begin()+i, entries.begin()+i+1);
 	changes.clear();
 }
