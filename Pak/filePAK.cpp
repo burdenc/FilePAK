@@ -40,7 +40,7 @@ bool filePAK::createPAK(string name, string entryPath, string types)
 	memcpy(header.version, "1.0\0", 4);
 
 	vector<string> correctTypes = split(types, '|');
-	if(entryPath.empty())
+	if(!entryPath.empty())
 	{
 		DIR *dir; //dirent.h stuff to accumulate all files within a folder
 		dirent *entry = NULL;
