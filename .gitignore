@@ -1,4 +1,6 @@
 
+*.txt
+*.new
 *.orig
 output.*
 *.pak
