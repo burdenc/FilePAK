@@ -1,6 +1,7 @@
 #include "stdafx.h"
 
 #include <iostream>
+#include <sstream>
 #include <fstream>
 #include <stdio.h>
 #include <random>
@@ -12,19 +13,19 @@
 #include <dirent.h>
 #endif
 
-filePAK::filePAK(void)
+libPAK::libPAK(void)
 {
 	pakloaded = false;
 	lastEntry = 0;
 }
 
 
-filePAK::~filePAK(void)
+libPAK::~libPAK(void)
 {
 	entries.clear();
 }
 
-bool filePAK::createPAK(string name, string entryPath, string types)
+bool libPAK::createPAK(string name, string entryPath, string types)
 {
 	pakloaded = false;
 	pakname = name;
@@ -38,41 +39,44 @@ bool filePAK::createPAK(string name, string entryPath, string types)
 	memcpy(header.fileID, "DBPAK\0", 6); //Using memcpy because lol char array
 	memcpy(header.version, "1.0\0", 4);
 
-	vector<string> correctTypes = filetypes(types);
-	DIR *dir; //dirent.h stuff to accumulate all files within a folder
-	dirent *entry = NULL;
-	if(dir = opendir(entryPath.c_str()))
+	vector<string> correctTypes = split(types, '|');
+	if(!entryPath.empty())
 	{
-		while(entry = readdir(dir))
+		DIR *dir; //dirent.h stuff to accumulate all files within a folder
+		dirent *entry = NULL;
+		if(dir = opendir(entryPath.c_str()))
 		{
-			if(entry->d_type != DT_DIR && entry->d_type == DT_REG) //if it's not a folder and a regular file
+			while(entry = readdir(dir))
 			{
-				bool correctType = false;
-				if(types.empty()) correctType = true;
-				else
+				if(entry->d_type != DT_DIR && entry->d_type == DT_REG) //if it's not a folder and a regular file
 				{
-					for(unsigned int i = 0; i < correctTypes.size(); i++)
+					bool correctType = false;
+					if(types.empty()) correctType = true;
+					else
 					{
-						string comparestr = entry->d_name;
-						int found = comparestr.find_last_of('.');
-						comparestr = comparestr.substr(found);
+						for(unsigned int i = 0; i < correctTypes.size(); i++)
+						{
+							string comparestr = entry->d_name;
+							int found = comparestr.find_last_of('.');
+							comparestr = comparestr.substr(found);
 
-						if(!comparestr.compare(correctTypes[i]))
-							correctType = true;
+							if(!comparestr.compare(correctTypes[i]))
+								correctType = true;
+						}
 					}
-				}
 
 
-				if(correctType)
-				{
-					numberFiles++;
-					if(!createEntry(entryPath, entry->d_name)) return false;
+					if(correctType)
+					{
+						numberFiles++;
+						if(!createEntry(entryPath, entry->d_name)) return false;
+					}
 				}
 			}
 		}
-	}
 
-	delete dir, entry;
+		delete dir, entry;
+	}
 
 	header.numberFiles = numberFiles;
 
@@ -83,13 +87,13 @@ bool filePAK::createPAK(string name, string entryPath, string types)
 		offset += entries[i].size;
 	}
 
-	if(numberFiles) //if any files were found at all
+	PAKout.open(name, ofstream::binary | ofstream::trunc);
+	if(PAKout.is_open())
 	{
-		PAKout.open(name, ofstream::binary | ofstream::trunc);
-		if(PAKout.is_open())
-		{
-			PAKout.write((char *) &header, sizeof(header)); //write the header
+		PAKout.write((char *) &header, sizeof(header)); //write the header
 
+		if(numberFiles) //if any files were found at all
+		{
 			char *buffer;
 
 			for(unsigned int i = 0; i < entries.size(); i++)
@@ -133,15 +137,58 @@ bool filePAK::createPAK(string name, string entryPath, string types)
 
 			PAKout.close();
 		}
-		else return false; //PAKout not open
 	}
-
-	if(numberFiles < 1) return false; //no files found :(
+	else return false; //PAKout not open
 
 	return true;
 }
 
-bool filePAK::createEntry(string path, string name)
+bool libPAK::appendFolder(string folderPath, string types)
+{
+	vector<string> correctTypes = split(types, '|');
+
+	DIR *dir; //dirent.h stuff to accumulate all files within a folder
+	dirent *entry = NULL;
+	if(dir = opendir(folderPath.c_str()))
+	{
+		while(entry = readdir(dir))
+		{
+			if(entry->d_type != DT_DIR && entry->d_type == DT_REG) //if it's not a folder and a regular file
+			{
+				bool correctType = false;
+				if(types.empty()) correctType = true;
+				else
+				{
+					for(unsigned int i = 0; i < correctTypes.size(); i++)
+					{
+						string comparestr = entry->d_name;
+						int found = comparestr.find_last_of('.');
+						comparestr = comparestr.substr(found);
+
+						if(!comparestr.compare(correctTypes[i]))
+							correctType = true;
+					}
+				}
+
+
+				if(correctType)
+				{
+					if(!appendFile(folderPath + entry->d_name)) return false;
+				}
+			}
+		}
+	}
+	else
+	{
+		delete dir, entry;
+		return false;
+	}
+
+	delete dir, entry;
+	return true;
+}
+
+bool libPAK::createEntry(string path, string name)
 {
 	ifstream fileIn;
 	PAKfileEntry fentry; //creates a new table of contents entry
@@ -172,7 +219,7 @@ bool filePAK::createEntry(string path, string name)
 	return true;
 }
 
-bool filePAK::readPAK(string PAKpath)
+bool libPAK::readPAK(string PAKpath)
 {
 	ifstream PAKread;
 	PAKread.open(PAKpath, ios::binary);
@@ -182,34 +229,37 @@ bool filePAK::readPAK(string PAKpath)
 
 		PAKread.read((char *) &header, sizeof(PAKheader)); //read in the header information so you can decrypt
 
-		if(strcmp(header.fileID, "DBPAK") != 0 || !(header.numberFiles > 0) || strcmp(header.version, "1.0") != 0) 
-		{ //if the fileIDs or versions don't match or if there's 0 or less files
+		if(strcmp(header.fileID, "DBPAK") != 0 || strcmp(header.version, "1.0") != 0) 
+		{ //if the fileIDs or versions don't match
 			PAKread.close(); 
 			return false;
 		}
 
 		entries.clear(); //entries could be full from createPAK()
 
-		char *buffer;
-
-		for(int i = 0; i < header.numberFiles; i++)
+		if(header.numberFiles > 0) //if it's not an empty pak
 		{
-			buffer = new char[sizeof(PAKfileEntry)];
-			PAKfileEntry entry;
-			PAKread.read(buffer, sizeof(PAKfileEntry));
+			char *buffer;
 
-			for(int j = 0; j < sizeof(PAKfileEntry); j++)
+			for(int i = 0; i < header.numberFiles; i++)
 			{
-				if(header.additionEncrypt) buffer[j] -= header.encryptVal; //decrypt each byte
-				else buffer[j] += header.encryptVal;
+				buffer = new char[sizeof(PAKfileEntry)];
+				PAKfileEntry entry;
+				PAKread.read(buffer, sizeof(PAKfileEntry));
+
+				for(int j = 0; j < sizeof(PAKfileEntry); j++)
+				{
+					if(header.additionEncrypt) buffer[j] -= header.encryptVal; //decrypt each byte
+					else buffer[j] += header.encryptVal;
+				}
+
+				memcpy(&entry, buffer, sizeof(PAKfileEntry)); //store the decrypted stuff into the entry
+
+				entries.push_back(entry); //append to the vector
+
+				delete [] buffer;
+
 			}
-
-			memcpy(&entry, buffer, sizeof(PAKfileEntry)); //store the decrypted stuff into the entry
-
-			entries.push_back(entry); //append to the vector
-
-			delete [] buffer;
-
 		}
 
 		PAKread.close();
@@ -220,7 +270,7 @@ bool filePAK::readPAK(string PAKpath)
 	return true;
 }
 
-bool filePAK::rebuildPAK()
+bool libPAK::rebuildPAK()
 {
 	if(changes.empty()) return false; //if no changes are buffered
 	if(pakloaded)
@@ -353,7 +403,12 @@ bool filePAK::rebuildPAK()
 	return true;
 }
 
-bool filePAK::appendFile(string name)
+vector<int> libPAK::getChanges()
+{
+	return changes;
+}
+
+bool libPAK::appendFile(string name)
 {
 	int found = name.find_last_of("/\\"); //seperating path from filename
 	string path = name.substr(0, found+1);
@@ -363,15 +418,15 @@ bool filePAK::appendFile(string name)
 		if(!file.compare(entries[i].name))
 			return false;
 
-	if(!createEntry(path, file)) return false;
-
-	if(changes.empty()) changes.assign(entries.size()-1, 0);
+	if(changes.empty()) changes.assign(entries.size(), 0);
 	changes.push_back(1);
+
+	if(!createEntry(path, file)) return false;
 
 	return true;
 }
 
-char* filePAK::getPAKEntryData(string name)
+char* libPAK::getPAKEntryData(string name)
 {
 	if( PAKfileEntry *entry = getPAKEntry( name ) )
 	{
@@ -395,7 +450,6 @@ char* filePAK::getPAKEntryData(string name)
 		}
 		else
 		{
-			cout << "Critical error: getPAKEntryData() could not open stream\n";
 			return buffer; //NULL
 		}
 	}
@@ -403,7 +457,7 @@ char* filePAK::getPAKEntryData(string name)
 	return NULL; //PAK file isn't loaded, or entry isn't found
 }
 
-filePAK::PAKfileEntry *filePAK::getPAKEntry(string name)
+libPAK::PAKfileEntry *libPAK::getPAKEntry(string name)
 {
 	if(pakloaded)
 	{
@@ -419,7 +473,7 @@ filePAK::PAKfileEntry *filePAK::getPAKEntry(string name)
 	return NULL; //PAK file isn't loaded, or entry isn't found
 }
 
-int filePAK::getPAKEntrySize(string name)
+int libPAK::getPAKEntrySize(string name)
 {
 	if(pakloaded)
 	{
@@ -435,10 +489,10 @@ int filePAK::getPAKEntrySize(string name)
 	return -2; //PAK file isn't loaded
 }
 
-vector<string> filePAK::getAllPAKEntries()
+vector<string> libPAK::getAllPAKEntries()
 {
 	vector<string> allentries;
-	if(pakloaded)
+	if(pakloaded && header.numberFiles > 0)
 	{
 		for(unsigned int i = 0; i < entries.size(); i++)
 		{
@@ -449,76 +503,74 @@ vector<string> filePAK::getAllPAKEntries()
 	return allentries; //NULL if pakloaded == false
 }
 
-bool filePAK::unPAKEntry(string name, string path)
+bool libPAK::unPAKEntry(string name, string path)
 {
-	ofstream output;
-	output.open(path, ofstream::binary | ofstream::trunc);
-	if(output.is_open())
+	if(pakloaded)
 	{
-		char *buffer = getPAKEntryData(name);
-		int size = getPAKEntrySize(name);
-		if(buffer == NULL || size <= 0) return false;
+		ofstream output;
+		output.open(path+name, ofstream::binary | ofstream::trunc);
+		if(output.is_open())
+		{
+			char *buffer = getPAKEntryData(name);
+			int size = getPAKEntrySize(name);
+			if(buffer == NULL || size <= 0) return false;
 
-		output.write(buffer, size);
-		delete [] buffer;
-	}
-	else
-	{
-		return false;
-	}
+			output.write(buffer, size);
+			delete [] buffer;
+		}
+		else
+		{
+			return false;
+		}
 
-	output.close();
-	return true;
+		output.close();
+		return true;
+	}
+	return false;
 }
 
-vector<string> filePAK::filetypes(string types)
-{
-	vector<string> splittypes;
-	if(types.empty()) return splittypes;
-	int numtypes = 0;
-	size_t pos = -1;
-
-	do
-	{
-		pos = types.find('|', pos+1);
-		if(pos == string::npos) { numtypes++; break; }
-		numtypes++;
-	} while(true);
-
-	string splittype;
-	pos = -1;
-
-	for(int i = 0; i < numtypes; i++)
-	{
-		splittype = types.substr(pos+1, types.find('|', pos+1));
-		pos = types.find('|', pos+1);
-		splittypes.push_back(splittype);
+vector<string> libPAK::split(const string &s, char delim) {
+	vector<string> elems;
+	stringstream ss(s);
+	string item;
+	while(getline(ss, item, delim)) {
+		elems.push_back(item);
 	}
-
-	return splittypes;
+	return elems;
 }
 
-//Returns the number of entries in the pak file
-int filePAK::getNumPAKEntries()
+int libPAK::getNumPAKEntries()
 {
 	return header.numberFiles;
 }
 
-bool filePAK::removeFile(string name)
+bool libPAK::removeFile(string name)
 {
-	for(unsigned int i = 0; i < entries.size(); i++)
+	if(pakloaded)
 	{
-		if(name.compare(entries[i].name) == 0)
+		for(unsigned int i = 0; i < entries.size(); i++)
 		{
-			if(changes.empty()) changes.assign(entries.size()-1, 0);
-			changes[i] = -1;
-			return true;
+			if(name.compare(entries[i].name) == 0)
+			{
+				if(changes.empty()) changes.assign(entries.size(), 0);
+				changes[i] = -1;
+				return true;
+			}
 		}
 	}
 	return false;
 }
 
-bool filePAK::isLoaded()
+bool libPAK::isLoaded()
 {
 	return pakloaded;
+}
+
+void libPAK::discardChanges()
+{
+	if(changes.empty()) return;
+	for(unsigned int i = 0; i < entries.size(); i++)
+		if(changes[i] == 1)
+			entries.erase(entries.begin()+i, entries.begin()+i+1);
+	changes.clear();
 }

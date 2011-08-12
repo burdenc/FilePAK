@@ -1,12 +1,12 @@
 #include "stdafx.h"
-#include "Events.h"
+#include "events.h"
 
 #include <sstream>
 
 using namespace PAKGUI;
 
 
-filePAK pak;
+libPAK pak;
 map<string, long long> fileSizes;
 long long currentEstimatedSize = 0;
 int numChecked = 0;

@@ -13,7 +13,7 @@
 #define		DESCENDING	-1
 
 
-extern	filePAK								pak;
+extern	libPAK								pak;
 extern	map<string, long long>				fileSizes;
 extern	long long							currentEstimatedSize;
 extern	int									numChecked;

@@ -3,6 +3,6 @@
 // are changed infrequently
 #pragma once
 
-#include "filePAK.h"
-#include "FrmMain.h"
+#include "libPAK.h"
+#include "frmMain.h"
 #include "frmLog.h"

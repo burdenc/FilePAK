@@ -12,7 +12,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{00DED9FF-7B5B-413C-8BFB-E4A73DEF6B04}</ProjectGuid>
-    <RootNamespace>Pak</RootNamespace>
+    <RootNamespace>libPAK</RootNamespace>
     <ProjectName>libPAK</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -61,10 +61,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="filePAK.h" />
+    <ClInclude Include="libPAK.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="filePAK.cpp" />
+    <ClCompile Include="libPAK.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

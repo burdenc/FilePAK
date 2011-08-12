@@ -9,8 +9,8 @@
 //		Reminder: char represents a byte
 
 
-#ifndef FILEPAK_H
-#define FILEPAH_H
+#ifndef LIBPAK_H
+#define LIBPAK_H
 
 #include <string>
 #include <vector>
@@ -18,7 +18,7 @@
 
 using namespace std;
 
-class filePAK
+class libPAK
 {
 private:
 	struct PAKheader //The header for the .pak file, the only thing not encyrpted
@@ -52,8 +52,8 @@ private:
 	bool createEntry(string fullname, string name);
 
 public:
-	filePAK(void);
-	~filePAK(void);
+	libPAK(void);
+	~libPAK(void);
 
 	//Creates new PAK file
 	//name - name of PAK file to be created

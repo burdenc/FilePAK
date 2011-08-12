@@ -32,10 +32,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="PAKGUI.cpp">
+    <ClCompile Include="pakGUI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AssemblyInfo.cpp">
+    <ClCompile Include="assemblyInfo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="stdafx.cpp">
@@ -53,10 +53,10 @@
     <ClCompile Include="menuEvents.cpp">
       <Filter>Source Files\Events</Filter>
     </ClCompile>
-    <ClCompile Include="Events.cpp">
+    <ClCompile Include="events.cpp">
       <Filter>Source Files\Events</Filter>
     </ClCompile>
-    <ClCompile Include="filePAK.cpp">
+    <ClCompile Include="libPAK.cpp">
       <Filter>Source Files\libPAK</Filter>
     </ClCompile>
   </ItemGroup>
@@ -73,11 +73,11 @@
     <ClInclude Include="frmLog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="filePAK.h">
-      <Filter>Header Files\libPAK</Filter>
-    </ClInclude>
-    <ClInclude Include="Events.h">
+    <ClInclude Include="events.h">
       <Filter>Header Files\Events</Filter>
+    </ClInclude>
+    <ClInclude Include="libPAK.h">
+      <Filter>Header Files\libPAK</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

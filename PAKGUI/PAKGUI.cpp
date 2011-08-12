@@ -1,7 +1,7 @@
 // PAKGUI.cpp : main project file.
 
 #include "stdafx.h"
-#include "FrmMain.h"
+#include "frmMain.h"
 
 using namespace PAKGUI;
 

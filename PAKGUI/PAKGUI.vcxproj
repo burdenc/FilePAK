@@ -14,7 +14,7 @@
     <ProjectGuid>{F117A81E-3EBE-448F-8382-621588D4A734}</ProjectGuid>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <Keyword>ManagedCProj</Keyword>
-    <RootNamespace>PAKGUI</RootNamespace>
+    <RootNamespace>pakGUI</RootNamespace>
     <ProjectName>pakGUI</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -86,22 +86,22 @@
     <None Include="app.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AssemblyInfo.cpp" />
+    <ClCompile Include="assemblyInfo.cpp" />
     <ClCompile Include="btnEvents.cpp" />
-    <ClCompile Include="Events.cpp" />
-    <ClCompile Include="filePAK.cpp" />
+    <ClCompile Include="events.cpp" />
+    <ClCompile Include="libPAK.cpp" />
     <ClCompile Include="logEvents.cpp" />
     <ClCompile Include="lstEvents.cpp" />
     <ClCompile Include="menuEvents.cpp" />
-    <ClCompile Include="PAKGUI.cpp" />
+    <ClCompile Include="pakGUI.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Events.h" />
-    <ClInclude Include="filePAK.h" />
+    <ClInclude Include="events.h" />
+    <ClInclude Include="libPAK.h" />
     <ClInclude Include="frmLog.h">
       <FileType>CppForm</FileType>
     </ClInclude>

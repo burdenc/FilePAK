@@ -1,4 +1,4 @@
-#include "filePAK.h"
+#include "libPAK.h"
 
 #include <iostream>
 #include <sstream>
@@ -13,19 +13,19 @@
 #include <dirent.h>
 #endif
 
-filePAK::filePAK(void)
+libPAK::libPAK(void)
 {
 	pakloaded = false;
 	lastEntry = 0;
 }
 
 
-filePAK::~filePAK(void)
+libPAK::~libPAK(void)
 {
 	entries.clear();
 }
 
-bool filePAK::createPAK(string name, string entryPath, string types)
+bool libPAK::createPAK(string name, string entryPath, string types)
 {
 	pakloaded = false;
 	pakname = name;
@@ -143,7 +143,7 @@ bool filePAK::createPAK(string name, string entryPath, string types)
 	return true;
 }
 
-bool filePAK::appendFolder(string folderPath, string types)
+bool libPAK::appendFolder(string folderPath, string types)
 {
 	vector<string> correctTypes = split(types, '|');
 
@@ -188,7 +188,7 @@ bool filePAK::appendFolder(string folderPath, string types)
 	return true;
 }
 
-bool filePAK::createEntry(string path, string name)
+bool libPAK::createEntry(string path, string name)
 {
 	ifstream fileIn;
 	PAKfileEntry fentry; //creates a new table of contents entry
@@ -219,7 +219,7 @@ bool filePAK::createEntry(string path, string name)
 	return true;
 }
 
-bool filePAK::readPAK(string PAKpath)
+bool libPAK::readPAK(string PAKpath)
 {
 	ifstream PAKread;
 	PAKread.open(PAKpath, ios::binary);
@@ -270,7 +270,7 @@ bool filePAK::readPAK(string PAKpath)
 	return true;
 }
 
-bool filePAK::rebuildPAK()
+bool libPAK::rebuildPAK()
 {
 	if(changes.empty()) return false; //if no changes are buffered
 	if(pakloaded)
@@ -403,12 +403,12 @@ bool filePAK::rebuildPAK()
 	return true;
 }
 
-vector<int> filePAK::getChanges()
+vector<int> libPAK::getChanges()
 {
 	return changes;
 }
 
-bool filePAK::appendFile(string name)
+bool libPAK::appendFile(string name)
 {
 	int found = name.find_last_of("/\\"); //seperating path from filename
 	string path = name.substr(0, found+1);
@@ -426,7 +426,7 @@ bool filePAK::appendFile(string name)
 	return true;
 }
 
-char* filePAK::getPAKEntryData(string name)
+char* libPAK::getPAKEntryData(string name)
 {
 	if( PAKfileEntry *entry = getPAKEntry( name ) )
 	{
@@ -457,7 +457,7 @@ char* filePAK::getPAKEntryData(string name)
 	return NULL; //PAK file isn't loaded, or entry isn't found
 }
 
-filePAK::PAKfileEntry *filePAK::getPAKEntry(string name)
+libPAK::PAKfileEntry *libPAK::getPAKEntry(string name)
 {
 	if(pakloaded)
 	{
@@ -473,7 +473,7 @@ filePAK::PAKfileEntry *filePAK::getPAKEntry(string name)
 	return NULL; //PAK file isn't loaded, or entry isn't found
 }
 
-int filePAK::getPAKEntrySize(string name)
+int libPAK::getPAKEntrySize(string name)
 {
 	if(pakloaded)
 	{
@@ -489,7 +489,7 @@ int filePAK::getPAKEntrySize(string name)
 	return -2; //PAK file isn't loaded
 }
 
-vector<string> filePAK::getAllPAKEntries()
+vector<string> libPAK::getAllPAKEntries()
 {
 	vector<string> allentries;
 	if(pakloaded && header.numberFiles > 0)
@@ -503,7 +503,7 @@ vector<string> filePAK::getAllPAKEntries()
 	return allentries; //NULL if pakloaded == false
 }
 
-bool filePAK::unPAKEntry(string name, string path)
+bool libPAK::unPAKEntry(string name, string path)
 {
 	if(pakloaded)
 	{
@@ -529,7 +529,7 @@ bool filePAK::unPAKEntry(string name, string path)
 	return false;
 }
 
-vector<string> filePAK::split(const string &s, char delim) {
+vector<string> libPAK::split(const string &s, char delim) {
     vector<string> elems;
     stringstream ss(s);
 	string item;
@@ -539,12 +539,12 @@ vector<string> filePAK::split(const string &s, char delim) {
     return elems;
 }
 
-int filePAK::getNumPAKEntries()
+int libPAK::getNumPAKEntries()
 {
 	return header.numberFiles;
 }
 
-bool filePAK::removeFile(string name)
+bool libPAK::removeFile(string name)
 {
 	if(pakloaded)
 	{
@@ -561,12 +561,12 @@ bool filePAK::removeFile(string name)
 	return false;
 }
 
-bool filePAK::isLoaded()
+bool libPAK::isLoaded()
 {
 	return pakloaded;
 }
 
-void filePAK::discardChanges()
+void libPAK::discardChanges()
 {
 	if(changes.empty()) return;
 	for(unsigned int i = 0; i < entries.size(); i++)

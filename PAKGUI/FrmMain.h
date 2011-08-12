@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Events.h"
+#include "events.h"
 #include "frmLog.h"
 
 namespace PAKGUI {
