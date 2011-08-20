@@ -1,3 +1,6 @@
+#include <cstring>
+#include <cstdlib>
+#include <cmath>
 #include <string>
 #include "../libPAK/libPAK.h"
 #include <stdio.h>

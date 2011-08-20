@@ -1,5 +1,7 @@
 #include "libPAK.h"
 
+#include <cstring>
+#include <cstdlib>
 #include <iostream>
 #include <sstream>
 #include <fstream>
@@ -7,7 +9,7 @@
 #include <random>
 #include <time.h>
 
-#ifndef _POSIX_
+#if !defined unix && !defined __unix__ && !defined __unix
 #include "dirent.h" //Usually only in POSIX compilers, it allows you to find all the files contained within a folder
 #else
 #include <dirent.h>
@@ -149,7 +151,8 @@ bool libPAK::appendFolder(string folderPath, string types)
 
 	DIR *dir; //dirent.h stuff to accumulate all files within a folder
 	dirent *entry = NULL;
-	if(dir = opendir(folderPath.c_str()))
+	dir = opendir(folderPath.c_str())
+	if(dir)
 	{
 		while(entry = readdir(dir))
 		{
@@ -180,6 +183,7 @@ bool libPAK::appendFolder(string folderPath, string types)
 	}
 	else
 	{
+		cout << "Dirent not working...\n";
 		delete dir, entry;
 		return false;
 	}
@@ -530,13 +534,13 @@ bool libPAK::unPAKEntry(string name, string path)
 }
 
 vector<string> libPAK::split(const string &s, char delim) {
-    vector<string> elems;
-    stringstream ss(s);
+	vector<string> elems;
+	stringstream ss(s);
 	string item;
-    while(getline(ss, item, delim)) {
-        elems.push_back(item);
-    }
-    return elems;
+	while(getline(ss, item, delim)) {
+		elems.push_back(item);
+	}
+	return elems;
 }
 
 int libPAK::getNumPAKEntries()

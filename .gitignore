@@ -1,4 +1,7 @@
 
+*.a
+*.o
+*.out
 *.txt
 *.new
 *.orig
