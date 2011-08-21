@@ -683,7 +683,7 @@ char sys(string param)
 		#if !defined unix && !defined __unix__ && !defined __unix
 				system("pause");
 		#else
-				system("read -n1 -s -r -p \"Press any key to continue...\""); //should silently read only 1 character then return
+				system("read -n 1 -s -r -p \"Press any key to continue...\""); //should silently read only 1 character then return
 		#endif
 	}
 	else if(param.compare("getch") == 0)
@@ -691,7 +691,7 @@ char sys(string param)
 		#if !defined unix && !defined __unix__ && !defined __unix
 			return _getch();
 		#else
-			system("read -n1 -s -r"); //should silently read only 1 character then return
+			system("read -n 1 -s -r"); //should silently read only 1 character then return
 		#endif
 	}
 	else if(param.compare("syntaxerr") == 0)
