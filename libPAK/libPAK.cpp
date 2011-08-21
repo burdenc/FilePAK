@@ -46,7 +46,8 @@ bool libPAK::createPAK(string name, string entryPath, string types)
 	{
 		DIR *dir; //dirent.h stuff to accumulate all files within a folder
 		dirent *entry = NULL;
-		if(dir = opendir(entryPath.c_str()))
+		dir = opendir(entryPath.c_str());
+		if(dir)
 		{
 			while(entry = readdir(dir))
 			{
@@ -151,7 +152,7 @@ bool libPAK::appendFolder(string folderPath, string types)
 
 	DIR *dir; //dirent.h stuff to accumulate all files within a folder
 	dirent *entry = NULL;
-	dir = opendir(folderPath.c_str())
+	dir = opendir(folderPath.c_str());
 	if(dir)
 	{
 		while(entry = readdir(dir))
