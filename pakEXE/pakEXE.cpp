@@ -12,6 +12,9 @@
 
 #if !defined unix && !defined __unix__ && !defined __unix
 #include <conio.h>
+#else
+#include <unistd.h>
+#include <termios.h>
 #endif
 
 using namespace std;
@@ -668,6 +671,22 @@ string chooseEntry()
 	}
 }
 
+//if not on windows, make our own implementation of getch
+#if defined unix || defined __unix__ || defined __unix
+int _getch()
+{
+	struct termios oldt, newt;
+	int ch;
+	tcgetattr( STDIN_FILENO, &oldt );
+	newt = oldt;
+	newt.c_lflag &= ~( ICANON | ECHO );
+	tcsetattr( STDIN_FILENO, TCSANOW, &newt );
+	ch = getchar();
+	tcsetattr( STDIN_FILENO, TCSANOW, &oldt );
+	return ch;
+}
+#endif
+
 char sys(string param)
 {
 	if(param.compare("cls") == 0)
@@ -683,16 +702,13 @@ char sys(string param)
 		#if !defined unix && !defined __unix__ && !defined __unix
 				system("pause");
 		#else
-				system("read -n 1 -s -r -p \"Press any key to continue...\""); //should silently read only 1 character then return
+				cout << "Press any key to continue...";
+				_getch();
 		#endif
 	}
 	else if(param.compare("getch") == 0)
 	{
-		#if !defined unix && !defined __unix__ && !defined __unix
-			return _getch();
-		#else
-			system("read -n 1 -s -r"); //should silently read only 1 character then return
-		#endif
+		return _getch(); // if not on windows, we defined this as our own implementation of getch up above
 	}
 	else if(param.compare("syntaxerr") == 0)
 	{
