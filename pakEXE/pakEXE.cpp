@@ -1,6 +1,7 @@
-#include <cstring>
-#include <cstdlib>
-#include <cmath>
+#include <cstring> //These three are
+#include <cstdlib> //required for
+#include <cmath>   //compiling with G++
+
 #include <string>
 #include "../libPAK/libPAK.h"
 #include <stdio.h>
@@ -31,29 +32,30 @@ libPAK pak;
 
 int main(int argc, const char* argv[])
 {
-	progname = argv[0];
+	progname = argv[0]; //Store the program name for easy access
 
 	if(argc > 1)
 	{
-		return commandPrompt(argc, argv);
+		return commandPrompt(argc, argv); //Command line use
 	}
 	else
 	{
-		return menuPrompt();
+		return menuPrompt(); //Menu use, works best on Windows
 	}
 }
 
 int commandPrompt(int argc, const char* argv[])
 {
+	//Array of all flags that you can use
 	string flags[] = {"-c", "-r", "-a", "-d", "-u", "-f", "-v"};
-	int numflags = 7;
+	int numflags = 7; //the length of the above array
 	
 	bool verbose = false;
 	for(int i = 1; i < argc; i++) //check to see if verbose should be enabled
-		if(!strcmp(argv[i], "-v"))
+		if(!strcmp(argv[i], "-v"))//if so output a lot of debug info
 			verbose = true;
 
-	for(int i = 1; i < argc; i++)
+	for(int i = 1; i < argc; i++) //check if any of the flags are the help flags
 	{
 		if(!strcmp(argv[i], "/?") || !strcmp(argv[i], "help"))
 		{
@@ -100,14 +102,14 @@ int commandPrompt(int argc, const char* argv[])
 	string filename = argv[argc-1];
 	for(int i = 0; i < numflags; i++) //making sure a filename is supplied as the last argument and not a flag
 		if(filename.compare(flags[i]) == 0)
-			sys("syntaxerr");
+			sys("syntaxerr"); //outputs that there's a syntax error and print reminder of how to get help
 
 	bool read; //false = create mode, true = read mode
 	if(strcmp(argv[1], "-c") == 0)
-		read = false;
+		read = false; //create mode active
 
 	else if(strcmp(argv[1], "-r") == 0)
-		read = true;
+		read = true; //read mode active
 
 	for(int j = 2; j < argc-1; j++)
 		for(int i = 2; i < 5; i++) //making sure no -r dependent commands are called when -r is not supplied
@@ -121,9 +123,6 @@ int commandPrompt(int argc, const char* argv[])
 					if(strcmp(argv[j], flags[i].c_str()) == 0 && strcmp(argv[j+1], flags[h].c_str()) == 0) //make sure argument supplied after flag isn't a new flag
 						sys("syntaxerr");
 
-	
-	//for(int i = 0; i < argc-2; i++)
-
 	///////////////////////
 	//End of syntax check//
 	///////////////////////
@@ -132,7 +131,7 @@ int commandPrompt(int argc, const char* argv[])
 	if(read)
 	{
 		if(verbose) cout << "Reading " << argv[argc-1] << "\n";
-		if(!pak.readPAK(argv[argc-1]))
+		if(!pak.readPAK(argv[argc-1])) //Try to read the pak file with the last argument
 		{
 			if(verbose) cout << "Could not read pak file: " << argv[argc-1] << "\n";
 			return 1;
@@ -141,27 +140,27 @@ int commandPrompt(int argc, const char* argv[])
 	else
 	{
 		if(verbose) cout << "Creating " << argv[argc-1] << "\n";
-		if(!pak.createPAK(argv[argc-1]))
+		if(!pak.createPAK(argv[argc-1])) //try to create a new empty pak file with the last argument
 		{
 			if(verbose) cout << "Could not create pak file: " << argv[argc-1] << "\n";
 			return 1;
 		}
 
 		if(verbose) cout << "Reading new pak file " << argv[argc-1] << "\n";
-		if(!pak.readPAK(argv[argc-1]))
+		if(!pak.readPAK(argv[argc-1])) //read the new empty pak file so you can manipulate it
 		{
 			if(verbose) cout << "Reading new pak file " << argv[argc-1] << "\n";
 			return 1;
 		}
 	}
 
-	bool changes = false;
+	bool changes = false; //make sure flags are supplied that require changes
 	for(int i = 2; i < argc - 2; i++)
 	{
 		if(strcmp(argv[i], "-a") == 0)
 		{
 			if(verbose) cout << "Appending " << argv[i + 1] << "\n";
-			if(!pak.appendFile(argv[i+1]))
+			if(!pak.appendFile(argv[i+1])) //attempt to append file name given after -a
 			{
 				if(verbose) cout << "Could not append " << argv[i+1] << " to pak file\n";
 				return 1;
@@ -171,8 +170,8 @@ int commandPrompt(int argc, const char* argv[])
 		if(strcmp(argv[i], "-u") == 0)
 		{
 			if(verbose) cout << "Unpaking " << argv[i+1] << "\n";
-			if(!pak.unPAKEntry(argv[i+1], "./"))
-			{
+			if(!pak.unPAKEntry(argv[i+1], "./")) //attempt to append file name given after -u
+			{ //it unpaks to the current folder, thus the ./
 				if(verbose) cout << "Could not unpak " << argv[i+1] << " from pak file\n";
 				return 1;
 			}
@@ -180,24 +179,24 @@ int commandPrompt(int argc, const char* argv[])
 		if(strcmp(argv[i], "-d") == 0)
 		{
 			if(verbose) cout << "Deleting " << argv[i+1] << "\n";
-			if(!pak.removeFile(argv[i+1]))
+			if(!pak.removeFile(argv[i+1])) //attempt to remove file name given after -d
 			{
 				if(verbose) cout << "Could not delete " << argv[i+1] << " from pak file\n";
 				return 1;
 			}
 			changes = true;
 		}
-		if(strcmp(argv[i], "-f") == 0)
+		if(strcmp(argv[i], "-f") == 0) //appending a folder
 		{
 			bool typesarg = true;
-			for(int j = 0; j < numflags; j++)
-				if(!(i+2 < argc-1) || strcmp(flags[j].c_str(), argv[i+2]) == 0)
-					typesarg = false;
+			for(int j = 0; j < numflags; j++) //append folder can optionally take a 2nd argument
+				if(!(i+2 < argc-1) || strcmp(flags[j].c_str(), argv[i+2]) == 0) //this is checking to see
+					typesarg = false;											//if that 2nd argument is supplied or not
 
-			if(typesarg)
+			if(typesarg) //if the 2nd argument was supplied
 			{
 				if(verbose) cout << "Appending folder " << argv[i+1] << " with types " << argv[i+2] << "\n";
-				if(!pak.appendFolder(argv[i+1], argv[i+2]))
+				if(!pak.appendFolder(argv[i+1], argv[i+2])) //attempt to append a folder with type restrictions given
 				{
 					if(verbose) cout << "Could not append folder " << argv[i+1] << " with types " << argv[i+2] << "\n";
 					return 1;
@@ -206,7 +205,7 @@ int commandPrompt(int argc, const char* argv[])
 			else
 			{
 				if(verbose) cout << "Appending folder " << argv[i+1] << "\n";
-				if(!pak.appendFolder(argv[i+1]))
+				if(!pak.appendFolder(argv[i+1])) //appending a folder with no type restriction
 				{
 					if(verbose) cout << "Could not append folder " << argv[i+1] << "\n";
 					return 1;
@@ -216,7 +215,7 @@ int commandPrompt(int argc, const char* argv[])
 		}
 	}
 
-	if(changes)
+	if(changes) //if arguments were given that require a rebuild then rebuild the PAK
 	{
 		if(verbose) cout << "Rebuilding " << argv[argc-1] << "\n";
 		if(!pak.rebuildPAK())
@@ -250,7 +249,7 @@ int menuPrompt()
 		sys("cls");
 
 		//Exit
-		if(choice == '0')
+		if(choice == '0') //the exit command is always 0
 		{
 			return 0;
 		}
@@ -309,6 +308,7 @@ int menuPrompt()
 				cout << "(Seperate each with | ex: '.jpg|.bmp' will only use jpg and bmp files):\n";
 				getline(cin, types);
 
+				//Ensure they want to create a new PAK with the following options
 				sys("cls");
 				cout << "Are the following options are correct?\n";
 				cout << "PAK Name: " << pakname << "\n";
@@ -341,7 +341,7 @@ int menuPrompt()
 			if(choice == '1')
 			{
 
-				if(displayChanges())
+				if(displayChanges()) //displays and checks to see if you're ok with the current changes
 				{
 					cout << "Are you sure you wish to rebuild the PAK with the following changes?\n\n";
 					cout << "Y = Yes, Others = No\n";
@@ -582,6 +582,7 @@ int menuPrompt()
 	return 0;
 }
 
+//Displays all changes
 bool displayChanges()
 {
 	vector<int> changes = pak.getChanges();
@@ -612,6 +613,8 @@ bool displayChanges()
 	}
 }
 
+//Abstract function for displaying all entries and letting you choose one
+//Used for removing, unpaking, and viewing files in a PAK
 string chooseEntry()
 {
 	vector<string> entries = pak.getAllPAKEntries();
@@ -720,6 +723,7 @@ char sys(string param)
 	return NULL;
 }
 
+//Uses a string stream to easily split a string, it's so simple!
 vector<string> split(const string &s, char delim) {
     vector<string> elems;
     stringstream ss(s);

@@ -40,7 +40,6 @@ private:
 
 	string pakname; //name of the pak file
 	bool pakloaded; //set to true after readPAK() is used
-	int lastEntry;
 	PAKheader header; //the header
 	vector<PAKfileEntry> entries; //table of contents of all the entries
 	vector<int> changes; //corresponds with entries: -1 = deleted, 0 = normal, 1 = added
