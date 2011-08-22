@@ -184,7 +184,7 @@ bool libPAK::appendFolder(string folderPath, string types)
 	}
 	else
 	{
-		cout << "Dirent not working...\n";
+		//cout << "Dirent not working...\n";
 		delete dir, entry;
 		return false;
 	}
@@ -268,6 +268,7 @@ bool libPAK::readPAK(string PAKpath)
 		}
 
 		PAKread.close();
+		pakname = PAKpath;
 		pakloaded = true;
 	}
 	else return false; //PAKread not open
@@ -415,7 +416,9 @@ vector<int> libPAK::getChanges()
 
 bool libPAK::appendFile(string name)
 {
-	int found = name.find_last_of("/\\"); //seperating path from filename
+	if(name.compare(pakname) == 0) return false; //trying to append pak file to itself
+
+	int found = name.find_last_of("/\\"); //separating path from filename
 	string path = name.substr(0, found+1);
 	string file = name.substr(found+1);
 

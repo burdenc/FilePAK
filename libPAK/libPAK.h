@@ -78,6 +78,7 @@ public:
 	//Run rebuildPAK() to flush changes
 	//filePath - path to file to append
 	//Returns true if nothing goes wrong, returns false if folder contains a file with the same name as in the PAK
+	//Returns false if you try to append a pak to itself
 	bool appendFile(string filePath);
 
 	//Appends folder contents to PAK
