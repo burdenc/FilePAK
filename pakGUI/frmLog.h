@@ -1,6 +1,6 @@
 #pragma once
 
-namespace PAKGUI {
+namespace pakGUI {
 
 	using namespace System;
 	using namespace System::ComponentModel;

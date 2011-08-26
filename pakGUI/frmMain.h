@@ -2,8 +2,9 @@
 
 #include "events.h"
 #include "frmLog.h"
+#include "frmAbout.h"
 
-namespace PAKGUI {
+namespace pakGUI {
 
 	using namespace System;
 	using namespace System::ComponentModel;
@@ -23,6 +24,7 @@ namespace PAKGUI {
 
 		//private: System::Windows::Forms::Form ^log;
 	private: frmLog ^log;
+	private: frmAbout ^about;
 
 	public:
 		frmMain(void)
@@ -33,6 +35,8 @@ namespace PAKGUI {
 			//
 			log = gcnew frmLog();
 			log->VisibleChanged += gcnew System::EventHandler(this, &frmMain::frmLog_VisibleChanged);
+
+			about = gcnew frmAbout();
 		}
 
 	protected:
@@ -171,6 +175,8 @@ namespace PAKGUI {
 	private: System::Windows::Forms::Button^  btnSelectAll;
 private: System::Windows::Forms::ToolTip^  toolTip;
 private: System::Windows::Forms::OpenFileDialog^  addFilesDialog;
+private: System::Windows::Forms::ToolStripMenuItem^  helpToolStripMenuItem;
+private: System::Windows::Forms::ToolStripMenuItem^  menuAbout;
 
 
 
@@ -213,6 +219,8 @@ private: System::Windows::Forms::OpenFileDialog^  addFilesDialog;
 			this->menuPak = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->menuUnpak = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->menuCancel = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->helpToolStripMenuItem = (gcnew System::Windows::Forms::ToolStripMenuItem());
+			this->menuAbout = (gcnew System::Windows::Forms::ToolStripMenuItem());
 			this->groupBox2 = (gcnew System::Windows::Forms::GroupBox());
 			this->btnSelectNone = (gcnew System::Windows::Forms::Button());
 			this->btnSelectAll = (gcnew System::Windows::Forms::Button());
@@ -268,8 +276,8 @@ private: System::Windows::Forms::OpenFileDialog^  addFilesDialog;
 			// 
 			// menuStrip1
 			// 
-			this->menuStrip1->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(4) {this->fileToolStripMenuItem, 
-				this->editToolStripMenuItem, this->viewToolStripMenuItem, this->pAKToolStripMenuItem});
+			this->menuStrip1->Items->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(5) {this->fileToolStripMenuItem, 
+				this->editToolStripMenuItem, this->viewToolStripMenuItem, this->pAKToolStripMenuItem, this->helpToolStripMenuItem});
 			this->menuStrip1->Location = System::Drawing::Point(0, 0);
 			this->menuStrip1->Margin = System::Windows::Forms::Padding(10);
 			this->menuStrip1->Name = L"menuStrip1";
@@ -373,7 +381,7 @@ private: System::Windows::Forms::OpenFileDialog^  addFilesDialog;
 			this->logToolStripMenuItem->CheckOnClick = true;
 			this->logToolStripMenuItem->Name = L"logToolStripMenuItem";
 			this->logToolStripMenuItem->ShortcutKeys = static_cast<System::Windows::Forms::Keys>((System::Windows::Forms::Keys::Control | System::Windows::Forms::Keys::L));
-			this->logToolStripMenuItem->Size = System::Drawing::Size(134, 22);
+			this->logToolStripMenuItem->Size = System::Drawing::Size(152, 22);
 			this->logToolStripMenuItem->Text = L"Log";
 			this->logToolStripMenuItem->Click += gcnew System::EventHandler(this, &frmMain::logToolStripMenuItem_Click);
 			// 
@@ -410,6 +418,20 @@ private: System::Windows::Forms::OpenFileDialog^  addFilesDialog;
 			this->menuCancel->Size = System::Drawing::Size(183, 22);
 			this->menuCancel->Text = L"Cancel";
 			this->menuCancel->Visible = false;
+			// 
+			// helpToolStripMenuItem
+			// 
+			this->helpToolStripMenuItem->DropDownItems->AddRange(gcnew cli::array< System::Windows::Forms::ToolStripItem^  >(1) {this->menuAbout});
+			this->helpToolStripMenuItem->Name = L"helpToolStripMenuItem";
+			this->helpToolStripMenuItem->Size = System::Drawing::Size(44, 20);
+			this->helpToolStripMenuItem->Text = L"Help";
+			// 
+			// menuAbout
+			// 
+			this->menuAbout->Name = L"menuAbout";
+			this->menuAbout->Size = System::Drawing::Size(152, 22);
+			this->menuAbout->Text = L"About";
+			this->menuAbout->Click += gcnew System::EventHandler(this, &frmMain::menuAbout_Click);
 			// 
 			// groupBox2
 			// 
@@ -1013,6 +1035,9 @@ private: System::Windows::Forms::OpenFileDialog^  addFilesDialog;
 	private: inline System::Void lstPakContents_ColumnClick(System::Object^  sender, System::Windows::Forms::ColumnClickEventArgs^  e);
 
 	private: System::Void btnAddFiles_Click(System::Object^  sender, System::EventArgs^  e);
+
+			 // This event occurs when the About menu item is clicked under the Help menu
+	private: System::Void inline menuAbout_Click(System::Object^  sender, System::EventArgs^  e);
 };	
 
 	// Implements the manual sorting of items by columns.

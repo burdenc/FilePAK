@@ -30,6 +30,15 @@
     <None Include="app.ico">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="Hogg Logo Text.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="gpl.png">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="pakgui.png">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pakGUI.cpp">
@@ -59,6 +68,9 @@
     <ClCompile Include="libPAK.cpp">
       <Filter>Source Files\libPAK</Filter>
     </ClCompile>
+    <ClCompile Include="frmAbout.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -79,6 +91,9 @@
     <ClInclude Include="libPAK.h">
       <Filter>Header Files\libPAK</Filter>
     </ClInclude>
+    <ClInclude Include="frmAbout.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="app.rc">
@@ -90,6 +105,9 @@
       <Filter>Resource Files</Filter>
     </EmbeddedResource>
     <EmbeddedResource Include="frmLog.resx">
+      <Filter>Resource Files</Filter>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmAbout.resx">
       <Filter>Resource Files</Filter>
     </EmbeddedResource>
   </ItemGroup>

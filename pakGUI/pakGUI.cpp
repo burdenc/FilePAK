@@ -1,9 +1,9 @@
-// PAKGUI.cpp : main project file.
+// pakGUI.cpp : main project file.
 
 #include "stdafx.h"
 #include "frmMain.h"
 
-using namespace PAKGUI;
+using namespace pakGUI;
 
 [STAThreadAttribute]
 int main(array<System::String ^> ^args)

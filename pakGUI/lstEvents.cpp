@@ -1,7 +1,7 @@
 ﻿#include "stdafx.h"
 #include "events.h"
 
-using namespace PAKGUI;
+using namespace pakGUI;
 
 
 // This event occurs every time an item in the PAK Contents list is checked or unchecked.

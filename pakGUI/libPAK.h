@@ -40,7 +40,6 @@ private:
 
 	string pakname; //name of the pak file
 	bool pakloaded; //set to true after readPAK() is used
-	int lastEntry;
 	PAKheader header; //the header
 	vector<PAKfileEntry> entries; //table of contents of all the entries
 	vector<int> changes; //corresponds with entries: -1 = deleted, 0 = normal, 1 = added
@@ -78,6 +77,7 @@ public:
 	//Run rebuildPAK() to flush changes
 	//filePath - path to file to append
 	//Returns true if nothing goes wrong, returns false if folder contains a file with the same name as in the PAK
+	//Returns false if you try to append a pak to itself
 	bool appendFile(string filePath);
 
 	//Appends folder contents to PAK

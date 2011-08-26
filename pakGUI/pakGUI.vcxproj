@@ -84,11 +84,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.ico" />
+    <None Include="gpl.png" />
+    <None Include="Hogg Logo Text.png" />
+    <None Include="pakgui.png" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="assemblyInfo.cpp" />
     <ClCompile Include="btnEvents.cpp" />
     <ClCompile Include="events.cpp" />
+    <ClCompile Include="frmAbout.cpp" />
     <ClCompile Include="libPAK.cpp" />
     <ClCompile Include="logEvents.cpp" />
     <ClCompile Include="lstEvents.cpp" />
@@ -101,6 +105,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="events.h" />
+    <ClInclude Include="frmAbout.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
     <ClInclude Include="libPAK.h" />
     <ClInclude Include="frmLog.h">
       <FileType>CppForm</FileType>
@@ -115,6 +122,9 @@
     <ResourceCompile Include="app.rc" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="frmAbout.resx">
+      <DependentUpon>frmAbout.h</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="frmLog.resx">
       <DependentUpon>frmLog.h</DependentUpon>
     </EmbeddedResource>

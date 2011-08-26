@@ -5,7 +5,7 @@
 #include <fstream>
 
 
-using namespace PAKGUI;
+using namespace pakGUI;
 
 
 // This event occurs when the user clicks the Check all button

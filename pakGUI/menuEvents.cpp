@@ -1,8 +1,13 @@
 #include "stdafx.h"
 #include "events.h"
 
-using namespace PAKGUI;
+using namespace pakGUI;
 
+// This event occurs when the About menu item is clicked under the Help menu
+System::Void inline frmMain::menuAbout_Click(System::Object^  sender, System::EventArgs^  e)
+{
+	about->Visible = true;
+}
 
 // This event occurs when the Open menu item is clicked
 System::Void frmMain::openToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e)

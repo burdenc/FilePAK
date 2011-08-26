@@ -1,5 +1,8 @@
 #include "stdafx.h"
+#include "libPAK.h"
 
+#include <cstring>
+#include <cstdlib>
 #include <iostream>
 #include <sstream>
 #include <fstream>
@@ -7,7 +10,7 @@
 #include <random>
 #include <time.h>
 
-#ifndef _POSIX_
+#if !defined unix && !defined __unix__ && !defined __unix
 #include "dirent.h" //Usually only in POSIX compilers, it allows you to find all the files contained within a folder
 #else
 #include <dirent.h>
@@ -16,20 +19,21 @@
 libPAK::libPAK(void)
 {
 	pakloaded = false;
-	lastEntry = 0;
 }
 
 
 libPAK::~libPAK(void)
 {
 	entries.clear();
+	changes.clear();
 }
 
 bool libPAK::createPAK(string name, string entryPath, string types)
 {
-	pakloaded = false;
-	pakname = name;
+	pakloaded = false; //reset the loaded state
+	pakname = name; //save the name of the PAK file
 	srand((unsigned) time(NULL)); //seedin'
+
 	ofstream PAKout;
 	ifstream fileIn;
 	int numberFiles = 0;
@@ -39,28 +43,29 @@ bool libPAK::createPAK(string name, string entryPath, string types)
 	memcpy(header.fileID, "DBPAK\0", 6); //Using memcpy because lol char array
 	memcpy(header.version, "1.0\0", 4);
 
-	vector<string> correctTypes = split(types, '|');
+	vector<string> correctTypes = split(types, '|'); //splits the types into an array
 	if(!entryPath.empty())
 	{
 		DIR *dir; //dirent.h stuff to accumulate all files within a folder
 		dirent *entry = NULL;
-		if(dir = opendir(entryPath.c_str()))
+		dir = opendir(entryPath.c_str());
+		if(dir)
 		{
 			while(entry = readdir(dir))
 			{
 				if(entry->d_type != DT_DIR && entry->d_type == DT_REG) //if it's not a folder and a regular file
 				{
 					bool correctType = false;
-					if(types.empty()) correctType = true;
+					if(types.empty()) correctType = true; //if no type restriction is provided, all of them are correct
 					else
 					{
 						for(unsigned int i = 0; i < correctTypes.size(); i++)
 						{
 							string comparestr = entry->d_name;
 							int found = comparestr.find_last_of('.');
-							comparestr = comparestr.substr(found);
+							comparestr = comparestr.substr(found); //compare the extension to see if it's a correctType
 
-							if(!comparestr.compare(correctTypes[i]))
+							if(!comparestr.compare(correctTypes[i])) //it is a correct type
 								correctType = true;
 						}
 					}
@@ -69,7 +74,7 @@ bool libPAK::createPAK(string name, string entryPath, string types)
 					if(correctType)
 					{
 						numberFiles++;
-						if(!createEntry(entryPath, entry->d_name)) return false;
+						if(!createEntry(entryPath, entry->d_name)) return false; //create a new entry return false if fails
 					}
 				}
 			}
@@ -145,11 +150,14 @@ bool libPAK::createPAK(string name, string entryPath, string types)
 
 bool libPAK::appendFolder(string folderPath, string types)
 {
+	//This is all essentially a copy of what's in createPAK
+
 	vector<string> correctTypes = split(types, '|');
 
 	DIR *dir; //dirent.h stuff to accumulate all files within a folder
 	dirent *entry = NULL;
-	if(dir = opendir(folderPath.c_str()))
+	dir = opendir(folderPath.c_str());
+	if(dir)
 	{
 		while(entry = readdir(dir))
 		{
@@ -180,6 +188,7 @@ bool libPAK::appendFolder(string folderPath, string types)
 	}
 	else
 	{
+		//cout << "Dirent not working...\n";
 		delete dir, entry;
 		return false;
 	}
@@ -263,6 +272,7 @@ bool libPAK::readPAK(string PAKpath)
 		}
 
 		PAKread.close();
+		pakname = PAKpath;
 		pakloaded = true;
 	}
 	else return false; //PAKread not open
@@ -301,7 +311,7 @@ bool libPAK::rebuildPAK()
 		if(PAKout.is_open())
 		{
 			PAKout.write((char *) &header, sizeof(header)); //write out header
-
+			
 			char *buffer;
 
 			for(unsigned int i = 0; i < entries.size(); i++)
@@ -390,7 +400,7 @@ bool libPAK::rebuildPAK()
 #endif
 
 		rename(filename, pakname.c_str());
-		delete []filename;
+		delete [] filename;
 	}
 	else return false;
 
@@ -410,7 +420,9 @@ vector<int> libPAK::getChanges()
 
 bool libPAK::appendFile(string name)
 {
-	int found = name.find_last_of("/\\"); //seperating path from filename
+	if(name.compare(pakname) == 0) return false; //trying to append pak file to itself
+
+	int found = name.find_last_of("/\\"); //separating path from filename
 	string path = name.substr(0, found+1);
 	string file = name.substr(found+1);
 
@@ -418,8 +430,8 @@ bool libPAK::appendFile(string name)
 		if(!file.compare(entries[i].name))
 			return false;
 
-	if(changes.empty()) changes.assign(entries.size(), 0);
-	changes.push_back(1);
+	if(changes.empty()) changes.assign(entries.size(), 0); //if there's no changes fill the changes vector with 0's (0 = no change)
+	changes.push_back(1); //1 = append
 
 	if(!createEntry(path, file)) return false;
 
@@ -553,7 +565,7 @@ bool libPAK::removeFile(string name)
 			if(name.compare(entries[i].name) == 0)
 			{
 				if(changes.empty()) changes.assign(entries.size(), 0);
-				changes[i] = -1;
+				changes[i] = -1; //-1 = deletion
 				return true;
 			}
 		}
@@ -568,6 +580,7 @@ bool libPAK::isLoaded()
 
 void libPAK::discardChanges()
 {
+	//delete all changes
 	if(changes.empty()) return;
 	for(unsigned int i = 0; i < entries.size(); i++)
 		if(changes[i] == 1)

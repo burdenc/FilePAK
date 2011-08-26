@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-using namespace PAKGUI;
+using namespace pakGUI;
 
 
 System::Void inline frmMain::logToolStripMenuItem_Click(System::Object^  sender, System::EventArgs^  e)

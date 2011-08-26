@@ -3,7 +3,7 @@
 
 #include <sstream>
 
-using namespace PAKGUI;
+using namespace pakGUI;
 
 
 libPAK pak;
