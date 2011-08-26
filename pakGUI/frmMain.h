@@ -898,6 +898,7 @@ private: System::Windows::Forms::OpenFileDialog^  addFilesDialog;
 			this->Controls->Add(this->groupBox2);
 			this->Controls->Add(this->menuStrip1);
 			this->Controls->Add(this->statusStrip1);
+			this->Icon = (cli::safe_cast<System::Drawing::Icon^  >(resources->GetObject(L"$this.Icon")));
 			this->MainMenuStrip = this->menuStrip1;
 			this->MaximizeBox = false;
 			this->MaximumSize = System::Drawing::Size(836, 637);
