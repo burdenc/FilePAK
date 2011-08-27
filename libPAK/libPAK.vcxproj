@@ -62,9 +62,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="libPAK.h" />
+    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="libPAK.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="libPAK.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

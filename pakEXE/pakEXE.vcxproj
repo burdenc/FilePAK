@@ -13,6 +13,12 @@
   <ItemGroup>
     <ClCompile Include="pakEXE.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="pakEXE.rc" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{A25F9E6A-2D89-452D-AC39-FA88C6758467}</ProjectGuid>
     <RootNamespace>pakEXE</RootNamespace>
