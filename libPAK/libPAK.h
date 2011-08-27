@@ -127,7 +127,7 @@ public:
 	//name - entry to unPAK
 	//path - folder to unPAK to
 	//Returns true if nothing goes wrong
-	bool unPAKEntry(string name, string path);
+	bool unPAKEntry(string name, string path = "");
 
 };
 

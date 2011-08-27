@@ -170,7 +170,7 @@ int commandPrompt(int argc, const char* argv[])
 		if(strcmp(argv[i], "-u") == 0)
 		{
 			if(verbose) cout << "Unpaking " << argv[i+1] << "\n";
-			if(!pak.unPAKEntry(argv[i+1], "./")) //attempt to append file name given after -u
+			if(!pak.unPAKEntry(argv[i+1])) //attempt to append file name given after -u
 			{ //it unpaks to the current folder, thus the ./
 				if(verbose) cout << "Could not unpak " << argv[i+1] << " from pak file\n";
 				return 1;
