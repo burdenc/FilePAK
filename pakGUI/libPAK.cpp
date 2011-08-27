@@ -1,3 +1,29 @@
+/*
+	This file is part of libPAK.
+
+	libPAK is a library that provides tools for the packing and un-packing of
+	several files into one easily manageable resource file.
+
+	pakGUI, pakEXE, and libPAK
+	Copyright © 2011  Cassidy Burden, Hogg Studios
+
+	libPAK was developed by Cassidy Burden in cooperation with Drew Burden
+	and released by Hogg Studios under the GPLv3 License.
+
+	libPAK is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	libPAK is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with libPAK. If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #include "stdafx.h"
 #include "libPAK.h"
 

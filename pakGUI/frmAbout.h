@@ -1,3 +1,29 @@
+/*
+	This file is part of pakGUI.
+
+	pakGUI is a user-friendly graphical user interface for libPAK which allows the
+	packing and un-packing of several files into one easily manageable resource file.
+
+	pakGUI, pakEXE, and libPAK
+	Copyright © 2011  Drew Burden, Hogg Studios
+
+	pakGUI was developed by Drew Burden in cooperation with Cassidy Burden
+	and released by Hogg Studios under the GPLv3 License.
+
+	pakGUI is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	pakGUI is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with pakGUI. If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #pragma once
 
 namespace pakGUI {
@@ -96,7 +122,8 @@ namespace pakGUI {
 			this->txtGPL->ReadOnly = true;
 			this->txtGPL->ScrollBars = System::Windows::Forms::ScrollBars::Vertical;
 			this->txtGPL->Size = System::Drawing::Size(259, 126);
-			this->txtGPL->TabIndex = 3;
+			this->txtGPL->TabIndex = 1;
+			this->txtGPL->TabStop = false;
 			this->txtGPL->Text = resources->GetString(L"txtGPL.Text");
 			// 
 			// btnOK
@@ -104,7 +131,7 @@ namespace pakGUI {
 			this->btnOK->Location = System::Drawing::Point(285, 163);
 			this->btnOK->Name = L"btnOK";
 			this->btnOK->Size = System::Drawing::Size(103, 34);
-			this->btnOK->TabIndex = 4;
+			this->btnOK->TabIndex = 0;
 			this->btnOK->Text = L"OK";
 			this->btnOK->UseVisualStyleBackColor = true;
 			this->btnOK->Click += gcnew System::EventHandler(this, &frmAbout::btnOK_Click);
@@ -141,10 +168,14 @@ namespace pakGUI {
 			this->Controls->Add(this->btnOK);
 			this->Controls->Add(this->txtGPL);
 			this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::FixedToolWindow;
+			this->MaximizeBox = false;
+			this->MinimizeBox = false;
 			this->Name = L"frmAbout";
 			this->ShowIcon = false;
 			this->ShowInTaskbar = false;
+			this->SizeGripStyle = System::Windows::Forms::SizeGripStyle::Hide;
 			this->Text = L"About";
+			this->TopMost = true;
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->pictureBox2))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->pictureBox4))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->pictureBox1))->EndInit();

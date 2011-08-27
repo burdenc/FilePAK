@@ -165,7 +165,7 @@
         XTesb3QPLh88M+QwdP6m681Lt7xuXbu94vbgcOjwnZHokdE77DtTd1PuvriXeW/h/sYH6AdFD6UeVjxS
         fNTws+7PbaOWo6fHXMf6Hwc/vj/OGn/2S8Yv7ycKnpCfVEyqTDZPmU2dmnafvvF05dOJZ+nPFmYKf5X+
         tfa5zvMffnP8rX82YnbiBf/Fp99LXsq/PPRq2aueuYC5R69TXy/MF72Rf3P4LeNt37vwd5MLWe+x7ys/
-        6H7o/ujz8cGn1E+f/gUDmPP8usTo0wAAAAlwSFlzAAALDwAACw8BkvkDpQAAJixJREFUeF7tfQdYFcf3
+        6H7o/ujz8cGn1E+f/gUDmPP8usTo0wAAAAlwSFlzAAALDAAACwwBP0AiyAAAJixJREFUeF7tfQdYFcf3
         dkCkiRUVxYYFFVREFAQEpCiiWLD3XrHG3nvXKHax966gURF7Yq+xxEIUjYnRiIliib3M/33Xu/yWy+69
         GOELeb7c5zney+7MOXPOvHP2zJmZ9SshxFf/0X82+LdiQAJvBvqYoC1apNXMzy2vz4f1TUGZQGYK4t+8
         zvtp9ZHlqMniNbktf1deevP/u+1K83rygMsoAM4MDXODioNK61EJ/G0HslBYgR2dBWQPKqlSpyiu5dSB
@@ -331,22 +331,20 @@
         dLbP2AbujKbD/4v2aDmU9LLV38JVMgDLf/z3LZIOC/5ni3+HLf4PPZBuRdPy3jUAAAAASUVORK5CYII=
 </value>
   </data>
+  <metadata name="txtGPL.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
   <data name="txtGPL.Text" xml:space="preserve">
-    <value>pakGUI
-Copyright (C) 2011  Hogg Studios
+    <value>pakGUI is a user-friendly graphical user interface for libPAK which allows the packing and un-packing of several files into one easily manageable resource file.
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+pakGUI, pakEXE, and libPAK
+Copyright © 2011  Drew Burden, Hogg Studios
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+pakGUI was developed by Drew Burden in cooperation with Cassidy Burden and released by Hogg Studios under the GPLv3 License.
 
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</value>
+pakGUI is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+pakGUI is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+You should have received a copy of the GNU General Public License along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</value>
   </data>
   <data name="pictureBox4.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
@@ -395,7 +393,7 @@ along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</val
         XTesb3QPLh88M+QwdP6m681Lt7xuXbu94vbgcOjwnZHokdE77DtTd1PuvriXeW/h/sYH6AdFD6UeVjxS
         fNTws+7PbaOWo6fHXMf6Hwc/vj/OGn/2S8Yv7ycKnpCfVEyqTDZPmU2dmnafvvF05dOJZ+nPFmYKf5X+
         tfa5zvMffnP8rX82YnbiBf/Fp99LXsq/PPRq2aueuYC5R69TXy/MF72Rf3P4LeNt37vwd5MLWe+x7ys/
-        6H7o/ujz8cGn1E+f/gUDmPP8usTo0wAAAAlwSFlzAAAOvwAADr8BOAVTJAAAKORJREFUeF7tnQdYVWe6
+        6H7o/ujz8cGn1E+f/gUDmPP8usTo0wAAAAlwSFlzAAAOvAAADrwBlbxySQAAKORJREFUeF7tnQdYVWe6
         tld6Milz5kzmTKZkMpn8M5m0SZv0pmlqTEbHaIqxK/aCIF1BEOkiXXrvHaT33kVAQHovArb0qJm8//N+
         u7jZ0jSQk+TgdX0Xyl6svdnr3s/bnm8pEZE0u2bfgx8DA0oQhzuPScNdNVJvdYx0prdO6i7zk3org6T+
         6kjpbFe51FfuJ51py5d6So5IIyfTpO5CJ2mwJkoabkiUhuoTpMHj4dJgdZjUX+kvDVSHSuc6iqTeUg/p
@@ -620,7 +618,7 @@ along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</val
         XTesb3QPLh88M+QwdP6m681Lt7xuXbu94vbgcOjwnZHokdE77DtTd1PuvriXeW/h/sYH6AdFD6UeVjxS
         fNTws+7PbaOWo6fHXMf6Hwc/vj/OGn/2S8Yv7ycKnpCfVEyqTDZPmU2dmnafvvF05dOJZ+nPFmYKf5X+
         tfa5zvMffnP8rX82YnbiBf/Fp99LXsq/PPRq2aueuYC5R69TXy/MF72Rf3P4LeNt37vwd5MLWe+x7ys/
-        6H7o/ujz8cGn1E+f/gUDmPP8usTo0wAAAAlwSFlzAAALDwAACw8BkvkDpQAAEpVJREFUeF7tm3e0VcUV
+        6H7o/ujz8cGn1E+f/gUDmPP8usTo0wAAAAlwSFlzAAALDAAACwwBP0AiyAAAEpVJREFUeF7tm3e0VcUV
         hw+PIjaaYsEGCnYFe0+sSxJ7UOxgV6wktrCUqJgoSoyIikbEjopIEUVFpVkQqRZEQY0FC0hQEUus5PvO
         m7med7nlvQdqdOWPvc49U/bs2b/ZZWbOTZ5IkqQcjaLN/6l2OlC3Y6BnoNFJ0pT3LdHl8dD10BPQa9AH
         lL/Dc9rjSXIRtDZtywNDp1XpdAh02C+IDkXWw38meR030mHo73AUffhTSdKF53Dqvoa+gl6BboPOpLwj
