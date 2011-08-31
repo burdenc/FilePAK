@@ -73,7 +73,8 @@ bool libPAK::createPAK(string name, string entryPath, string types)
 					if(correctType)
 					{
 						numberFiles++;
-						if(!createEntry(entryPath, entry->d_name)) return false; //create a new entry return false if fails
+						int err = createEntry(entryPath, entry->d_name); //create a new entry return error code if fails
+						if(err == PAK_FAIL) return err;
 					}
 				}
 			}
@@ -136,18 +137,18 @@ bool libPAK::createPAK(string name, string entryPath, string types)
 					delete [] buffer;
 					fileIn.close();
 				}
-				else return false; //fileIn not open
+				else return PAK_FILE_OPEN_FAIL; //fileIn not open
 			}
 
 			PAKout.close();
 		}
 	}
-	else return false; //PAKout not open
+	else return PAK_FILE_OPEN_FAIL; //PAKout not open
 
-	return true;
+	return PAK_SUCCESS;
 }
 
-bool libPAK::appendFolder(string folderPath, string types)
+int libPAK::appendFolder(string folderPath, string types)
 {
 	//This is all essentially a copy of what's in createPAK
 
@@ -180,23 +181,23 @@ bool libPAK::appendFolder(string folderPath, string types)
 
 				if(correctType)
 				{
-					if(!appendFile(folderPath + entry->d_name)) return false;
+					int err = appendFile(folderPath + entry->d_name);
+					if(err == PAK_FAIL) return err; //return error code if fails
 				}
 			}
 		}
 	}
 	else
 	{
-		//cout << "Dirent not working...\n";
 		delete dir, entry;
-		return false;
+		return PAK_DIRENT_FAIL;
 	}
 
 	delete dir, entry;
-	return true;
+	return PAK_SUCCESS;
 }
 
-bool libPAK::createEntry(string path, string name)
+int libPAK::createEntry(string path, string name)
 {
 	ifstream fileIn;
 	PAKfileEntry fentry; //creates a new table of contents entry
@@ -210,13 +211,9 @@ bool libPAK::createEntry(string path, string name)
 	fileIn.open(entryName, ifstream::binary | ifstream::ate);
 
 	if(fileIn.is_open())
-	{
 		fentry.size = (unsigned int) fileIn.tellg(); //to calculate the file's size
-	}
 	else
-	{
-		return false;
-	}
+		return PAK_FILE_OPEN_FAIL;
 
 	fileIn.close();
 
@@ -224,10 +221,10 @@ bool libPAK::createEntry(string path, string name)
 
 	entries.push_back(fentry); //append to the vector
 
-	return true;
+	return PAK_SUCCESS;
 }
 
-bool libPAK::readPAK(string PAKpath)
+int libPAK::readPAK(string PAKpath)
 {
 	ifstream PAKread;
 	PAKread.open(PAKpath, ios::binary);
@@ -240,7 +237,7 @@ bool libPAK::readPAK(string PAKpath)
 		if(strcmp(header.fileID, "DBPAK") != 0 || strcmp(header.version, "1.0") != 0) 
 		{ //if the fileIDs or versions don't match
 			PAKread.close(); 
-			return false;
+			return PAK_BAD_PAK;
 		}
 
 		entries.clear(); //entries could be full from createPAK()
@@ -274,14 +271,14 @@ bool libPAK::readPAK(string PAKpath)
 		pakname = PAKpath;
 		pakloaded = true;
 	}
-	else return false; //PAKread not open
+	else return PAK_FILE_OPEN_FAIL; //PAKread not open
 
-	return true;
+	return PAK_SUCCESS;
 }
 
-bool libPAK::rebuildPAK()
+int libPAK::rebuildPAK()
 {
-	if(changes.empty()) return false; //if no changes are buffered
+	if(changes.empty()) return PAK_NO_CHANGES; //if no changes are buffered
 	if(pakloaded)
 	{
 		ofstream PAKout;
@@ -366,7 +363,7 @@ bool libPAK::rebuildPAK()
 				else
 				{
 					original.clear();
-					return false;
+					return PAK_FILE_OPEN_FAIL;
 				}
 
 				PAKin.close();
@@ -379,7 +376,7 @@ bool libPAK::rebuildPAK()
 		else
 		{
 			original.clear();
-			return false;
+			return PAK_FILE_OPEN_FAIL;
 		}
 
 		PAKout.close();
@@ -401,7 +398,7 @@ bool libPAK::rebuildPAK()
 		rename(filename, pakname.c_str());
 		delete [] filename;
 	}
-	else return false;
+	else return PAK_NOT_LOADED;
 
 	for(unsigned int i = 0; i < entries.size(); i++) //erase all deletions
 		if(changes[i] == -1)
@@ -409,7 +406,7 @@ bool libPAK::rebuildPAK()
 
 	changes.clear();
 
-	return true;
+	return PAK_SUCCESS;
 }
 
 vector<int> libPAK::getChanges()
@@ -417,9 +414,9 @@ vector<int> libPAK::getChanges()
 	return changes;
 }
 
-bool libPAK::appendFile(string name)
+int libPAK::appendFile(string name)
 {
-	if(name.compare(pakname) == 0) return false; //trying to append pak file to itself
+	if(name.compare(pakname) == 0) return PAK_APPEND_SELF; //trying to append pak file to itself
 
 	int found = name.find_last_of("/\\"); //separating path from filename
 	string path = name.substr(0, found+1);
@@ -427,14 +424,12 @@ bool libPAK::appendFile(string name)
 
 	for(unsigned int i = 0; i < entries.size(); i++) //if file name already exists
 		if(!file.compare(entries[i].name))
-			return false;
+			return PAK_ENTRY_EXISTS;
 
 	if(changes.empty()) changes.assign(entries.size(), 0); //if there's no changes fill the changes vector with 0's (0 = no change)
 	changes.push_back(1); //1 = append
 
-	if(!createEntry(path, file)) return false;
-
-	return true;
+	return createEntry(path, file); //should return PAK_SUCCESS
 }
 
 char* libPAK::getPAKEntryData(string name)
@@ -495,9 +490,9 @@ int libPAK::getPAKEntrySize(string name)
 				return entries[i].size;
 			}
 		}
-		return -1; // This shouldn't happen. Treat as a critical error.
+		return PAK_CRIT_ERR; // This shouldn't happen. Treat as a critical error.
 	}
-	return -2; //PAK file isn't loaded
+	return PAK_NOT_LOADED; //PAK file isn't loaded
 }
 
 vector<string> libPAK::getAllPAKEntries()
@@ -514,7 +509,7 @@ vector<string> libPAK::getAllPAKEntries()
 	return allentries; //NULL if pakloaded == false
 }
 
-bool libPAK::unPAKEntry(string name, string path)
+int libPAK::unPAKEntry(string name, string path)
 {
 	if(pakloaded)
 	{
@@ -524,29 +519,31 @@ bool libPAK::unPAKEntry(string name, string path)
 		{
 			char *buffer = getPAKEntryData(name);
 			int size = getPAKEntrySize(name);
-			if(buffer == NULL || size <= 0) return false;
+			if(buffer == NULL || size <= 0) return PAK_FILE_BAD_BUFFER;
 
 			output.write(buffer, size);
 			delete [] buffer;
 		}
 		else
 		{
-			return false;
+			return PAK_FILE_OPEN_FAIL;
 		}
 
 		output.close();
-		return true;
+		return PAK_SUCCESS;
 	}
-	return false;
+	return PAK_NOT_LOADED;
 }
 
-vector<string> libPAK::split(const string &s, char delim) {
+vector<string> libPAK::split(const string &s, char delim)
+{
 	vector<string> elems;
 	stringstream ss(s);
 	string item;
-	while(getline(ss, item, delim)) {
+
+	while(getline(ss, item, delim))
 		elems.push_back(item);
-	}
+
 	return elems;
 }
 
@@ -555,7 +552,7 @@ int libPAK::getNumPAKEntries()
 	return header.numberFiles;
 }
 
-bool libPAK::removeFile(string name)
+int libPAK::removeFile(string name)
 {
 	if(pakloaded)
 	{
@@ -565,11 +562,11 @@ bool libPAK::removeFile(string name)
 			{
 				if(changes.empty()) changes.assign(entries.size(), 0);
 				changes[i] = -1; //-1 = deletion
-				return true;
+				return PAK_SUCCESS;
 			}
 		}
 	}
-	return false;
+	return PAK_NOT_LOADED;
 }
 
 bool libPAK::isLoaded()

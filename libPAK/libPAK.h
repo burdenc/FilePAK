@@ -12,6 +12,32 @@
 #ifndef LIBPAK_H
 #define LIBPAK_H
 
+///////////////
+//Error Codes//
+///////////////
+
+#define PAK_SUCCESS				0
+#define	PAK_FAIL				!0
+#define PAK_CRIT_ERR			-1
+
+#define PAK_BAD_PAK				-100
+#define PAK_APPEND_SELF			-101
+#define PAK_NOT_LOADED			-102
+#define PAK_NO_CHANGES			-103
+#define PAK_ENTRY_EXISTS		-104
+#define PAK_BAD_CHECKSUM		-105
+
+#define PAK_FILE_OPEN_FAIL		-200
+#define PAK_FILE_WRITE_FAIL		-201
+#define PAK_FILE_READ_FAIL		-202
+#define PAK_FILE_BAD_BUFFER		-203
+
+#define PAK_DIRENT_FAIL			-300
+
+///////////////////
+//End Error Codes//
+///////////////////
+
 #include <string>
 #include <vector>
 #include <stdio.h>
@@ -48,25 +74,26 @@ private:
 	vector<string> split(const string &s, char delim);
 
 	//Create PAKfileEntry
-	bool createEntry(string fullname, string name);
+	int createEntry(string fullname, string name);
 
 public:
 	libPAK(void);
 	~libPAK(void);
 
 	//Creates new PAK file
-	//name - name of PAK file to be created
-	//entryPath - path to the folder that contains all the files you want in the PAK file
-	//types - all filetypes to be included, seperate by |, ex: ".jpg|.png|.bmp"
-	//Returns true if nothing goes wrong
-	bool createPAK(string name, string entryPath = "", string types = "");
+	//$name = name of PAK file to be created
+	//$entryPath = path to the folder that contains all the files you want in the PAK file
+	//$types = all filetypes to be included, seperate by |, ex: ".jpg|.png|.bmp"
+	//@returns = 0, -200 (Refer to error codes above)
+	int createPAK(string name, string entryPath = "", string types = "");
 
 	//Reads a PAK file's header and entries into memory so you can manipulate it/decrypt files stored within it
 	//PAKpath - path to the PAK file to read
-	//Returns true if nothing goes wrong
-	bool readPAK(string PAKpath);
+	//@returns - Refer to error codes
+	int readPAK(string PAKpath);
 
-	//Returns true if readPAK() has successfully loaded the pak file
+	//@return
+	//	true - readPAK() has successfully loaded the pak file
 	bool isLoaded();
 
 	//----------------------------------------------------------
@@ -76,26 +103,27 @@ public:
 	//Appends file to PAK
 	//Run rebuildPAK() to flush changes
 	//filePath - path to file to append
-	//Returns true if nothing goes wrong, returns false if folder contains a file with the same name as in the PAK
-	//Returns false if you try to append a pak to itself
-	bool appendFile(string filePath);
+	//@return - Refer to error codes
+	int appendFile(string filePath);
 
 	//Appends folder contents to PAK
 	//Run rebuildPAK() to flush changes
 	//folderPath - path to folder
 	//types - all filetypes to be included, seperate by |, ex: ".jpg|.png|.bmp"
-	//Returns true if nothing goes wrong, returns false if folder contains a file with the same name as in the PAK
-	bool appendFolder(string folderPath, string types = "");
+	//@return
+	//	0 - Success
+	//	-1 - Fo
+	int appendFolder(string folderPath, string types = "");
 
 	//Removes file to PAK
 	//Run rebuildPAK() to flush changes
 	//filePath - path to file to append
 	//Returns true if nothing goes wrong
-	bool removeFile(string filePath);
+	int removeFile(string filePath);
 
 	//Rebuilds the PAK file with buffered changes
 	//Returns true if nothing goes wrong, also returns false if there are no changes to flush
-	bool rebuildPAK();
+	int rebuildPAK();
 
 	//Returns changes made
 	vector<int> getChanges();
@@ -127,7 +155,7 @@ public:
 	//name - entry to unPAK
 	//path - folder to unPAK to
 	//Returns true if nothing goes wrong
-	bool unPAKEntry(string name, string path = "");
+	int unPAKEntry(string name, string path = "");
 
 };
 
