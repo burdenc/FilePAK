@@ -27,7 +27,7 @@ libPAK::~libPAK(void)
 	changes.clear();
 }
 
-bool libPAK::createPAK(string name, string entryPath, string types)
+int libPAK::createPAK(string name, string entryPath, string types)
 {
 	pakloaded = false; //reset the loaded state
 	pakname = name; //save the name of the PAK file
@@ -74,7 +74,7 @@ bool libPAK::createPAK(string name, string entryPath, string types)
 					{
 						numberFiles++;
 						int err = createEntry(entryPath, entry->d_name); //create a new entry return error code if fails
-						if(err == PAK_FAIL) return err;
+						if(err != PAK_SUCCESS) return err;
 					}
 				}
 			}
@@ -182,7 +182,7 @@ int libPAK::appendFolder(string folderPath, string types)
 				if(correctType)
 				{
 					int err = appendFile(folderPath + entry->d_name);
-					if(err == PAK_FAIL) return err; //return error code if fails
+					if(err == PAK_SUCCESS) return err; //return error code if fails
 				}
 			}
 		}
@@ -416,20 +416,24 @@ vector<int> libPAK::getChanges()
 
 int libPAK::appendFile(string name)
 {
-	if(name.compare(pakname) == 0) return PAK_APPEND_SELF; //trying to append pak file to itself
+	if(pakloaded)
+	{
+		if(name.compare(pakname) == 0) return PAK_APPEND_SELF; //trying to append pak file to itself
 
-	int found = name.find_last_of("/\\"); //separating path from filename
-	string path = name.substr(0, found+1);
-	string file = name.substr(found+1);
+		int found = name.find_last_of("/\\"); //separating path from filename
+		string path = name.substr(0, found+1);
+		string file = name.substr(found+1);
 
-	for(unsigned int i = 0; i < entries.size(); i++) //if file name already exists
-		if(!file.compare(entries[i].name))
-			return PAK_ENTRY_EXISTS;
+		for(unsigned int i = 0; i < entries.size(); i++) //if file name already exists
+			if(!file.compare(entries[i].name))
+				return PAK_ENTRY_EXISTS;
 
-	if(changes.empty()) changes.assign(entries.size(), 0); //if there's no changes fill the changes vector with 0's (0 = no change)
-	changes.push_back(1); //1 = append
+		if(changes.empty()) changes.assign(entries.size(), 0); //if there's no changes fill the changes vector with 0's (0 = no change)
+		changes.push_back(1); //1 = append
 
-	return createEntry(path, file); //should return PAK_SUCCESS
+		return createEntry(path, file); //should return PAK_SUCCESS
+	}
+	return PAK_NOT_LOADED;
 }
 
 char* libPAK::getPAKEntryData(string name)
