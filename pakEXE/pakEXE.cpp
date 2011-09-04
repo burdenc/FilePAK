@@ -365,25 +365,18 @@ int menuPrompt()
 
 				cout << "Please provide the name of the PAK file to create:\n";
 				getline(cin, pakname);
-				cout << "\nPlease provide the file path to the files to include in the PAK file: \n"; 
-				getline(cin, entryname);
-				cout << "\nPlease provide the file type restriction to use (optional, press enter to skip)\n";
-				cout << "(Seperate each with | ex: '.jpg|.bmp' will only use jpg and bmp files):\n";
-				getline(cin, types);
 
 				//Ensure they want to create a new PAK with the following options
 				sys("cls");
 				cout << "Are the following options are correct?\n";
 				cout << "PAK Name: " << pakname << "\n";
-				cout << "Folder Path: " << entryname << "\n";
-				cout << "Type Restriction: " << (types.empty() ? "None" : types) << "\n";
 				cout << "Y = Yes, Others = No\n";
 				char input = sys("getch");
 				sys("cls");
 
 				if(input == 'y' || input == 'Y')
 				{
-					errcode = pak.createPAK(pakname, entryname, types);
+					errcode = pak.createPAK(pakname);
 					if(errcode == PAK_SUCCESS)
 					{
 						cout << "PAK file successfully created!\n\n";

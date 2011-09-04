@@ -27,123 +27,28 @@ libPAK::~libPAK(void)
 	changes.clear();
 }
 
-int libPAK::createPAK(string name, string entryPath, string types)
+int libPAK::createPAK(string name)
 {
 	pakloaded = false; //reset the loaded state
 	pakname = name; //save the name of the PAK file
 	srand((unsigned) time(NULL)); //seedin'
 
 	ofstream PAKout;
-	ifstream fileIn;
-	int numberFiles = 0;
 
 	header.additionEncrypt = ( (rand() % 2) ? true : false ); //Set random values for encrypting. The compact if-statement is used to prevent compiler warnings about casting int to a bool.
 	header.encryptVal = (char) (rand() % 256);
 	memcpy(header.fileID, "DBPAK\0", 6); //Using memcpy because lol char array
-	memcpy(header.version, "1.0\0", 4);
-
-	vector<string> correctTypes = split(types, '|'); //splits the types into an array
-	if(!entryPath.empty())
-	{
-		DIR *dir; //dirent.h stuff to accumulate all files within a folder
-		dirent *entry = NULL;
-		dir = opendir(entryPath.c_str());
-		if(dir)
-		{
-			while(entry = readdir(dir))
-			{
-				if(entry->d_type != DT_DIR && entry->d_type == DT_REG) //if it's not a folder and a regular file
-				{
-					bool correctType = false;
-					if(types.empty()) correctType = true; //if no type restriction is provided, all of them are correct
-					else
-					{
-						for(unsigned int i = 0; i < correctTypes.size(); i++)
-						{
-							string comparestr = entry->d_name;
-							int found = comparestr.find_last_of('.');
-							comparestr = comparestr.substr(found); //compare the extension to see if it's a correctType
-
-							if(!comparestr.compare(correctTypes[i])) //it is a correct type
-								correctType = true;
-						}
-					}
-
-
-					if(correctType)
-					{
-						numberFiles++;
-						int err = createEntry(entryPath, entry->d_name); //create a new entry return error code if fails
-						if(err != PAK_SUCCESS) return err;
-					}
-				}
-			}
-		}
-
-		delete dir, entry;
-	}
-
-	header.numberFiles = numberFiles;
-
-	int offset = sizeof(PAKheader) + (numberFiles * sizeof(PAKfileEntry)); //there's always 1 header, and there's a PAKfileEntry for every file so find the sum of
-	for(unsigned int i = 0; i < entries.size(); i++)						//their sizes to find the offset for the first file
-	{
-		entries[i].offset = offset; //calculate all the offsets for each file
-		offset += entries[i].size;
-	}
+	memcpy(header.version, "1.1\0", 4);
+	header.numberFiles = 0;
 
 	PAKout.open(name, ofstream::binary | ofstream::trunc);
 	if(PAKout.is_open())
 	{
 		PAKout.write((char *) &header, sizeof(header)); //write the header
-
-		if(numberFiles) //if any files were found at all
-		{
-			char *buffer;
-
-			for(unsigned int i = 0; i < entries.size(); i++)
-			{
-				buffer = new char[sizeof(PAKfileEntry)]; //char array to hold each table of contents entry
-				memcpy(buffer, &(entries[i]), sizeof(PAKfileEntry)); //copy over the current entry in the for loop
-
-				for(int j = 0; j < sizeof(PAKfileEntry); j++)
-				{
-					if(header.additionEncrypt) buffer[j] += header.encryptVal; //encrypt each byte
-					else buffer[j] -= header.encryptVal;
-				}
-
-				PAKout.write(buffer, sizeof(PAKfileEntry)); //finally write the entry
-
-				delete [] buffer; //no memory leaks in this code, no sir
-			}
-			for(unsigned int i = 0; i < entries.size(); i++)
-			{
-				int size = entries[i].size;
-				buffer = new char[size];
-
-				fileIn.open(entries[i].fullname, ifstream::binary);
-				if(fileIn.is_open())
-				{
-					fileIn.read(buffer, size); //read in the file so it can be encrypted then written into the PAK file
-
-					for(int j = 0; j < size; j++)
-					{
-						if(header.additionEncrypt) buffer[j] += header.encryptVal; //more encryptan'
-						else buffer[j] -= header.encryptVal;
-					}
-
-					PAKout.write(buffer, size); //write it out
-
-					delete [] buffer;
-					fileIn.close();
-				}
-				else return PAK_FILE_OPEN_FAIL; //fileIn not open
-			}
-
-			PAKout.close();
-		}
 	}
 	else return PAK_FILE_OPEN_FAIL; //PAKout not open
+
+	PAKout.close();
 
 	return PAK_SUCCESS;
 }
@@ -234,7 +139,7 @@ int libPAK::readPAK(string PAKpath)
 
 		PAKread.read((char *) &header, sizeof(PAKheader)); //read in the header information so you can decrypt
 
-		if(strcmp(header.fileID, "DBPAK") != 0 || strcmp(header.version, "1.0") != 0) 
+		if(strcmp(header.fileID, "DBPAK") != 0) 
 		{ //if the fileIDs or versions don't match
 			PAKread.close(); 
 			return PAK_BAD_PAK;

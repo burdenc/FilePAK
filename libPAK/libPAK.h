@@ -94,17 +94,11 @@ public:
 	//
 	//$name = name of PAK file to be created
 	//
-	//$entryPath = path to the folder that contains
-	//all the files you want in the PAK file
-	//
-	//$types = all filetypes to be included,
-	//separate by | ex: ".jpg|.png|.bmp"
-	//
 	//@returns =
 	//		PAK_SUCCESS
 	//		PAK_FILE_OPEN_FAIL
 	//*******************************************
-	int createPAK(string name, string entryPath = "", string types = "");
+	int createPAK(string name);
 
 	//*******************************************
 	//Reads a PAK file's header and entries into
