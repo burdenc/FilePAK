@@ -2,7 +2,7 @@
 //			PAK File Compression
 //
 //		Packs any set of files (best used on resource files in a program. Images, sounds, etc.) into one .pak file.
-//		Each file is encrypted with the caesar encryption, it's really simple: choose a random value between 0 and 255 and
+//		Each file is encrypted with the Caesar encryption, it's really simple: choose a random value between 0 and 255 and
 //		randomly choose to either add or subtract then store those values in the files header. Then whenever you store a
 //		file you add or subtract that value to every byte.
 //
@@ -46,7 +46,7 @@ using namespace std;
 class libPAK
 {
 private:
-	struct PAKheader //The header for the .pak file, the only thing not encyrpted
+	struct PAKheader //The header for the .pak file, the only thing not encrypted
 	{
 		char fileID[6]; //Identifier to make sure this is the type of .pak we want (and not some other sort of compression someone else made), I use "DBPAK"
 		char version[4]; //Version of the format
@@ -143,7 +143,6 @@ public:
 	//		PAK_NOT_LOADED
 	//		PAK_APPEND_SELF
 	//		PAK_ENTRY_EXISTS
-	//		PAK_BUFFER_FAIL
 	//*******************************************
 	int appendFile(string filePath);
 

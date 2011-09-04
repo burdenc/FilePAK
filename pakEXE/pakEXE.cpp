@@ -20,7 +20,7 @@
 
 using namespace std;
 
-char sys(string param);
+char sys(string param, int extra = NULL);
 string chooseEntry();
 bool displayChanges();
 vector<string> split(const string &s, char delim);
@@ -128,28 +128,48 @@ int commandPrompt(int argc, const char* argv[])
 	///////////////////////
 
 	libPAK pak;
+	int errcode;
+
 	if(read)
 	{
 		if(verbose) cout << "Reading " << argv[argc-1] << "\n";
-		if(!pak.readPAK(argv[argc-1])) //Try to read the pak file with the last argument
+		errcode = pak.readPAK(argv[argc-1]);
+
+		if(errcode != PAK_SUCCESS) //Try to read the pak file with the last argument
 		{
-			if(verbose) cout << "Could not read pak file: " << argv[argc-1] << "\n";
+			if(verbose) 
+			{
+				cout << "Could not read pak file: " << argv[argc-1] << "\n";
+				sys("liberr", errcode);
+			}
 			return 1;
 		}
 	}
 	else
 	{
 		if(verbose) cout << "Creating " << argv[argc-1] << "\n";
-		if(!pak.createPAK(argv[argc-1])) //try to create a new empty pak file with the last argument
+		errcode = pak.createPAK(argv[argc-1]);
+
+		if(errcode != PAK_SUCCESS) //try to create a new empty pak file with the last argument
 		{
-			if(verbose) cout << "Could not create pak file: " << argv[argc-1] << "\n";
+			if(verbose) 
+			{
+				cout << "Could not create pak file: " << argv[argc-1] << "\n";
+				sys("liberr", errcode);
+			}
 			return 1;
 		}
 
 		if(verbose) cout << "Reading new pak file " << argv[argc-1] << "\n";
-		if(!pak.readPAK(argv[argc-1])) //read the new empty pak file so you can manipulate it
+		errcode = pak.readPAK(argv[argc-1]);
+
+		if(errcode != PAK_SUCCESS) //Try to read the pak file with the last argument
 		{
-			if(verbose) cout << "Reading new pak file " << argv[argc-1] << "\n";
+			if(verbose) 
+			{
+				cout << "Could not read new pak file: " << argv[argc-1] << "\n";
+				sys("liberr", errcode);
+			}
 			return 1;
 		}
 	}
@@ -160,9 +180,16 @@ int commandPrompt(int argc, const char* argv[])
 		if(strcmp(argv[i], "-a") == 0)
 		{
 			if(verbose) cout << "Appending " << argv[i + 1] << "\n";
-			if(!pak.appendFile(argv[i+1])) //attempt to append file name given after -a
+			errcode = pak.appendFile(argv[i+1]);
+			
+			if(errcode != PAK_SUCCESS) //attempt to append file name given after -a
 			{
-				if(verbose) cout << "Could not append " << argv[i+1] << " to pak file\n";
+				if(verbose)
+				{
+					cout << "Could not append " << argv[i+1] << " to pak file\n";
+					sys("liberr", errcode);
+				}
+
 				return 1;
 			}
 			changes = true;
@@ -170,18 +197,30 @@ int commandPrompt(int argc, const char* argv[])
 		if(strcmp(argv[i], "-u") == 0)
 		{
 			if(verbose) cout << "Unpaking " << argv[i+1] << "\n";
-			if(!pak.unPAKEntry(argv[i+1])) //attempt to append file name given after -u
+			errcode = pak.unPAKEntry(argv[i+1]);
+
+			if(errcode != PAK_SUCCESS) //attempt to append file name given after -u
 			{ //it unpaks to the current folder, thus the ./
-				if(verbose) cout << "Could not unpak " << argv[i+1] << " from pak file\n";
+				if(verbose)
+				{
+					cout << "Could not unpak " << argv[i+1] << " from pak file\n";
+					sys("liberr", errcode);
+				}
 				return 1;
 			}
 		}
 		if(strcmp(argv[i], "-d") == 0)
 		{
 			if(verbose) cout << "Deleting " << argv[i+1] << "\n";
-			if(!pak.removeFile(argv[i+1])) //attempt to remove file name given after -d
+			errcode = pak.removeFile(argv[i+1]);
+
+			if(errcode != PAK_SUCCESS) //attempt to remove file name given after -d
 			{
-				if(verbose) cout << "Could not delete " << argv[i+1] << " from pak file\n";
+				if(verbose) 
+				{
+						cout << "Could not delete " << argv[i+1] << " from pak file\n";
+						sys("liberr", errcode);
+				}
 				return 1;
 			}
 			changes = true;
@@ -196,18 +235,30 @@ int commandPrompt(int argc, const char* argv[])
 			if(typesarg) //if the 2nd argument was supplied
 			{
 				if(verbose) cout << "Appending folder " << argv[i+1] << " with types " << argv[i+2] << "\n";
-				if(!pak.appendFolder(argv[i+1], argv[i+2])) //attempt to append a folder with type restrictions given
+				errcode = pak.appendFolder(argv[i+1], argv[i+2]);
+
+				if(errcode != PAK_SUCCESS) //attempt to append a folder with type restrictions given
 				{
-					if(verbose) cout << "Could not append folder " << argv[i+1] << " with types " << argv[i+2] << "\n";
+					if(verbose)
+					{
+						cout << "Could not append folder " << argv[i+1] << " with types " << argv[i+2] << "\n";
+						sys("liberr", errcode);
+					}
 					return 1;
 				}
 			}
 			else
 			{
 				if(verbose) cout << "Appending folder " << argv[i+1] << "\n";
-				if(!pak.appendFolder(argv[i+1])) //appending a folder with no type restriction
+				errcode = pak.appendFolder(argv[i+1]);
+
+				if(errcode != PAK_SUCCESS) //appending a folder with no type restriction
 				{
-					if(verbose) cout << "Could not append folder " << argv[i+1] << "\n";
+					if(verbose) 
+					{
+						cout << "Could not append folder " << argv[i+1] << "\n";
+						sys("liberr", errcode);
+					}
 					return 1;
 				}
 			}
@@ -218,9 +269,15 @@ int commandPrompt(int argc, const char* argv[])
 	if(changes) //if arguments were given that require a rebuild then rebuild the PAK
 	{
 		if(verbose) cout << "Rebuilding " << argv[argc-1] << "\n";
-		if(!pak.rebuildPAK())
+		errcode = pak.rebuildPAK();
+
+		if(errcode != PAK_SUCCESS)
 		{
-			if(verbose) cout << "Could not rebuild " << argv[argc-1] << "\n";
+			if(verbose) 
+			{
+				cout << "Could not rebuild " << argv[argc-1] << "\n";
+				sys("liberr", errcode);
+			}
 			return 1;
 		}
 	}
@@ -230,6 +287,7 @@ int commandPrompt(int argc, const char* argv[])
 
 int menuPrompt()
 {
+	int errcode;
 	char choice;
 
 	for(;;)
@@ -280,13 +338,18 @@ int menuPrompt()
 			getline(cin, pakname);
 			sys("cls");
 
-			if(pak.readPAK(pakname))
+			errcode = pak.readPAK(pakname);
+
+			cout << errcode;
+
+			if(errcode == PAK_SUCCESS)
 			{
 				cout << "PAK file successfully loaded!\n";
 			}
 			else
 			{
-				cout << "The PAK file could not be loaded. Make sure the provided PAK file was made by this program.\n";
+				cout << "The PAK file could not be loaded.\n";
+				sys("liberr", errcode);
 			}
 
 			sys("pause");
@@ -320,14 +383,16 @@ int menuPrompt()
 
 				if(input == 'y' || input == 'Y')
 				{
-					if(pak.createPAK(pakname, entryname, types))
+					errcode = pak.createPAK(pakname, entryname, types);
+					if(errcode == PAK_SUCCESS)
 					{
 						cout << "PAK file successfully created!\n\n";
 					}
 					else
 					{
 						cout << "The PAK file could not be created successfully, please check your options and try again.\n";
-						cout << "Make sure you're placing your slashes in the correct place (\"/test/\" isn't the same as \"test/\")\n\n";
+						cout << "Make sure you're placing your slashes in the correct place (\"/test/\" isn't the same as \"test/\")\n";
+						sys("liberr", errcode);
 					}
 
 					sys("pause");
@@ -349,13 +414,16 @@ int menuPrompt()
 					if(input == 'y' || input == 'Y')
 					{
 						sys("cls");
-						if(pak.rebuildPAK())
+
+						errcode = pak.rebuildPAK();
+						if(errcode == PAK_SUCCESS)
 						{
 							cout << "The PAK was successfully rebuilt!\n";
 						}
 						else
 						{
 							cout << "The PAK could not be rebuilt.\n";
+							sys("liberr", errcode);
 						}
 
 					}
@@ -404,25 +472,32 @@ int menuPrompt()
 				if(input == 'y' || input == 'Y')
 				{
 					sys("cls");
-					if(pak.appendFile(choose))
+					
+					errcode = pak.appendFile(choose);
+
+					if(errcode == PAK_SUCCESS)
 					{
 						cout << "\"" << choose << "\" was successfully appended to the pak file!\nThe PAK will now be rebuilt...\n\n";
 
 						sys("pause");
 						sys("cls");
 
-						if(pak.rebuildPAK())
+						errcode = pak.rebuildPAK();
+
+						if(errcode != PAK_SUCCESS)
 						{
 							cout << "The PAK was successfully rebuilt!\n";
 						}
 						else
 						{
 							cout << "The PAK could not be rebuilt.\n";
+							sys("liberr", errcode);
 						}
 					}
 					else
 					{
-						cout << "\"" << choose << "\" could not be appended.\n Please ensure you input the file name correctly.\n\n";
+						cout << "\"" << choose << "\" could not be appended.\n";
+						sys("liberr", errcode);
 					}
 					sys("pause");
 				}
@@ -452,25 +527,32 @@ int menuPrompt()
 				if(input == 'y' || input == 'Y')
 				{
 					sys("cls");
-					if(pak.appendFolder(choose, types))
+
+					errcode = pak.appendFolder(choose, types);
+
+					if(errcode == PAK_SUCCESS)
 					{
 						cout << "The folder \"" << choose << "\" was successfully appended to the pak file!\nThe PAK will now be rebuilt...\n\n";
 
 						sys("pause");
 						sys("cls");
 
-						if(pak.rebuildPAK())
+						errcode = pak.rebuildPAK();
+
+						if(errcode == PAK_SUCCESS)
 						{
 							cout << "The PAK was successfully rebuilt!\n";
 						}
 						else
 						{
 							cout << "The PAK could not be rebuilt.\n";
+							sys("liberr", errcode);
 						}
 					}
 					else
 					{
 						cout << "The folder \"" << choose << "\" could not be appended.\n Please ensure you input the file name correctly.\n\n";
+						sys("liberr", errcode);
 					}
 					sys("pause");
 				}
@@ -495,13 +577,17 @@ int menuPrompt()
 					if(input == 'y' || input == 'Y')
 					{
 						sys("cls");
-						if(pak.removeFile(choose))
+
+						errcode = pak.removeFile(choose);
+
+						if(errcode == PAK_SUCCESS)
 						{
 							cout << "\"" << choose << "\" was successfully removed from the pak file!\n(Use Rebuild PAK to flush changes)\n\n";
 						}
 						else
 						{
 							cout << "\"" << choose << "\" could not be removed.\n";
+							sys("liberr", errcode);
 						}
 						sys("pause");
 					}
@@ -526,13 +612,17 @@ int menuPrompt()
 					if(input == 'y' || input == 'Y')
 					{
 						sys("cls");
-						if(pak.unPAKEntry(choose, "./"))
+
+						errcode = pak.unPAKEntry(choose, "./");
+
+						if(errcode == PAK_SUCCESS)
 						{
 							cout << "\"" << choose << "\" was successfully unpaked from the pak file!\n\n";
 						}
 						else
 						{
 							cout << "\"" << choose << "\" could not be unpaked.\n";
+							sys("liberr", errcode);
 						}
 						sys("pause");
 					}
@@ -690,7 +780,7 @@ int _getch()
 }
 #endif
 
-char sys(string param)
+char sys(string param, int extra)
 {
 	if(param.compare("cls") == 0)
 	{
@@ -719,17 +809,65 @@ char sys(string param)
 		cout << "Please do " << progname << " help or " << progname << " /? for correct syntax.\n\n";
 		exit(0);
 	}
+	else if(param.compare("liberr") == 0)
+	{
+		if(extra == PAK_SUCCESS) return NULL;
+
+		cout << "ERROR CODE " << extra << ": ";
+		switch(extra)
+		{
+		case PAK_CRIT_ERR:
+			cout << "A critical error that cannot be explained has occurred.\n\n";
+			break;
+		case PAK_BAD_PAK:
+			cout << "A corrupted or incorrect archive was loaded.\n\n";
+			break;
+		case PAK_FILE_BAD_BUFFER:
+			cout << "A corrupted buffer was used/allocated.\n\n";
+			break;
+		case PAK_APPEND_SELF:
+			cout << "The archive attempted to append itself.\n\n";
+			break;
+		case PAK_FILE_OPEN_FAIL:
+			cout << "The output/input streams could not be opened correctly.\n\n";
+			break;
+		case PAK_NOT_LOADED:
+			cout << "The archive was attempting to do load dependent operation without being loaded.\n\n";
+			break;
+		case PAK_DIRENT_FAIL:
+			cout << "Dirent could not be used to allocate files within a folder.\n\n";
+			break;
+		case PAK_NO_CHANGES:
+			cout << "The archive attempted to rebuild itself when it had no changes to flush.\n\n";
+			break;
+		case PAK_ENTRY_EXISTS:
+			cout << "The archive attempted to append a file name which already exists.\n\n";
+			break;
+		case PAK_BAD_CHECKSUM:
+			cout << "Bad checksum.\n\n";
+			break;
+		case PAK_FILE_WRITE_FAIL:
+			cout << "The archive could not write to the file.\n\n";
+			break;
+		case PAK_FILE_READ_FAIL:
+			cout << "The archive could not read from the file.\n\n";
+			break;
+		default:
+			cout << "Undocumented error.\n\n";
+		}
+	}
+
 
 	return NULL;
 }
 
 //Uses a string stream to easily split a string, it's so simple!
 vector<string> split(const string &s, char delim) {
-    vector<string> elems;
-    stringstream ss(s);
+	vector<string> elems;
+	stringstream ss(s);
 	string item;
-    while(getline(ss, item, delim)) {
-        elems.push_back(item);
-    }
-    return elems;
+	while(getline(ss, item, delim)) {
+		elems.push_back(item);
+	}
+	return elems;
 }
