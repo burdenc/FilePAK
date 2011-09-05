@@ -31,7 +31,7 @@ int libPAK::createPAK(string name)
 {
 	pakloaded = false; //reset the loaded state
 	pakname = name; //save the name of the PAK file
-	srand((unsigned) time(NULL)); //seedin'
+	srand((unsigned) time(NULL)); //seed
 
 	ofstream PAKout;
 
@@ -105,7 +105,7 @@ int libPAK::appendFolder(string folderPath, string types)
 int libPAK::createEntry(string path, string name)
 {
 	ifstream fileIn;
-	PAKfileEntry fentry; //creates a new table of contents entry
+	fileEntry fentry; //creates a new table of contents entry
 
 	string entryName; //Sets up the path/name strings
 	entryName += path;
@@ -153,17 +153,13 @@ int libPAK::readPAK(string PAKpath)
 
 			for(int i = 0; i < header.numberFiles; i++)
 			{
-				buffer = new char[sizeof(PAKfileEntry)];
-				PAKfileEntry entry;
-				PAKread.read(buffer, sizeof(PAKfileEntry));
+				buffer = new char[sizeof(fileEntry)];
+				fileEntry entry;
+				PAKread.read(buffer, sizeof(fileEntry));
 
-				for(int j = 0; j < sizeof(PAKfileEntry); j++)
-				{
-					if(header.additionEncrypt) buffer[j] -= header.encryptVal; //decrypt each byte
-					else buffer[j] += header.encryptVal;
-				}
+				crypt(buffer, sizeof(fileEntry), false);
 
-				memcpy(&entry, buffer, sizeof(PAKfileEntry)); //store the decrypted stuff into the entry
+				memcpy(&entry, buffer, sizeof(fileEntry)); //store the decrypted stuff into the entry
 
 				entries.push_back(entry); //append to the vector
 
@@ -193,7 +189,7 @@ int libPAK::rebuildPAK()
 
 		int numberFiles = 0;
 
-		vector<PAKfileEntry> original(entries);
+		vector<fileEntry> original(entries);
 
 		for(unsigned int i = 0; i < changes.size(); i++)
 			if(changes[i] >= 0) //count all changes that aren't deletions
@@ -201,7 +197,7 @@ int libPAK::rebuildPAK()
 
 		header.numberFiles = numberFiles;
 
-		int offset = sizeof(PAKheader) + (numberFiles * sizeof(PAKfileEntry));
+		int offset = sizeof(PAKheader) + (numberFiles * sizeof(fileEntry));
 		for(unsigned int i = 0; i < entries.size(); i++) //find out new offsets
 		{
 			if(changes[i] == -1) continue; //don't factor in deletions
@@ -222,16 +218,12 @@ int libPAK::rebuildPAK()
 					continue;
 				}
 
-				buffer = new char[sizeof(PAKfileEntry)]; //char array to hold each table of contents entry
-				memcpy(buffer, &(entries[i]), sizeof(PAKfileEntry)); //copy over the current entry in the for loop
+				buffer = new char[sizeof(fileEntry)]; //char array to hold each table of contents entry
+				memcpy(buffer, &(entries[i]), sizeof(fileEntry)); //copy over the current entry in the for loop
 
-				for(int j = 0; j < sizeof(PAKfileEntry); j++)
-				{
-					if(header.additionEncrypt) buffer[j] += header.encryptVal; //encrypt each byte
-					else buffer[j] -= header.encryptVal;
-				}
+				crypt(buffer, sizeof(fileEntry), true);
 
-				PAKout.write(buffer, sizeof(PAKfileEntry)); //finally write the entry
+				PAKout.write(buffer, sizeof(fileEntry)); //finally write the entry
 
 				delete [] buffer; //no memory leaks in this code, no sir
 			}
@@ -256,11 +248,7 @@ int libPAK::rebuildPAK()
 
 					if(changes[i] == 1)
 					{
-						for(unsigned int j = 0; j < entries[i].size; j++)
-						{
-							if(header.additionEncrypt) buffer[j] += header.encryptVal; //encrypt each byte
-							else buffer[j] -= header.encryptVal;
-						}
+						crypt(buffer, entries[i].size, true);
 					}
 
 					PAKout.write(buffer, entries[i].size);
@@ -341,38 +329,7 @@ int libPAK::appendFile(string name)
 	return PAK_NOT_LOADED;
 }
 
-char* libPAK::getPAKEntryData(string name)
-{
-	if( PAKfileEntry *entry = getPAKEntry( name ) )
-	{
-		char *buffer = NULL;
-
-		ifstream PAKread;
-		PAKread.open(pakname, ios::binary);
-		if(PAKread.is_open())
-		{
-			buffer = new char[entry->size];
-			PAKread.seekg(entry->offset, ifstream::beg); //seek to the offset of the file in the .pak file
-			PAKread.read(buffer, entry->size); //read everything into the buffer
-
-			for(unsigned int j = 0; j < entry->size; j++)
-			{
-				if(header.additionEncrypt) buffer[j] -= header.encryptVal; //decrypt it
-				else buffer[j] += header.encryptVal;
-			}
-
-			return buffer; //return it all
-		}
-		else
-		{
-			return buffer; //NULL
-		}
-	}
-
-	return NULL; //PAK file isn't loaded, or entry isn't found
-}
-
-libPAK::PAKfileEntry *libPAK::getPAKEntry(string name)
+fileEntry *libPAK::getFileEntry(string name)
 {
 	if(pakloaded)
 	{
@@ -388,23 +345,7 @@ libPAK::PAKfileEntry *libPAK::getPAKEntry(string name)
 	return NULL; //PAK file isn't loaded, or entry isn't found
 }
 
-int libPAK::getPAKEntrySize(string name)
-{
-	if(pakloaded)
-	{
-		for(int i = 0; i < header.numberFiles; i++)
-		{
-			if(strcmp(entries[i].name, name.c_str()) == 0)
-			{
-				return entries[i].size;
-			}
-		}
-		return PAK_CRIT_ERR; // This shouldn't happen. Treat as a critical error.
-	}
-	return PAK_NOT_LOADED; //PAK file isn't loaded
-}
-
-vector<string> libPAK::getAllPAKEntries()
+vector<string> libPAK::getAllFileEntries()
 {
 	vector<string> allentries;
 	if(pakloaded && header.numberFiles > 0)
@@ -426,8 +367,8 @@ int libPAK::unPAKEntry(string name, string path)
 		output.open(path+name, ofstream::binary | ofstream::trunc);
 		if(output.is_open())
 		{
-			char *buffer = getPAKEntryData(name);
-			int size = getPAKEntrySize(name);
+			char *buffer = getFileEntryData(name);
+			int size = getFileEntry(name)->size;
 			if(buffer == NULL || size <= 0) return PAK_FILE_BAD_BUFFER;
 
 			output.write(buffer, size);
@@ -454,11 +395,6 @@ vector<string> libPAK::split(const string &s, char delim)
 		elems.push_back(item);
 
 	return elems;
-}
-
-int libPAK::getNumPAKEntries()
-{
-	return header.numberFiles;
 }
 
 int libPAK::removeFile(string name)
@@ -491,4 +427,48 @@ void libPAK::discardChanges()
 		if(changes[i] == 1)
 			entries.erase(entries.begin()+i, entries.begin()+i+1);
 	changes.clear();
+}
+
+void libPAK::crypt(char * buffer, int size, bool encrypt)
+{
+	if(encrypt)
+	{
+		for(int j = 0; j < size; j++)
+		{
+			if(header.additionEncrypt) buffer[j] += header.encryptVal; //decrypt each byte
+			else buffer[j] -= header.encryptVal;
+		}
+	}
+	else
+	{
+		for(int j = 0; j < size; j++)
+		{
+			if(header.additionEncrypt) buffer[j] -= header.encryptVal; //decrypt each byte
+			else buffer[j] += header.encryptVal;
+		}
+	}
+}
+
+char *libPAK::getFileEntryData(string name)
+{
+	ifstream pakread;
+	char* buffer;
+	fileEntry* fentry = getFileEntry(name);
+	pakread.open(fentry->fullname, ios_base::binary);
+
+
+	if(pakread.is_open())
+	{
+		pakread.seekg(fentry->offset, ios_base::cur);
+		buffer = new char[fentry->size];
+		pakread.read(buffer, fentry->size);
+
+		crypt(buffer, fentry->size, false);
+
+		delete fentry;
+		return buffer;
+	}
+
+	delete fentry;
+	return NULL;
 }

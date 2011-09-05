@@ -12,6 +12,10 @@
 #ifndef LIBPAK_H
 #define LIBPAK_H
 
+#if defined unix || defined __unix__ || defined __unix
+#define NULL 0
+#endif
+
 ///////////////
 //Error Codes//
 ///////////////
@@ -43,6 +47,14 @@
 
 using namespace std;
 
+struct fileEntry
+{
+	char name[50];
+	char fullname[150];
+	unsigned int size;
+	unsigned int offset;
+};
+
 class libPAK
 {
 private:
@@ -55,18 +67,10 @@ private:
 		char encryptVal; //Random, value that is added or subtracted from each byte
 	};
 
-	struct PAKfileEntry //Basically an entry in a table of contents for each file stored in the .pak file
-	{
-		char name[50]; //name of the file, must be unique from other files
-		char fullname[150]; //name of the file + the folder it is in
-		unsigned int size; //size of the file in bytes
-		unsigned int offset; //offset of where the files in located in the .pak file in bytes
-	};
-
 	string pakname; //name of the pak file
 	bool pakloaded; //set to true after readPAK() is used
 	PAKheader header; //the header
-	vector<PAKfileEntry> entries; //table of contents of all the entries
+	vector<fileEntry> entries; //table of contents of all the entries
 	vector<int> changes; //corresponds with entries: -1 = deleted, 0 = normal, 1 = added
 
 	//Used to split the parameter types in createPAK() into a vector 
@@ -86,6 +90,7 @@ private:
 	int createEntry(string fullname, string name);
 
 public:
+
 	libPAK(void);
 	~libPAK(void);
 
@@ -113,6 +118,23 @@ public:
 	//		PAK_FILE_OPEN_FAIL
 	//********************************************
 	int readPAK(string PAKpath);
+
+	//*******************************************
+	//Reads a PAK file's header and entries into
+	//memory so you can manipulate it/decrypt
+	//files stored within it
+	//
+	//$buffer = buffer to en/decrypt
+	//
+	//$size = size of the buffer
+	//
+	//$encrypt = if true encrypt buffer, otherwise
+	//decrypt it.
+	//
+	//@returns =
+	//		char *
+	//********************************************
+	void crypt(char * buffer, int size, bool encrypt);
 
 	//*******************************************
 	//Ensure the PAK file is loaded
@@ -146,7 +168,7 @@ public:
 	//
 	//$folderPath = path to folder
 	//
-	//$types = all filetypes to be included,
+	//$types = all file types to be included,
 	//separate by | ex: ".jpg|.png|.bmp"
 	//
 	//@returns =
@@ -197,17 +219,6 @@ public:
 	void discardChanges();
 
 	//*******************************************
-	//Get a file data stored in the PAK file
-	//
-	//$name = name of the file stored in the PAK
-	//file (don't include the folder/path)
-	//
-	//@returns =
-	//		char *
-	//*******************************************
-	char* getPAKEntryData(string name);
-
-	//*******************************************
 	//Get a file stored in the PAK file
 	//
 	//$name = name of the file stored in the PAK
@@ -216,19 +227,7 @@ public:
 	//@returns =
 	//		PAKfileEntry *
 	//*******************************************
-	PAKfileEntry *getPAKEntry(string name);
-
-	//*******************************************
-	//Gets the size in bytes of the entry
-	//
-	//name = name of the file stored in the PAK file (don't include the folder/path)
-	//
-	//@returns =
-	//		int
-	//		PAK_NOT_LOADED
-	//		PAK_CRIT_ERR
-	//*******************************************
-	int getPAKEntrySize(string name);
+	fileEntry *getFileEntry(string name);
 
 	//*******************************************
 	//Returns names of all PAK entries within the
@@ -237,7 +236,7 @@ public:
 	//@returns =
 	//		vector<string>
 	//*******************************************
-	vector<string> getAllPAKEntries();
+	vector<string> getAllFileEntries();
 
 	//*******************************************
 	//Returns the number of entries in the pak
@@ -246,7 +245,8 @@ public:
 	//@returns =
 	//		int
 	//*******************************************
-	int getNumPAKEntries();
+	int getNumPAKEntries()
+	{ return header.numberFiles; }
 
 	//*******************************************
 	//Unpaks a PAK entry
@@ -262,6 +262,24 @@ public:
 	//*******************************************
 	int unPAKEntry(string name, string path = "");
 
+	//*******************************************
+	//Returns name of the pak file
+	//
+	//@returns =
+	//		string
+	//*******************************************
+	string getName()
+	{ return pakname; }
+
+	//*******************************************
+	//Get a file data stored in the PAK file
+	//
+	//$name - name of entry to pull
+	//
+	//@returns =
+	//		char *
+	//*******************************************
+	char *getFileEntryData(string name);
 };
 
 #endif

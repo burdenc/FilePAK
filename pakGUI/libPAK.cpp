@@ -428,7 +428,7 @@ bool libPAK::appendFile(string name)
 
 char* libPAK::getPAKEntryData(string name)
 {
-	if( PAKfileEntry *entry = getPAKEntry( name ) )
+	if( PAKfileEntry *entry = getFileEntry( name ) )
 	{
 		char *buffer = NULL;
 
@@ -457,7 +457,7 @@ char* libPAK::getPAKEntryData(string name)
 	return NULL; //PAK file isn't loaded, or entry isn't found
 }
 
-libPAK::PAKfileEntry *libPAK::getPAKEntry(string name)
+libPAK::PAKfileEntry *libPAK::getFileEntry(string name)
 {
 	if(pakloaded)
 	{
@@ -489,7 +489,7 @@ int libPAK::getPAKEntrySize(string name)
 	return -2; //PAK file isn't loaded
 }
 
-vector<string> libPAK::getAllPAKEntries()
+vector<string> libPAK::getAllFileEntries()
 {
 	vector<string> allentries;
 	if(pakloaded && header.numberFiles > 0)

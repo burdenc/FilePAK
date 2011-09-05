@@ -340,8 +340,6 @@ int menuPrompt()
 
 			errcode = pak.readPAK(pakname);
 
-			cout << errcode;
-
 			if(errcode == PAK_SUCCESS)
 			{
 				cout << "PAK file successfully loaded!\n";
@@ -437,11 +435,11 @@ int menuPrompt()
 					sys("cls");
 					if(choose.empty()) break;
 
-					int size = pak.getPAKEntry(choose)->size;
+					int size = pak.getFileEntry(choose)->size;
 
 					cout << choose << ": \n\n";
-					cout.width(15); cout << "Original Path: " << left << pak.getPAKEntry(choose)->fullname << "\n";
-					cout.width(15); cout << "Offset: " << left << pak.getPAKEntry(choose)->offset << "\n";
+					cout.width(15); cout << "Original Path: " << left << pak.getFileEntry(choose)->fullname << "\n";
+					cout.width(15); cout << "Offset: " << left << pak.getFileEntry(choose)->offset << "\n";
 					cout.width(15); cout << "Size: " << left << size << " bytes (~" << (double) ((size/1024)/1024) << " MB)\n\n";
 
 					sys("pause");
@@ -477,7 +475,7 @@ int menuPrompt()
 
 						errcode = pak.rebuildPAK();
 
-						if(errcode != PAK_SUCCESS)
+						if(errcode == PAK_SUCCESS)
 						{
 							cout << "The PAK was successfully rebuilt!\n";
 						}
@@ -674,7 +672,7 @@ bool displayChanges()
 		string remove;
 		remove += "Removing: \n";
 
-		vector<string> allentries = pak.getAllPAKEntries();
+		vector<string> allentries = pak.getAllFileEntries();
 
 		for(unsigned int i = 0; i < changes.size(); i++)
 		{
@@ -700,7 +698,7 @@ bool displayChanges()
 //Used for removing, unpaking, and viewing files in a PAK
 string chooseEntry()
 {
-	vector<string> entries = pak.getAllPAKEntries();
+	vector<string> entries = pak.getAllFileEntries();
 	char choice;
 	int pages, page = 0;
 	pages = (int) ceil(entries.size()/7.0);
@@ -751,9 +749,11 @@ string chooseEntry()
 		else if(choice == '1' || choice == '2' || choice == '3' || choice == '4' || choice == '5' || choice == '6' || choice == '7')
 		{
 			cout << atoi(&choice) + (7 * page);
-			if(!(atoi(&choice)-1 > numchoices))
+			if(!(atoi(&choice)-1 >= numchoices))
 				return entries[atoi(&choice) + (7 * page)-1];
 		}
+
+		sys("cls");
 	}
 }
 

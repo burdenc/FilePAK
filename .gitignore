@@ -1,4 +1,8 @@
 
+*.vcxproj.filters
+*.vcxproj
+*.filters
+*.cd
 *.a
 *.o
 *.out

@@ -61,14 +61,14 @@ System::Void frmMain::openToolStripMenuItem_Click(System::Object^  sender, Syste
 		menuPak->Enabled = true;
 		menuUnpak->Enabled = true;
 
-		for each ( string name in pak.getAllPAKEntries() )
+		for each ( string name in pak.getAllFileEntries() )
 		{
 			// add an item with all the columns
 			String ^filename = gcnew String( name.c_str() ); // get the name, and convert it to a System::String
 
 			// calc file size
-			String ^size = getFileSize( pak.getPAKEntry( name )->size );
-			long bytes = pak.getPAKEntry( name )->size;
+			String ^size = getFileSize( pak.getFileEntry( name )->size );
+			long bytes = pak.getFileEntry( name )->size;
 			fileSizes[name] = bytes;
 
 			ListViewItem^ item = gcnew ListViewItem( filename ); // create the item and give it name column
