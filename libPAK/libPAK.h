@@ -36,6 +36,7 @@
 #define PAK_FILE_BAD_BUFFER		-203	//Buffer failed to load
 
 #define PAK_DIRENT_FAIL			-300
+#define PAK_HASH_CUPDATE_FAIL	-301	//SHA1 context update didn't work
 
 ///////////////////
 //End Error Codes//
@@ -88,6 +89,17 @@ private:
 	//		PAK_FILE_OPEN_FAIL
 	//*******************************************
 	int createEntry(string fullname, string name);
+
+	//*******************************************
+	//Gets the checksum of the PAK file
+	//Automatically ignores the last 40 bytes as
+	//those are the old checksum.
+	//
+	//@returns =
+	//		string
+	//		""
+	//*******************************************
+	string getChecksum();
 
 public:
 

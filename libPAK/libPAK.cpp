@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <random>
 #include <time.h>
+#include "hashlibpp.h"
 
 #if !defined unix && !defined __unix__ && !defined __unix
 #include "dirent.h" //Usually only in POSIX compilers, it allows you to find all the files contained within a folder
@@ -47,6 +48,15 @@ int libPAK::createPAK(string name)
 		PAKout.write((char *) &header, sizeof(header)); //write the header
 	}
 	else return PAK_FILE_OPEN_FAIL; //PAKout not open
+
+	PAKout.flush();
+
+	sha1wrapper *wrapper = new sha1wrapper();
+	string hash = wrapper->getHashFromFile(pakname);
+
+	PAKout.write(hash.c_str(), 40);
+
+	delete wrapper;
 
 	PAKout.close();
 
@@ -132,11 +142,14 @@ int libPAK::createEntry(string path, string name)
 int libPAK::readPAK(string PAKpath)
 {
 	ifstream PAKread;
-	PAKread.open(PAKpath, ios::binary);
 	pakname = PAKpath;
+
+	string filehash = getChecksum();
+
+	PAKread.open(PAKpath, ios::binary);
+	
 	if(PAKread.is_open())
 	{
-
 		PAKread.read((char *) &header, sizeof(PAKheader)); //read in the header information so you can decrypt
 
 		if(strcmp(header.fileID, "DBPAK") != 0) 
@@ -144,6 +157,21 @@ int libPAK::readPAK(string PAKpath)
 			PAKread.close(); 
 			return PAK_BAD_PAK;
 		}
+
+		PAKread.seekg(-40, ios::end);
+
+		char *storedhash = new char[41];
+		PAKread.read(storedhash, 40);
+		storedhash[40] = '\0';
+
+		if(strcmp(filehash.c_str(), storedhash) != 0)
+		{
+			PAKread.close();
+			return PAK_BAD_CHECKSUM;
+		}
+
+		PAKread.seekg(sizeof(PAKheader), ios::beg);
+
 
 		entries.clear(); //entries could be full from createPAK()
 
@@ -271,6 +299,11 @@ int libPAK::rebuildPAK()
 			original.clear();
 			return PAK_FILE_OPEN_FAIL;
 		}
+		PAKout.flush();
+
+		hashwrapper *wrapper = new sha1wrapper();
+		string hash = wrapper->getHashFromFile(pakname+".new");
+		PAKout.write(hash.c_str(), 40);
 
 		PAKout.close();
 
@@ -290,6 +323,12 @@ int libPAK::rebuildPAK()
 
 		rename(filename, pakname.c_str());
 		delete [] filename;
+
+		/*int err = updateChecksum();
+		if(err != PAK_SUCCESS)
+		{
+			return err;
+		}*/
 	}
 	else return PAK_NOT_LOADED;
 
@@ -471,4 +510,48 @@ char *libPAK::getFileEntryData(string name)
 
 	delete fentry;
 	return NULL;
+}
+
+string libPAK::getChecksum()
+{
+	int len;
+
+	string hash;
+	
+	ifstream PAKin;
+
+	//char* buffer = new char[1024];
+	unsigned char buffer[1024];
+
+	sha1wrapper *wrapper = new sha1wrapper();
+	wrapper->resetContext();
+
+	PAKin.open(pakname, ios::binary);
+
+	PAKin.seekg(0, ios::end);
+	int length = PAKin.tellg();
+	length -= 40;
+	PAKin.seekg(0, ios::beg);
+
+	if(length < 0) return "";
+
+	bool escape = true;
+	if(PAKin.is_open())
+	{
+		do
+		{
+			len = 1024;
+			if((length - PAKin.tellg()) <= len)
+			{ len = (length - PAKin.tellg()); escape = false; }
+
+			PAKin.read((char *)buffer,len);
+			wrapper->updateContext(buffer, len);
+		} while(escape);
+
+		hash = wrapper->hashIt();
+	}
+	else { delete wrapper; return ""; }
+	PAKin.close();
+
+	return hash;
 }
