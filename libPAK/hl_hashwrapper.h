@@ -248,7 +248,7 @@ class hashwrapper
 		virtual std::string getHashFromFile(std::string filename)
 		{
 			std::ifstream ifs;
-			int len;
+			unsigned int len;
 			unsigned char buffer[1024];
 
 			/*
@@ -273,16 +273,15 @@ class hashwrapper
 			 * update the context for every block
 			 */
 			ifs.seekg(0, std::ios::end);
-			int length = ifs.tellg();
+			int length = ((int) ifs.tellg());
 			ifs.seekg(0, std::ios::beg);
 
 			bool escape = true;
 			do
 			{
 				len = 1024;
-				int test = ifs.tellg();
 				if((length - ifs.tellg()) <= len)
-				{ len = (length - ifs.tellg()); escape = false; }
+				{ len = (length - (unsigned int) ifs.tellg()); escape = false; }
 				ifs.read((char*)buffer,len);
 				updateContext(buffer, len);
 			} while(escape);

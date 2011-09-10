@@ -7,6 +7,48 @@
 //		file you add or subtract that value to every byte.
 //
 //		Reminder: char represents a byte
+//
+//      File format table:
+//	----------------------------------------------------------------------
+//	|Byte Offset|Component  |Size     |Desc                              |
+//	----------------------------------------------------------------------
+//	|0          |PAKheader  |36 bytes |Contains file format ID, format   |
+//	|           |           |         |version, encryption data, and # of|
+//	|           |           |         |files within the archive          |
+//	----------------------------------------------------------------------
+//	|1 component per file contained in the archive below back to back:   |
+//  |(N represents an arbitrary entry in the list that's not the first   |
+//  |element, i.e. N != 0)                                               |
+//	----------------------------------------------------------------------
+//	|36         |fileEntry 0|208      |Contains name/path of each file,  |
+//	|           |           |bytes    |it's size in bytes, and it's      |
+//	|           |           |         |offset in the file below          |
+//  ----------------------------------------------------------------------
+//	|36 +       |fileEntry N|         |                                  |
+//	|(N * 208)  |           |         |                                  |
+//	|           |           |         |                                  |
+//  ----------------------------------------------------------------------
+//	----------------------------------------------------------------------
+//	|36 +       |Raw file   |Varies,  |The raw bytes of the file after   |
+//	|(# files * |data 0     |stored   |being encrypted with whatever     |
+//	|208) or    |           |in       |algorithm is stored in the header.|
+//	|fileEntry's|           |matching |                                  |
+//	|stored     |           |fileEntry|                                  |
+//  |offset val |           |         |                                  |
+//	----------------------------------------------------------------------
+//	|fileEntry's|Raw file   |         |                                  |
+//	|stored     |data N     |         |                                  |
+//	|offset val |           |         |                                  |
+//	|           |           |         |                                  |
+//	|           |           |         |                                  |
+//	|           |           |         |                                  |
+//	----------------------------------------------------------------------
+//	|The following components only appear once:                          |
+//	----------------------------------------------------------------------
+//	|pak size - |Checksum   |40 bytes |Hexadecimal representation of the |
+//	|40         |           |         |SHA1 hash of the PAK file (not    |
+//	|           |           |         |including these last 40 bytes)    |
+//	----------------------------------------------------------------------
 
 
 #ifndef LIBPAK_H
@@ -28,7 +70,8 @@
 #define PAK_NOT_LOADED			-102	//PAK is not loaded
 #define PAK_NO_CHANGES			-103	//No changes made
 #define PAK_ENTRY_EXISTS		-104	//Trying to append duplicate entry
-#define PAK_BAD_CHECKSUM		-105	//Bad checksum, TODO: Implement
+#define PAK_BAD_CHECKSUM		-105	//Bad checksum
+#define PAK_BAD_ARG				-106	//Bad argument supplied
 
 #define PAK_FILE_OPEN_FAIL		-200	//Stream is not open
 #define PAK_FILE_WRITE_FAIL		-201	//Write operation failed, TODO: Implement
@@ -52,8 +95,8 @@ struct fileEntry
 {
 	char name[50];
 	char fullname[150];
-	unsigned int size;
-	unsigned int offset;
+	int size;
+	int offset;
 };
 
 class libPAK
@@ -64,8 +107,8 @@ private:
 		char fileID[6]; //Identifier to make sure this is the type of .pak we want (and not some other sort of compression someone else made), I use "DBPAK"
 		char version[4]; //Version of the format
 		int numberFiles; //Total number of files
-		bool additionEncrypt; //Random, whether to add or subtract "encryptVal" from each byte
-		char encryptVal; //Random, value that is added or subtracted from each byte
+		int encryptData[4];
+		short encryptType;
 	};
 
 	string pakname; //name of the pak file
@@ -91,6 +134,19 @@ private:
 	int createEntry(string fullname, string name);
 
 	//*******************************************
+	//Sets up data needed for encryption
+	//
+	//$type = encryption algorithm to use:
+	//			0 - None
+	//			1 - Caesar
+	//
+	//@returns =
+	//		PAK_SUCCESS
+	//		PAK_BAD_ARG
+	//*******************************************
+	int setupCrypt(int type);
+
+	//*******************************************
 	//Gets the checksum of the PAK file
 	//Automatically ignores the last 40 bytes as
 	//those are the old checksum.
@@ -100,6 +156,27 @@ private:
 	//		""
 	//*******************************************
 	string getChecksum();
+
+	//*******************************************
+	//Reads a PAK file's header and entries into
+	//memory so you can manipulate it/decrypt
+	//files stored within it
+	//
+	//$buffer = buffer to en/decrypt
+	//
+	//$size = size of the buffer
+	//
+	//$encrypt = if true encrypt buffer, otherwise
+	//decrypt it.
+	//
+	//$type = encryption type to use
+	//(see setupCrypt())
+	//
+	//@returns =
+	//		PAK_SUCCESS
+	//		PAK_BAD_ARG
+	//********************************************
+	int crypt(char * buffer, int size, bool encrypt, int type);
 
 public:
 
@@ -111,11 +188,15 @@ public:
 	//
 	//$name = name of PAK file to be created
 	//
+	//$encryptType = encryption algorithm to use:
+	//			0 - None
+	//			1 - Caesar
+	//
 	//@returns =
 	//		PAK_SUCCESS
 	//		PAK_FILE_OPEN_FAIL
 	//*******************************************
-	int createPAK(string name);
+	int createPAK(string name, int encryptType = 1);
 
 	//*******************************************
 	//Reads a PAK file's header and entries into
@@ -130,23 +211,6 @@ public:
 	//		PAK_FILE_OPEN_FAIL
 	//********************************************
 	int readPAK(string PAKpath);
-
-	//*******************************************
-	//Reads a PAK file's header and entries into
-	//memory so you can manipulate it/decrypt
-	//files stored within it
-	//
-	//$buffer = buffer to en/decrypt
-	//
-	//$size = size of the buffer
-	//
-	//$encrypt = if true encrypt buffer, otherwise
-	//decrypt it.
-	//
-	//@returns =
-	//		char *
-	//********************************************
-	void crypt(char * buffer, int size, bool encrypt);
 
 	//*******************************************
 	//Ensure the PAK file is loaded
@@ -271,6 +335,7 @@ public:
 	//		PAK_SUCCESS
 	//		PAK_NOT_LOADED
 	//		PAK_FILE_OPEN_FAIL
+	//		PAK_FILE_BAD_BUFFER
 	//*******************************************
 	int unPAKEntry(string name, string path = "");
 

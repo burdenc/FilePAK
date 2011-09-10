@@ -28,19 +28,18 @@ libPAK::~libPAK(void)
 	changes.clear();
 }
 
-int libPAK::createPAK(string name)
+int libPAK::createPAK(string name, int encryptType)
 {
-	pakloaded = false; //reset the loaded state
-	pakname = name; //save the name of the PAK file
-	srand((unsigned) time(NULL)); //seed
-
-	ofstream PAKout;
-
-	header.additionEncrypt = ( (rand() % 2) ? true : false ); //Set random values for encrypting. The compact if-statement is used to prevent compiler warnings about casting int to a bool.
-	header.encryptVal = (char) (rand() % 256);
 	memcpy(header.fileID, "DBPAK\0", 6); //Using memcpy because lol char array
 	memcpy(header.version, "1.1\0", 4);
 	header.numberFiles = 0;
+
+	setupCrypt(encryptType);
+
+	pakloaded = false; //reset the loaded state
+	pakname = name; //save the name of the PAK file
+
+	ofstream PAKout;
 
 	PAKout.open(name, ofstream::binary | ofstream::trunc);
 	if(PAKout.is_open())
@@ -153,7 +152,7 @@ int libPAK::readPAK(string PAKpath)
 		PAKread.read((char *) &header, sizeof(PAKheader)); //read in the header information so you can decrypt
 
 		if(strcmp(header.fileID, "DBPAK") != 0) 
-		{ //if the fileIDs or versions don't match
+		{ //if the fileIDs don't match
 			PAKread.close(); 
 			return PAK_BAD_PAK;
 		}
@@ -185,7 +184,7 @@ int libPAK::readPAK(string PAKpath)
 				fileEntry entry;
 				PAKread.read(buffer, sizeof(fileEntry));
 
-				crypt(buffer, sizeof(fileEntry), false);
+				crypt(buffer, sizeof(fileEntry), false, header.encryptType);
 
 				memcpy(&entry, buffer, sizeof(fileEntry)); //store the decrypted stuff into the entry
 
@@ -249,7 +248,7 @@ int libPAK::rebuildPAK()
 				buffer = new char[sizeof(fileEntry)]; //char array to hold each table of contents entry
 				memcpy(buffer, &(entries[i]), sizeof(fileEntry)); //copy over the current entry in the for loop
 
-				crypt(buffer, sizeof(fileEntry), true);
+				crypt(buffer, sizeof(fileEntry), true, header.encryptType);
 
 				PAKout.write(buffer, sizeof(fileEntry)); //finally write the entry
 
@@ -276,7 +275,7 @@ int libPAK::rebuildPAK()
 
 					if(changes[i] == 1)
 					{
-						crypt(buffer, entries[i].size, true);
+						crypt(buffer, entries[i].size, true, header.encryptType);
 					}
 
 					PAKout.write(buffer, entries[i].size);
@@ -407,10 +406,9 @@ int libPAK::unPAKEntry(string name, string path)
 		if(output.is_open())
 		{
 			char *buffer = getFileEntryData(name);
-			int size = getFileEntry(name)->size;
-			if(buffer == NULL || size <= 0) return PAK_FILE_BAD_BUFFER;
+			if(buffer == NULL || sizeof(buffer) <= 0) return PAK_FILE_BAD_BUFFER;
 
-			output.write(buffer, size);
+			output.write(buffer, getFileEntry(name)->size);
 			delete [] buffer;
 		}
 		else
@@ -468,24 +466,23 @@ void libPAK::discardChanges()
 	changes.clear();
 }
 
-void libPAK::crypt(char * buffer, int size, bool encrypt)
+int libPAK::crypt(char * buffer, int size, bool encrypt, int type)
 {
-	if(encrypt)
+	if(type < 0 || type > 1)
+		return PAK_BAD_ARG;
+	if(type == 1) //Caesar
 	{
+		srand((unsigned int) header.encryptData[1]); //seeding
+		char randEncryptVal; //when using the same seed you should get the same exact random numbers
 		for(int j = 0; j < size; j++)
 		{
-			if(header.additionEncrypt) buffer[j] += header.encryptVal; //decrypt each byte
-			else buffer[j] -= header.encryptVal;
+			randEncryptVal = (rand() % 256);
+			if(header.encryptData[0] == 0) buffer[j] += (((encrypt) ? 1 : -1) * randEncryptVal);
+			else buffer[j] -= (((encrypt) ? 1 : -1) * randEncryptVal);
 		}
 	}
-	else
-	{
-		for(int j = 0; j < size; j++)
-		{
-			if(header.additionEncrypt) buffer[j] -= header.encryptVal; //decrypt each byte
-			else buffer[j] += header.encryptVal;
-		}
-	}
+
+	return PAK_SUCCESS;
 }
 
 char *libPAK::getFileEntryData(string name)
@@ -493,28 +490,26 @@ char *libPAK::getFileEntryData(string name)
 	ifstream pakread;
 	char* buffer;
 	fileEntry* fentry = getFileEntry(name);
-	pakread.open(fentry->fullname, ios_base::binary);
+	pakread.open(pakname);
 
 
 	if(pakread.is_open())
 	{
-		pakread.seekg(fentry->offset, ios_base::cur);
+		pakread.seekg(fentry->offset, ios_base::beg);
 		buffer = new char[fentry->size];
 		pakread.read(buffer, fentry->size);
 
-		crypt(buffer, fentry->size, false);
+		crypt(buffer, fentry->size, false, header.encryptType);
 
-		delete fentry;
 		return buffer;
 	}
 
-	delete fentry;
 	return NULL;
 }
 
 string libPAK::getChecksum()
 {
-	int len;
+	unsigned int len;
 
 	string hash;
 	
@@ -529,7 +524,7 @@ string libPAK::getChecksum()
 	PAKin.open(pakname, ios::binary);
 
 	PAKin.seekg(0, ios::end);
-	int length = PAKin.tellg();
+	int length = ((int) PAKin.tellg());
 	length -= 40;
 	PAKin.seekg(0, ios::beg);
 
@@ -542,7 +537,7 @@ string libPAK::getChecksum()
 		{
 			len = 1024;
 			if((length - PAKin.tellg()) <= len)
-			{ len = (length - PAKin.tellg()); escape = false; }
+			{ len = (length - (unsigned int) PAKin.tellg()); escape = false; }
 
 			PAKin.read((char *)buffer,len);
 			wrapper->updateContext(buffer, len);
@@ -554,4 +549,22 @@ string libPAK::getChecksum()
 	PAKin.close();
 
 	return hash;
+}
+
+int libPAK::setupCrypt(int type)
+{
+	if(strcmp(header.fileID, "DBPAK") == 0) //quick check to see if the function
+	{							//is called via createPAK or when file is loaded
+		if(type < 1 || type > 1)
+			return PAK_BAD_ARG;
+		header.encryptType = type;
+		if(type == 1) //Caesar
+		{
+			srand((unsigned) time(NULL));
+			header.encryptData[0] = (rand() % 2);
+			header.encryptData[1] = (rand() % 256);
+		}
+	}
+
+	return PAK_SUCCESS;
 }

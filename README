@@ -1,0 +1,41 @@
+      File format table:
+      ----------------------------------------------------------------------
+      |Byte Offset|Component  |Size     |Desc                              |
+      ----------------------------------------------------------------------
+      |0          |PAKheader  |36 bytes |Contains file format ID, format   |
+      |           |           |         |version, encryption data, and # of|
+      |           |           |         |files within the archive          |
+      ----------------------------------------------------------------------
+      |1 component per file contained in the archive below back to back:   |
+      |(N represents an arbitrary entry in the list that's not the first   |
+      |element, i.e. N != 0)                                               |
+      ----------------------------------------------------------------------
+      |36         |fileEntry 0|208      |Contains name/path of each file,  |
+      |           |           |bytes    |it's size in bytes, and it's      |
+      |           |           |         |offset in the file below          |
+      ----------------------------------------------------------------------
+      |36 +       |fileEntry N|         |                                  |
+      |(N * 208)  |           |         |                                  |
+      |           |           |         |                                  |
+      ----------------------------------------------------------------------
+      ----------------------------------------------------------------------
+      |36 +       |Raw file   |Varies,  |The raw bytes of the file after   |
+      |(# files * |data 0     |stored   |being encrypted with whatever     |
+      |208) or    |           |in       |algorithm is stored in the header.|
+      |fileEntry's|           |matching |                                  |
+      |stored     |           |fileEntry|                                  |
+      |offset val |           |         |                                  |
+      ----------------------------------------------------------------------
+      |fileEntry's|Raw file   |         |                                  |
+      |stored     |data N     |         |                                  |
+      |offset val |           |         |                                  |
+      |           |           |         |                                  |
+      |           |           |         |                                  |
+      |           |           |         |                                  |
+      ----------------------------------------------------------------------
+      |The following components only appear once:                          |
+      ----------------------------------------------------------------------
+      |pak size - |Checksum   |40 bytes |Hexadecimal representation of the |
+      |40         |           |         |SHA1 hash of the PAK file (not    |
+      |           |           |         |including these last 40 bytes)    |
+      ----------------------------------------------------------------------

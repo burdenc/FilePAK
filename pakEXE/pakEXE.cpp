@@ -435,11 +435,13 @@ int menuPrompt()
 					sys("cls");
 					if(choose.empty()) break;
 
-					int size = pak.getFileEntry(choose)->size;
+					fileEntry *choosen = pak.getFileEntry(choose);
+
+					int size = choosen->size;
 
 					cout << choose << ": \n\n";
-					cout.width(15); cout << "Original Path: " << left << pak.getFileEntry(choose)->fullname << "\n";
-					cout.width(15); cout << "Offset: " << left << pak.getFileEntry(choose)->offset << "\n";
+					cout.width(15); cout << "Original Path: " << left << choosen->fullname << "\n";
+					cout.width(15); cout << "Offset: " << left << choosen->offset << "\n";
 					cout.width(15); cout << "Size: " << left << size << " bytes (~" << (double) ((size/1024)/1024) << " MB)\n\n";
 
 					sys("pause");
