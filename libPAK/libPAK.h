@@ -151,11 +151,17 @@ private:
 	//Automatically ignores the last 40 bytes as
 	//those are the old checksum.
 	//
+	//$filename = file to hash
+	//
+	//$checkAll = if false it will not include
+	//the last 40 bytes in the checksum because
+	//that's what the old checksum is
+	//
 	//@returns =
 	//		string
 	//		""
 	//*******************************************
-	string getChecksum();
+	string getChecksum(string filename, bool checkAll = true);
 
 	//*******************************************
 	//Reads a PAK file's header and entries into

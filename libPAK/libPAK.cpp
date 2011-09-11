@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <random>
 #include <time.h>
-#include "hashlibpp.h"
+#include "sha1.h"
 
 #if !defined unix && !defined __unix__ && !defined __unix
 #include "dirent.h" //Usually only in POSIX compilers, it allows you to find all the files contained within a folder
@@ -50,12 +50,9 @@ int libPAK::createPAK(string name, int encryptType)
 
 	PAKout.flush();
 
-	sha1wrapper *wrapper = new sha1wrapper();
-	string hash = wrapper->getHashFromFile(pakname);
+	string hash = getChecksum(pakname);
 
 	PAKout.write(hash.c_str(), 40);
-
-	delete wrapper;
 
 	PAKout.close();
 
@@ -143,7 +140,7 @@ int libPAK::readPAK(string PAKpath)
 	ifstream PAKread;
 	pakname = PAKpath;
 
-	string filehash = getChecksum();
+	string filehash = getChecksum(pakname, false);
 
 	PAKread.open(PAKpath, ios::binary);
 	
@@ -300,8 +297,7 @@ int libPAK::rebuildPAK()
 		}
 		PAKout.flush();
 
-		hashwrapper *wrapper = new sha1wrapper();
-		string hash = wrapper->getHashFromFile(pakname+".new");
+		string hash = getChecksum(pakname+".new");
 		PAKout.write(hash.c_str(), 40);
 
 		PAKout.close();
@@ -507,25 +503,26 @@ char *libPAK::getFileEntryData(string name)
 	return NULL;
 }
 
-string libPAK::getChecksum()
+string libPAK::getChecksum(string filename, bool checkAll)
 {
 	unsigned int len;
 
 	string hash;
+	unsigned rawhash[5];
 	
 	ifstream PAKin;
 
 	//char* buffer = new char[1024];
 	unsigned char buffer[1024];
 
-	sha1wrapper *wrapper = new sha1wrapper();
-	wrapper->resetContext();
+	SHA1 sha;
+	sha.Reset();
 
-	PAKin.open(pakname, ios::binary);
+	PAKin.open(filename, ios::binary);
 
 	PAKin.seekg(0, ios::end);
 	int length = ((int) PAKin.tellg());
-	length -= 40;
+	length -= (checkAll) ? 0 : 40;
 	PAKin.seekg(0, ios::beg);
 
 	if(length < 0) return "";
@@ -540,13 +537,19 @@ string libPAK::getChecksum()
 			{ len = (length - (unsigned int) PAKin.tellg()); escape = false; }
 
 			PAKin.read((char *)buffer,len);
-			wrapper->updateContext(buffer, len);
+			sha.Input(buffer, len);
 		} while(escape);
-
-		hash = wrapper->hashIt();
 	}
-	else { delete wrapper; return ""; }
+	else { return ""; }
 	PAKin.close();
+
+	sha.Result(rawhash);
+	char hashbuffer[10];
+	for(int i = 0; i < 5; i++)
+	{
+		itoa(rawhash[i], hashbuffer, 16);
+		hash += hashbuffer;
+	}
 
 	return hash;
 }
