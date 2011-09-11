@@ -547,7 +547,7 @@ string libPAK::getChecksum(string filename, bool checkAll)
 	char hashbuffer[10];
 	for(int i = 0; i < 5; i++)
 	{
-		itoa(rawhash[i], hashbuffer, 16);
+		_itoa(rawhash[i], hashbuffer, 16);
 		hash += hashbuffer;
 	}
 

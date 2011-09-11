@@ -3,7 +3,7 @@
 #include <cmath>   //compiling with G++
 
 #include <string>
-#include "../libPAK/libPAK.h"
+#include "..\libPAK\libPAK.h"
 #include <stdio.h>
 #include <iostream>
 #include <iomanip>

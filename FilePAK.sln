@@ -13,6 +13,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pakGUI", "pakGUI\pakGUI.vcx
 		{00DED9FF-7B5B-413C-8BFB-E4A73DEF6B04} = {00DED9FF-7B5B-413C-8BFB-E4A73DEF6B04}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libreadPAK", "libreadPAK\libreadPAK.vcxproj", "{BC29E65A-70A2-4CEC-ADA6-CC42C45976DE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -31,6 +33,10 @@ Global
 		{F117A81E-3EBE-448F-8382-621588D4A734}.Debug|Win32.Build.0 = Debug|Win32
 		{F117A81E-3EBE-448F-8382-621588D4A734}.Release|Win32.ActiveCfg = Release|Win32
 		{F117A81E-3EBE-448F-8382-621588D4A734}.Release|Win32.Build.0 = Release|Win32
+		{BC29E65A-70A2-4CEC-ADA6-CC42C45976DE}.Debug|Win32.ActiveCfg = Debug|Win32
+		{BC29E65A-70A2-4CEC-ADA6-CC42C45976DE}.Debug|Win32.Build.0 = Debug|Win32
+		{BC29E65A-70A2-4CEC-ADA6-CC42C45976DE}.Release|Win32.ActiveCfg = Release|Win32
+		{BC29E65A-70A2-4CEC-ADA6-CC42C45976DE}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

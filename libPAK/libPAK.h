@@ -104,7 +104,7 @@ class libPAK
 private:
 	struct PAKheader //The header for the .pak file, the only thing not encrypted
 	{
-		char fileID[6]; //Identifier to make sure this is the type of .pak we want (and not some other sort of compression someone else made), I use "DBPAK"
+		char fileID[6]; //Identifier to make sure this is the type of .pak we want, I use "DBPAK"
 		char version[4]; //Version of the format
 		int numberFiles; //Total number of files
 		int encryptData[4];
@@ -215,6 +215,7 @@ public:
 	//		PAK_SUCCESS
 	//		PAK_BAD_PAK
 	//		PAK_FILE_OPEN_FAIL
+	//		PAK_BAD_CHECKSUM
 	//********************************************
 	int readPAK(string PAKpath);
 
